@@ -10,10 +10,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @SpringBootApplication
-public class SpringTutorialApplication {
+public class LimestudyBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringTutorialApplication.class, args);
+		SpringApplication.run(LimestudyBackendApplication.class, args);
 	}
 
 	@Bean
@@ -32,7 +32,7 @@ public class SpringTutorialApplication {
 		FilterRegistrationBean<CorsFilter> registrationBean = new FilterRegistrationBean<>();
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
-		config.addAllowedOrigin("http://localhost:"); // fill in port after semicolon or * for any
+		config.addAllowedOrigin("*"); // fill in port after semicolon or * for any
 		config.addAllowedHeader("*");
 		source.registerCorsConfiguration("/**", config);
 		registrationBean.setFilter(new CorsFilter(source));
