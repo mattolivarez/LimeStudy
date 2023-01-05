@@ -2,7 +2,7 @@
     <div class="app-wrapper">
         <div class="app" v-if="this.$store.state.postLoaded">
             <Navigation v-if="!navigation" />
-            <router-view />
+            <router-view></router-view>
             <Footer v-if="!navigation" />
         </div>
     </div>
@@ -11,7 +11,7 @@
 <script>
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
-import firebase from "firebase/app"
+//import firebase from "firebase/app"
 import "firebase/auth"
 
 export default {
@@ -23,13 +23,13 @@ export default {
         };
     },
     created() {
-        firebase.auth().onAuthStateChanged( async (user) => {
+        /*firebase.auth().onAuthStateChanged( async (user) => {
             this.$store.commit("updateUser", user);
             if (user)
             {
                 this.$store.dispatch("getCurrentUser", user);
             }
-        })
+        })*/
         this.checkRoute();
         this.$store.dispatch("getPost");
     },

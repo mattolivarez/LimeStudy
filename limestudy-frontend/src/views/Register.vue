@@ -5,7 +5,7 @@
                 Already have an account?
                 <router-link class="router-link" :to="{ name: 'Login' }">Login</router-link>
             </p>
-            <h2>Create your FireBlogs Account</h2>
+            <h2>Create your Limestudy Account</h2>
             <div class="inputs">
                 <div class="input">
                     <input type="text" placeholder="First Name" v-model="firstName" required>
@@ -16,16 +16,12 @@
                     <user class="icon" />
                 </div>
                 <div class="input">
-                    <input type="text" placeholder="Username" v-model="username" required>
-                    <user class="icon" />
-                </div>
-                <div class="input">
                     <input type="text" placeholder="Email" v-model="email" required>
-                    <email class="icon" />
+                    <Email class="icon" />
                 </div>
                 <div class="input">
                     <input type="password" placeholder="Password" v-model="password" required>
-                    <password class="icon" />
+                    <Password class="icon" />
                 </div>
                 <div class="error" v-show="error">
                     {{ this.errorMessage }}
@@ -39,25 +35,21 @@
 </template>
 
 <script>
-import email from "../assets/Icons/envelope-regular.svg"
-import password from "../assets/Icons/lock-alt-solid.svg"
-import user from "../assets/Icons/user-alt-light.svg"
-import firebase from "firebase/app"
-import "firebase/auth"
-import db from "../firebase/firebaseInit"
+import Email from "../assets/Icons/envelope-regular.svg"
+import Password from "../assets/Icons/lock-alt-solid.svg"
+import axios from "axios"
+
 
 export default {
     name: "Register",
     components: { 
-        email, 
-        password, 
-        user 
+        Email, 
+        Password, 
     },
     data() {
         return {
             firstName: "",
             lastName: "",
-            username: "",
             email: "",
             password: "",
             error: null,
@@ -65,7 +57,7 @@ export default {
         };
     },
     methods: {
-        async register() {
+        /*async register() {
             if (this.email !== "" && this.password !== "" && this.firstName !== "" && this.lastName !== "" && this.username !== "")
             {
                 this.error = false;
@@ -86,8 +78,74 @@ export default {
             this.error = true;
             this.errorMessage = "Please fill out all the fields!";
             return;
+        },*/
+        async register(){
+            /*fetch('http://localhost:8080/api/users/login', {
+                method: 'POST',
+                body: JSON.stringify(this.bodyData),
+                headers: {
+                    //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(res => console.log(res))
+            .catch(error => console.error(error[0].message));*/
+            /*axios.post('/api/users/login', {
+                email: "david@testemail.com",
+                password: "test",
+                headers: {
+                    //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(res => console.log(res))
+            .catch(error => console.log(error.response.data.message));*/
+            if (this.email !== "" && this.password !== "" && this.firstName !== "" && this.lastName !== "" && this.username !== "")
+            {
+                
+                await axios({
+                    method: 'POST',
+                    url: '/api/users/register',
+                    headers: {
+                        //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
+                        'Content-Type': 'application/json'
+                    },
+                    data: {
+                        firstName: this.firstName,
+                        lastName: this.lastName,
+                        email: this.email,
+                        password: this.password
+                    }
+                })
+                .then((response) => {
+                    console.log(response);
+                    localStorage.setItem("user", JSON.stringify(response.data.token));
+                    /*const details = {
+                        firstName: this.firstName,
+                        lastName: this.lastName,
+                        email: this.email
+                    }*/
+                    //this.$store.commit('setUserDetails', details);
+                    this.$router.push({ name: 'Home' });
+                    return;
+                })
+                .catch((err) => {
+                    console.error(err)
+                    this.error = true;
+                    this.errorMessage = JSON.stringify(err.response.data.message);
+                    console.log(err.response.data.message);
+                    return;
+                });
+            }
+            else
+            {
+                this.error = true;
+                this.errorMessage = "Please fill out all the fields!";
+                return;
+            }
         },
-    }
+    },
 }
 </script>
 

@@ -13,7 +13,7 @@
                 <div class="inputs">
                     <div class="input">
                         <input type="text" placeholder="Email" v-model="email">
-                        <email class="icon" />
+                        <Email class="icon" />
                     </div>
                 </div>
                 <button @click.prevent="resetPassword">Reset</button>
@@ -25,11 +25,9 @@
 </template>
 
 <script>
-import email from "../assets/Icons/envelope-regular.svg"
+import Email from "../assets/Icons/envelope-regular.svg"
 import Modal from "../components/Modal"
 import Loading from "../components/Loading"
-import firebase from "firebase/app"
-import "firebase/auth"
 
 export default {
     name: "ForgotPassword",
@@ -42,7 +40,7 @@ export default {
         }
     },
     components: {
-        email,
+        Email,
         Modal,
         Loading,
     },
@@ -51,7 +49,7 @@ export default {
             this.modalActive = !this.modalActive;
             this.email = "";
         },
-        resetPassword() {
+        /*resetPassword() {
             this.loading = true;
             firebase.auth().sendPasswordResetEmail(this.email)
             .then(() => {
@@ -63,7 +61,7 @@ export default {
                 this.loading = false;
                 this.modalActive = true;
             })
-        }
+        }*/
     },
 };
 </script>

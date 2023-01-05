@@ -1,10 +1,16 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import firebase from "firebase/app"
+//import firebase from "firebase/app"
 import "firebase/auth"
 import db from "../firebase/firebaseInit"
+import axios from "axios"
 
 Vue.use(Vuex)
+
+/*let newUser = JSON.parse(localStorage.getItem('user'));
+let initialState = newUser
+  ? { status: { loggedIn: true }, newUser }
+  : { status: { loggedIn: false }, newUser: null };*/
 
 export default new Vuex.Store({
     state: {
@@ -17,6 +23,7 @@ export default new Vuex.Store({
         blogPhotoPreview: null,
         editPost: null,
         user: null,
+        loggedIn: false,
         profileAdmin: null,
         profileEmail: null,
         profileFirstName: null,
@@ -72,6 +79,11 @@ export default new Vuex.Store({
             state.profileLastName = doc.data().lastName;
             state.profileUsername = doc.data().username;
         },
+        setUserDetails(state, details) {
+            state.profileEmail = details.email;
+            state.profileFirstName = details.firstName;
+            state.profileLastName = details.lastName;
+        },
         setProfileInitials(state) {
             state.profileInitials = state.profileFirstName.match(/(\b\S)?/g).join("") + 
                                     state.profileLastName.match(/(\b\S)?/g).join("");
@@ -87,10 +99,61 @@ export default new Vuex.Store({
         },
         setProfileAdmin(state, payload) {
             state.profileAdmin = payload;
+        },
+        loginSuccess(state, user) {
+            state.loggedIn = true;
+            state.user = user;
+        },
+        loginFailure(state) {
+            state.loggedIn = false;
+            state.user = null;
+        },
+        logout(state) {
+            state.loggedIn = false;
+            state.user = null;
+        },
+        registerSuccess(state) {
+            state.loggedIn = false;
+        },
+        registerFailure(state) {
+            state.loggedIn = false;
+        },
+        refreshToken(state, accessToken) {
+            state.loggedIn = true;
+            state.user = { ...state.user, accessToken: accessToken };
         }
     },
     actions: {
-        async getCurrentUser({commit}, user) {
+        async getCurrentUser({ commit }, user) {
+            await axios({
+                method: 'POST',
+                url: '/api/users/get-user',
+                headers: {
+                    //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    email: user.email,
+                    password: user.password
+                }
+            })
+            .then((response) => {
+                console.log(response.data);
+                const details = {
+                    firstName: response.data.firstName,
+                    lastName: response.data.lastName,
+                    email: response.data.email
+                }
+                commit('setUserDetails', details);
+                commit('setProfileInitials');
+                return;
+            }).catch((err) => {
+                console.log(err);
+                //this.$store.commit('loginFailure');
+                return;
+            });
+        },
+        /*async getCurrentUser({commit}, user) {
             const dataBase = await db.collection('users').doc(firebase.auth().currentUser.uid);
             const dbResults = await dataBase.get();
             commit("setProfileInfo", dbResults);
@@ -98,7 +161,7 @@ export default new Vuex.Store({
             const token = await user.getIdTokenResult();
             const admin = await token.claims.admin;
             commit('setProfileAdmin', admin);
-        },
+        },*/
         async updateUserSettings({commit, state}) {
             const dataBase = await db.collection('users').doc(state.profileID);
             await dataBase.update({
@@ -135,6 +198,19 @@ export default new Vuex.Store({
             const getPost = await db.collection('blogPosts').doc(payload);
             await getPost.delete();
             commit("filterBlogPost", payload);
+        },
+        async loginUser(user) {
+            await axios({
+                method: 'POST',
+                url: '/api/users/register',
+                headers: {
+                    //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    user
+                }
+            })
         }
     },
     modules: {

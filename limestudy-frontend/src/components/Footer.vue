@@ -3,7 +3,7 @@
         <div class="container">
             <div class="left">
                 <div class="col-1">
-                    <router-link class="header" :to="{ name: 'Home' }">FireBlogs</router-link>
+                    <router-link class="header" :to="{ name: 'Landing' }">Limestudy</router-link>
                     <ul>
                         <li>
                             <a href="#"><youTube class="svg-icon" /></a>
@@ -21,15 +21,16 @@
                 </div>
                 <div class="col-2">
                     <ul>
-                        <router-link class="link" :to="{ name: 'Home' }">Home</router-link>
-                        <router-link class="link" :to="{ name: 'Blogs' }">Blogs</router-link>
+                        <router-link v-if="!loggedIn" class="link" :to="{ name: 'Landing' }">Home</router-link>
+                        <router-link v-if="!loggedIn" class="link" :to="{ name: 'About' }">About</router-link>
+                        <router-link v-if="!loggedIn" class="link" :to="{ name: 'ViewClasses' }">Class</router-link>
                         <router-link v-if="admin" class="link" :to="{ name: 'CreatePost' }">Create Post</router-link>
                         <router-link v-if="!user" class="link" :to="{ name: 'Login' }">Log in / Register</router-link>
                     </ul>
                 </div>
             </div>
             <div class="right">
-                <p>Copyright 2022 All Rights Reserved</p>
+                <p>Copyright 2023 All Rights Reserved</p>
             </div>
         </div>
     </footer>
@@ -56,6 +57,9 @@ export default {
         admin() {
             return this.$store.state.profileAdmin;
         },
+        loggedIn() {
+            return this.$store.state.loggedIn;
+        }
     },
 };
 </script>

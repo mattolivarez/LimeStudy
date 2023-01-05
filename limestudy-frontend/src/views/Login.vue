@@ -5,15 +5,15 @@
                 Don't have an account?
                 <router-link class="router-link" :to="{ name: 'Register' }">Register</router-link>
             </p>
-            <h2>Login to FireBlogs</h2>
+            <h2>Login to Limestudy</h2>
             <div class="inputs">
                 <div class="input">
-                    <input type="text" placeholder="Email" v-model="email">
-                    <email class="icon" />
+                    <input type="text" placeholder="Email" v-model="email" required>
+                    <Email class="icon" />
                 </div>
                 <div class="input">
-                    <input type="password" placeholder="Password" v-model="password">
-                    <password class="icon" />
+                    <input type="password" placeholder="Password" v-model="password" required>
+                    <Password class="icon" />
                 </div>
                 <div class="error" v-show="error">
                     {{ this.errorMessage }}
@@ -28,16 +28,17 @@
 </template>
 
 <script>
-import email from "../assets/Icons/envelope-regular.svg"
-import password from "../assets/Icons/lock-alt-solid.svg"
-import firebase from "firebase/app"
-import "firebase/auth"
+import Email from "../assets/Icons/envelope-regular.svg"
+import Password from "../assets/Icons/lock-alt-solid.svg"
+import axios from "axios"
+
+
 
 export default {
     name: "Login",
     components: {
-        email,
-        password,
+        Email,
+        Password,
     },
     data() {
         return {
@@ -48,7 +49,7 @@ export default {
         };
     },
     methods: {
-        signIn() {
+        /*signIn() {
             firebase
             .auth()
             .signInWithEmailAndPassword(this.email, this. password)
@@ -61,6 +62,48 @@ export default {
                 this.error = true;
                 this.errorMessage = err.message;
             });
+        }*/
+        async signIn() {
+            if (this.email !== "" && this.password !== "")
+            {
+                await axios({
+                    method: 'POST',
+                    url: '/api/users/login',
+                    headers: {
+                        //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
+                        'Content-Type': 'application/json'
+                        //'Authorization': 'Bearer ' + localStorage.getItem('user')
+                    },
+                    data: {
+                        email: this.email,
+                        password: this.password
+                    }
+                })
+                .then((response) => {
+                    console.log(response)
+                    this.error = false;
+                    this.errorMessage = "";
+                    localStorage.setItem("user", JSON.stringify(response.data.token));
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    console.log(user);
+                    this.$store.dispatch("getCurrentUser", {email: this.email, password: this.password});
+                    this.$store.commit('loginSuccess', user);
+                    this.$router.push({ name: 'Landing' });
+                    return;
+                }).catch((err) => {
+                    this.error = true;
+                    this.errorMessage = err.response.data.message;
+                    //console.log(err.response.data.message);
+                    this.$store.commit('loginFailure');
+                    return;
+                });
+            }
+            else
+            {
+                this.error = true;
+                this.errorMessage = "Please fill out all the fields!";
+                return;
+            }
         }
     }
 };

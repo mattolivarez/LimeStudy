@@ -2,8 +2,9 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import firebase from "firebase/app";
 import "firebase/auth";
-import Home from "../views/Home.vue";
-import Blogs from "../views/Blogs.vue";
+import Landing from "../views/Landing.vue";
+import About from "../views/About.vue";
+import ViewClasses from "../views/ViewClasses.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
@@ -21,22 +22,58 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    name: "Landing",
+    component: Landing,
     meta: {
-      title: 'Home',
+      title: 'Landing',
       requiresAuth: false,
     }
   },
   {
-    path: "/blogs",
-    name: "Blogs",
-    component: Blogs,
+    path: "/about-us",
+    name: "About",
+    component: About,
     meta: {
-      title: 'Blogs',
+      title: 'About',
       requiresAuth: false,
     }
   },
+  {
+    path: "/home",
+    name: "ViewClasses",
+    component: ViewClasses,
+    meta: {
+      title: 'ViewClasses',
+      requiresAuth: false,
+    }
+  },
+  /*{
+    path: "/home/:classId",
+    name: "ViewDecks",
+    component: ViewDecks,
+    meta: {
+      title: 'ViewDecks',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/home/:classId/:deckId",
+    name: "ViewCards",
+    component: ViewCards,
+    meta: {
+      title: 'ViewCards',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/home/:classId/:deckId/:cardId",
+    name: "ViewCard",
+    component: ViewCard,
+    meta: {
+      title: 'ViewCard',
+      requiresAuth: false,
+    }
+  },*/
   {
     path: "/login",
     name: "Login",

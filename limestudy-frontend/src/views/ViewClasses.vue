@@ -13,7 +13,7 @@
 <script>
 import BlogCard from "../components/BlogCard"
 export default {
-    name: "Blogs",
+    name: "ViewClasses",
     components: { BlogCard },
     computed: {
         blogPosts() {

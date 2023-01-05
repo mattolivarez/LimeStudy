@@ -2,14 +2,17 @@
     <header>
         <nav class="container">
             <div class="branding">
-                <router-link class="header" :to="{ name: 'Home' }">FireBlogs</router-link>
+                <router-link class="header" :to="{ name: 'Landing' }">Limestudy</router-link>
             </div>
             <div class="nav-links">
                 <ul v-show="!mobile">
-                    <router-link class="link" :to="{ name: 'Home' }">Home</router-link>
-                    <router-link class="link" :to="{ name: 'Blogs' }">Blogs</router-link>
-                    <router-link v-if="admin" class="link" :to="{ name: 'CreatePost' }">Create Post</router-link>
-                    <router-link v-if="!user" class="link" :to="{ name: 'Login' }">Login/Register</router-link>
+                    <router-link v-if="!loggedIn" class="link" :to="{ name: 'Landing' }">Home</router-link>
+                    <router-link v-if="!loggedIn" class="link" :to="{ name: 'About' }">About</router-link>
+                    <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewClasses' }">Class List</router-link>
+                    <router-link v-if="loggedIn" class="link" to="#">Notes</router-link>
+                    <router-link v-if="loggedIn" class="link" to="#">Connects</router-link>
+                    <router-link class="link" :to="{ name: 'CreatePost' }">Create Post</router-link>
+                    <router-link v-if="!loggedIn" class="link" :to="{ name: 'Login' }">Login/Register</router-link>
                 </ul>
                 <div @click="toggleProfileMenu" class="profile" ref="profile" v-if="user">
                     <span>{{ this.$store.state.profileInitials }}</span>
@@ -47,9 +50,10 @@
         <menuIcon @click="toggleMobileNav" class="menu-icon" v-show="mobile" />
         <transition name="mobile-nav">
             <ul class="mobile-nav" v-show="mobileNav">
-                <router-link class="link" :to="{ name: 'Home' }">Home</router-link>
-                <router-link class="link" :to="{ name: 'Blogs' }">Blogs</router-link>
-                <router-link v-if="admin" class="link" :to="{ name: 'CreatePost' }">Create Post</router-link>
+                <router-link class="link" :to="{ name: 'Landing' }">Home</router-link>
+                <router-link class="link" :to="{ name: 'About' }">About</router-link>
+                <router-link class="link" :to="{ name: 'ViewClasses' }">Class</router-link>
+                <router-link class="link" :to="{ name: 'CreatePost' }">Create Post</router-link>
                 <router-link v-if="!user" class="link" :to="{ name: 'Login' }">Login/Register</router-link>
             </ul>
         </transition>
@@ -61,7 +65,7 @@ import menuIcon from '../assets/Icons/bars-regular.svg';
 import userIcon from '../assets/Icons/user-alt-light.svg';
 import adminIcon from '../assets/Icons/user-crown-light.svg';
 import signOutIcon from '../assets/Icons/sign-out-alt-regular.svg';
-import firebase from "firebase/app"
+//import firebase from "firebase/app"
 import "firebase/auth"
 
 export default {
@@ -110,7 +114,8 @@ export default {
         },
         signOut() 
         {
-            firebase.auth().signOut();
+            localStorage.removeItem('user');
+            this.$store.commit('logout')
             window.location.reload();
         },
     },
@@ -121,6 +126,9 @@ export default {
         admin() {
             return this.$store.state.profileAdmin;
         },
+        loggedIn() {
+            return this.$store.state.loggedIn;
+        }
     },
 };
 </script>

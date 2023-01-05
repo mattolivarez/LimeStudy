@@ -3,18 +3,19 @@
         <div class="blog-content">
             <div>
                 <h2 v-if="post.welcomeScreen">{{ post.title }}</h2>
-                <h2 v-else>{{ post.blogTitle }}</h2> <!-- post.blogTitle -->
-                <p v-if="post.welcomeScreen">{{ post.blogPost }}</p>
-                <p class="content-preview" v-else v-html="post.blogHTML"></p> <!-- v-html="post.blogHTML" and remove curly braces -->
-                <router-link class="link link-light" v-if="post.welcomeScreen" to="#">
+                <h2 v-else>{{ post.title }}</h2> <!-- post.blogTitle -->
+                <p v-if="post.welcomeScreen">{{ post.statement }}</p>
+                <p v-else>{{ post.statement }}</p>
+                <!--<p class="content-preview" v-else v-html="post.blogHTML"></p>  v-html="post.blogHTML" and remove curly braces -->
+                <router-link class="link link-light" v-if="post.welcomeScreen" :to="{ name: 'Login' }">
                     Login/Register<Arrow class="arrow arrow-light" />
                 </router-link>
-                <router-link class="link" v-else :to="{name: 'ViewBlog', params: {blogid: this.post.blogID}}">View the Post<Arrow class="arrow" /></router-link>
+                <router-link class="link" v-else to="#">Find out more<Arrow class="arrow" /></router-link>
             </div>
         </div>
         <div class="blog-photo">
             <img v-if="post.welcomeScreen" :src="require(`../assets/blogPhotos/${post.photo}.jpg`)" alt="">
-            <img v-else :src="post.blogCoverPhoto" alt=""> <!--:src="post.blogCoverPhoto" -->
+            <img v-else :src="require(`../assets/blogPhotos/${post.photo}.jpg`)" alt=""> <!--:src="require(`../assets/blogPhotos/${post.photo}.jpg`)" -->
         </div>
     </div>
 </template>

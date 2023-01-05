@@ -8,11 +8,11 @@
                 <Delete class="delete" />
             </div>
         </div>
-        <img :src="post.blogCoverPhoto" alt="">
+        <!--<img :src="post.blogCoverPhoto" alt="">-->
         <div class="info">
             <h4>{{ post.blogTitle }}</h4>
-            <h6>Posted on: {{ new Date(post.blogDate).toLocaleString('en-us', {dateStyle: "long"}) }}</h6> <!-- new Date(post.blogDate).toLocaleString('en-us', {dateStyle: "long"}) -->
-            <router-link class="link" :to="{name: 'ViewBlog', params: {blogid: this.post.blogID}}">View The Post <Arrow class="arrow" /></router-link>
+            <h6>Created on: {{ new Date(post.blogDate).toLocaleString('en-us', {dateStyle: "long"}) }}</h6> <!-- new Date(post.blogDate).toLocaleString('en-us', {dateStyle: "long"}) -->
+            <router-link class="link" :to="{name: 'ViewBlog', params: {blogid: this.post.blogID}}">View Class Decks <Arrow class="arrow" /></router-link>
         </div>
     </div>
 </template>
@@ -56,7 +56,7 @@ export default {
     flex-direction: column;
     border-radius: 8px;
     background-color: #fff;
-    min-height: 420px;
+    min-height: 225px; // original was 420px
     transition: .5s ease all;
 
     &:hover

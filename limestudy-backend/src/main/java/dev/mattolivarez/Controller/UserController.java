@@ -45,6 +45,15 @@ public class UserController
         return new ResponseEntity<>(generateJWTToken(user), HttpStatus.OK);
     }
 
+    @PostMapping("/get-user")
+    public ResponseEntity<User> getUserDetails(@RequestBody Map<String, Object> userMap)
+    {
+        String email = (String) userMap.get("email");
+        String password = (String) userMap.get("password");
+        User user = userService.validateUser(email, password);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
     private Map<String, String> generateJWTToken(User user)
     {
         long timestamp = System.currentTimeMillis();

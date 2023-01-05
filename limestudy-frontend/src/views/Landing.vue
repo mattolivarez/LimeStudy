@@ -1,20 +1,20 @@
 <template>
     <div class="home">
-        <BlogPost v-if="!user" :post="welcomeScreen" />
-        <BlogPost :post="post" v-for="(post, index) in blogPostsFeed" :key="index" /> 
-        <div class="blog-card-wrap">
+        <BlogPost :post="welcomeScreen" />
+        <BlogPost :post="aboutScreen" /> 
+        <!--<div class="blog-card-wrap">
             <div class="container">
                 <h3>View More Recent Blogs</h3>
                 <div class="blog-cards">
                     <BlogCard :post="post" v-for="(post, index) in blogPostsCards" :key="index" /> 
                 </div>
             </div>
-        </div>
+        </div> -->
         <div v-if="!user" class="updates">
             <div class="container">
-                <h2>Never miss a post! Register for your free account today!</h2>
-                <router-link class="router-button" to="#">
-                    Register for FireBlogs <Arrow class="arrow arrow-light" />
+                <h2>Improve your studying! Register for your free account today!</h2>
+                <router-link class="router-button" :to="{ name: 'Register' }">
+                    Register for Limestudy <Arrow class="arrow arrow-light" />
                 </router-link>
             </div>
         </div>
@@ -23,33 +23,35 @@
 
 <script>
 import BlogPost from '../components/BlogPost';
-import BlogCard from '../components/BlogCard';
 import Arrow from "../assets/Icons/arrow-right-light.svg";
 
 export default {
-    name: "Home",
-    components: { BlogPost, BlogCard, Arrow },
+    name: "Landing",
+    components: { BlogPost, Arrow },
     data() {
         return {
             welcomeScreen: {
-        title: "Welcome!",
-        blogPost: "Weekly blog articles with all things programming including HTML, CSS, JavaScript, and more. Register today to never miss a post!",
-        welcomeScreen: true,
-        photo: "coding",
+                title: "Welcome!",
+                statement: "Weekly blog articles with all things programming including HTML, CSS, JavaScript, and more. Register today to never miss a post!",
+                welcomeScreen: true,
+                photo: "coding",
             },
+            aboutScreen: {
+                title: "About Us",
+                statement: "Limestudy utilizes many different techniques to improve the efficiency of studying.",
+                welcomeScreen: false,
+                photo: "designed-for-everyone"
+            }
         };
     },
     computed: {
-        blogPostsCards() {
-            return this.$store.getters.blogPostsCards;
-        },
-        blogPostsFeed() {
-            return this.$store.getters.blogPostsFeed;
-        },
         user() {
             return this.$store.state.user;
         },
-    }
+    },
+    created() {
+        console.log(localStorage.getItem("user"))
+    },
 };
 </script>
 
