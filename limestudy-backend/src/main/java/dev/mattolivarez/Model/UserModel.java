@@ -1,7 +1,7 @@
 package dev.mattolivarez.Model;
 
 
-public class User
+public class UserModel
 {
 
     private Integer userId;
@@ -10,8 +10,8 @@ public class User
     private String email;
     private String password;
 
-    public User(){}
-    public User(Integer userId, String firstName, String lastName, String email, String password) {
+    public UserModel(){}
+    public UserModel(Integer userId, String firstName, String lastName, String email, String password) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;

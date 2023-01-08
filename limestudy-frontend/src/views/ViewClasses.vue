@@ -1,10 +1,15 @@
 <template>
     <div class="blog-card-wrap">
         <div class="blog-cards container">
+
+            <div class="new-class">
+                <span>Add New Class</span>
+            </div>
             <div class="toggle-edit">
                 <span>Toggle Editing Post</span>
                 <input type="checkbox" v-model="editPost" />
             </div>
+
             <BlogCard :post="post" v-for="(post, index) in blogPosts" :key="index" />
         </div>
     </div>
@@ -83,6 +88,20 @@ export default {
             background: #fff;
             left: 52px;
         }
+    }
+    .new-class
+    {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        top: -70px;
+        left: 0;
+
+        span
+        {
+            margin-right: 16px;
+        }
+
     }
 }
 

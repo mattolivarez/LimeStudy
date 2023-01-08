@@ -11,7 +11,7 @@
 	<groupId>dev.mattolivarez</groupId>
 	<artifactId>limestudy-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>limestudy-backend</name>
+	<class_name>limestudy-backend</class_name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>

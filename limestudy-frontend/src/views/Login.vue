@@ -88,7 +88,7 @@ export default {
                     console.log(user);
                     this.$store.dispatch("getCurrentUser", {email: this.email, password: this.password});
                     this.$store.commit('loginSuccess', user);
-                    this.$router.push({ name: 'Landing' });
+                    this.$router.push({ name: 'ViewClasses' });
                     return;
                 }).catch((err) => {
                     this.error = true;

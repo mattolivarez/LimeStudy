@@ -50,7 +50,13 @@ export default {
         },
     },
     created() {
-        console.log(localStorage.getItem("user"))
+        /*if (localStorage.getItem("user"))
+        {
+            console.log(localStorage.getItem("user"));
+            console.log(this.$store.state.loggedIn);
+            this.$router.push({name: 'ViewClasses'});
+        }*/
+        console.log(this.$store.state.loggedIn);
     },
 };
 </script>

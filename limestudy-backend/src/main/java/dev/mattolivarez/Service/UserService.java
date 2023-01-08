@@ -1,12 +1,12 @@
 package dev.mattolivarez.Service;
 
 import dev.mattolivarez.Exception.LSAuthException;
-import dev.mattolivarez.Model.User;
+import dev.mattolivarez.Model.UserModel;
 
 public interface UserService
 {
-    User validateUser(String email, String password) throws LSAuthException;
+    UserModel validateUser(String email, String password) throws LSAuthException;
 
-    User registerUser(String firsName, String lastName, String email, String password) throws LSAuthException;
+    UserModel registerUser(String firsName, String lastName, String email, String password) throws LSAuthException;
 
 }

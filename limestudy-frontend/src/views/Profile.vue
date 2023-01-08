@@ -18,10 +18,6 @@
                     <input type="text" id="lastName" v-model="lastName">
                 </div>
                 <div class="input">
-                    <label for="username">Username: </label>
-                    <input type="text" id="username" v-model="username">
-                </div>
-                <div class="input">
                     <label for="email">Email: </label>
                     <input type="text" id="email" v-model="email" disabled>
                 </div>
@@ -61,24 +57,10 @@ export default {
             get() {
                 return this.$store.state.profileFirstName;
             },
-            set(payload) {
-                this.$store.commit("changeFirstName", payload);
-            },
         },
         lastName: {
             get() {
                 return this.$store.state.profileLastName;
-            },
-            set(payload) {
-                this.$store.commit("changeLastName", payload);
-            },
-        },
-        username: {
-            get() {
-                return this.$store.state.profileUsername;
-            },
-            set(payload) {
-                this.$store.commit("changeUsername", payload);
             },
         },
         email() {

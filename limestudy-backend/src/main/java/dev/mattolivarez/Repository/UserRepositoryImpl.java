@@ -1,7 +1,7 @@
 package dev.mattolivarez.Repository;
 
 import dev.mattolivarez.Exception.LSAuthException;
-import dev.mattolivarez.Model.User;
+import dev.mattolivarez.Model.UserModel;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -60,15 +60,15 @@ public class UserRepositoryImpl implements UserRepository
     }
 
     @Override
-    public User findByEmailAndPassword(String email, String password) throws LSAuthException {
+    public UserModel findByEmailAndPassword(String email, String password) throws LSAuthException {
         try
         {
-            User user = jdbcTemplate.queryForObject(SQL_FIND_BY_EMAIL, new Object[]{email}, userRowMapper);
-            if (!BCrypt.checkpw(password, user.getPassword()))
+            UserModel userModel = jdbcTemplate.queryForObject(SQL_FIND_BY_EMAIL, new Object[]{email}, userRowMapper);
+            if (!BCrypt.checkpw(password, userModel.getPassword()))
             {
                 throw new LSAuthException("Invalid email/password");
             }
-            return user;
+            return userModel;
         }
         catch (EmptyResultDataAccessException e)
         {
@@ -82,12 +82,12 @@ public class UserRepositoryImpl implements UserRepository
     }
 
     @Override
-    public User findById(Integer userId) {
+    public UserModel findById(Integer userId) {
         return jdbcTemplate.queryForObject(SQL_FIND_BY_ID, new Object[]{userId}, userRowMapper);
     }
 
-    private RowMapper<User> userRowMapper = ((rs, rowNum) -> {
-        return new User(rs.getInt("USER_ID"),
+    private RowMapper<UserModel> userRowMapper = ((rs, rowNum) -> {
+        return new UserModel(rs.getInt("USER_ID"),
                 rs.getString("FIRST_NAME"),
                 rs.getString("LAST_NAME"),
                 rs.getString("EMAIL"),
