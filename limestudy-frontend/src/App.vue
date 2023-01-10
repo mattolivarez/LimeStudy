@@ -1,6 +1,6 @@
 <template>
     <div class="app-wrapper">
-        <div class="app" v-if="this.$store.state.postLoaded">
+        <div class="app"> <!--v-if="this.$store.state.postLoaded"-->
             <Navigation v-if="!navigation" />
             <router-view></router-view>
             <Footer v-if="!navigation" />
@@ -32,6 +32,7 @@ export default {
         })*/
         this.checkRoute();
         this.$store.dispatch("getPost");
+        
     },
     mounted() {},
     methods: {
@@ -173,7 +174,7 @@ button,
     color: red;
 }
 
-.blog-card-wrap
+.card-wrap
 {
     position: relative;
     padding: 80px 16px;
@@ -183,7 +184,7 @@ button,
         padding: 100px 16px;
     }
 
-    .blog-cards
+    .cards
     {
         display: grid;
         gap: 32px;

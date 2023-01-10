@@ -2,47 +2,47 @@
     <div class="card-wrap">
         <div class="cards container">
             <div class="toggle-edit">
-                <span>Toggle Editing Class </span>
-                <input type="checkbox" v-model="editClass" />
+                <span>Toggle Editing Decks </span>
+                <input type="checkbox" v-model="editDeck" />
             </div>
             
-            <ClassCard :classes="classes" v-for="(classes, index) in classes" :key="index" />
-            <NewClassCard />
+            <DeckCard :decks="decks" v-for="(decks, index) in decks" :key="index" />
+            <NewDeckCard />
         </div>
     </div>
 </template>
 
 <script>
-import ClassCard from "../components/ClassCard"
-import NewClassCard from "../components/NewClassCard"
+import DeckCard from "../components/DeckCard"
+import NewDeckCard from "../components/NewDeckCard"
 
 export default {
-    name: "ViewClasses",
+    name: "ViewDecks",
     components: { 
-        ClassCard,
-        NewClassCard,
+        DeckCard,
+        NewDeckCard,
     },
     computed: {
         blogPosts() {
             return this.$store.state.blogPosts;
         },
-        classes() {
-            return this.$store.state.classes;
+        decks() {
+            return this.$store.state.decks;
         },
-        editClass: {
+        editDeck: {
             get() {
-                return this.$store.state.editClass;
+                return this.$store.state.editDeck;
             },
             set(payload) {
-                this.$store.commit("toggleEditClass", payload);
+                this.$store.commit("toggleEditDeck", payload);
             }
         }
     },
     created() {
-        this.$store.dispatch("getUserClasses");
+        this.$store.dispatch("getUserClassDecks", this.$route.params.classId);
     },
     beforeDestroy() {
-        this.$store.commit("toggleEditClass", false);
+        this.$store.commit("toggleEditDeck", false);
     },
 }
 </script>

@@ -9,6 +9,7 @@ public class FlashcardModel
     private String question;
     private String answer;
     private Long flashcard_created_on;
+    //private Response response;
 
     public FlashcardModel() {}
 

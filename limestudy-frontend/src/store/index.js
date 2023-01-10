@@ -21,7 +21,18 @@ export default new Vuex.Store({
         blogPhotoName: "",
         blogPhotoFileURL: null,
         blogPhotoPreview: null,
-        editPost: null,
+
+        classesLoaded: null,
+        decksLoaded: null,
+        flashcardsLoaded: null,
+
+        classes: [],
+        editClass: null,
+        decks: [],
+        editDeck: null,
+        flashcards: [],
+        editFlashcard: null,
+
         user: null,
         loggedIn: false,
         profileAdmin: null,
@@ -55,9 +66,19 @@ export default new Vuex.Store({
         updateBlogTitle(state, payload) {
             state.blogTitle = payload;
         },
-        toggleEditPost(state, payload) {
-            state.editPost = payload;
+
+
+        toggleEditClass(state, payload) {
+            state.editClass = payload;
         },
+        toggleEditDeck(state, payload) {
+            state.editDeck = payload;
+        },
+        toggleEditFlashcard(state, payload) {
+            state.editFlashcard = payload;
+        },
+
+
         setBlogState(state, payload) {
             state.blogTitle = payload.blogTitle;
             state.blogHTML = payload.blogHTML;
@@ -127,7 +148,7 @@ export default new Vuex.Store({
                 }
             })
             .then((response) => {
-                console.log(response.data);
+                //console.log(response.data);
                 const details = {
                     firstName: response.data.firstName,
                     lastName: response.data.lastName,
@@ -200,7 +221,104 @@ export default new Vuex.Store({
                     user
                 }
             })
-        }
+        },
+        async getUserClasses({state}) {
+            state.classes = [];
+            await axios({
+                method: 'GET',
+                url: '/api/classes',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log("response starts here")
+                //console.log(response.data);
+                response.data.forEach((userClass) => {
+                    const newClass = {
+                        classId: userClass.classId,
+                        class_name: userClass.class_name,
+                        class_created_on: userClass.class_created_on,
+                        userId: userClass.userId
+                    }
+                    state.classes.push(newClass);
+                });
+                //console.log(state.classes);
+                return;
+            }).catch((err) => {
+                console.log("error starts here")
+                console.log(err);
+                return;
+            });
+        },
+        async getUserClassDecks({state}, classId) {
+            console.log(classId)
+            state.decks = [];
+            await axios({
+                method: 'GET',
+                url: `/api/classes/${classId}/decks`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log("response starts here")
+                //console.log(response.data);
+                response.data.forEach((userClassDeck) => {
+                    const newDeck = {
+                        deckId: userClassDeck.deckId,
+                        classId: userClassDeck.classId,
+                        userId: userClassDeck.userId,
+                        deck_name: userClassDeck.deck_name,
+                        deck_created_on: userClassDeck.deck_created_on,
+                    }
+                    state.decks.push(newDeck);
+                });
+                //console.log(state.classes);
+                return;
+            }).catch((err) => {
+                console.log("error starts here")
+                console.log(err);
+                return;
+            });
+        },
+        async getUserClassDeckFlashcards({state}, payload) {
+            console.log("classId = " + payload.classId)
+            console.log("deckId = " + payload.deckId)
+            state.flashcards = [];
+            await axios({
+                method: 'GET',
+                url: `/api/classes/${payload.classId}/decks/${payload.deckId}/flashcards`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log("response starts here")
+                //console.log(response.data);
+                response.data.forEach((userClassDeckFlashcard) => {
+                    const newFlashcard = {
+                        flashcardId: userClassDeckFlashcard.flashcardId,
+                        deckId: userClassDeckFlashcard.deckId,
+                        classId: userClassDeckFlashcard.classId,
+                        userId: userClassDeckFlashcard.userId,
+                        question: userClassDeckFlashcard.question,
+                        answer: userClassDeckFlashcard.answer,
+                        flashcard_created_on: userClassDeckFlashcard.flashcard_created_on,
+                    }
+                    state.flashcards.push(newFlashcard);
+                });
+                //console.log(state.classes);
+                return;
+            }).catch((err) => {
+                console.log("error starts here")
+                console.log(err);
+                return;
+            });
+        },
     },
     modules: {
     }

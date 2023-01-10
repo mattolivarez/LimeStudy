@@ -6,7 +6,8 @@ public class ClassModel
     private Integer userId;
     private String class_name;
     private Long class_created_on;
-    private Integer number_of_decks;
+    //private Integer number_of_decks;
+    //private String class_color_code;
 
     public ClassModel() {}
 

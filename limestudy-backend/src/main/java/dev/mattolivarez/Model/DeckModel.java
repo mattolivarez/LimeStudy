@@ -7,7 +7,8 @@ public class DeckModel
     private Integer userId;
     private String deck_name;
     private Long deck_created_on;
-    private Integer number_of_flashcards;
+    //private Integer number_of_flashcards;
+    //private String deck_color_code;
 
     public DeckModel() {}
 

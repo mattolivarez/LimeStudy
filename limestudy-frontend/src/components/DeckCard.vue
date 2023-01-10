@@ -1,18 +1,20 @@
 <template>
-    <div class="blog-card">
-        <div v-show="editPost" class="icons">
-            <div @click="editBlog" class="icon">
+    <div class="card">
+        <div v-show="getEditDeck" class="icons">
+            <div @click="editDeck" class="icon">
                 <Edit class="edit" />
             </div>
-            <div @click="deletePost" class="icon">
+            <div @click="deleteDeck" class="icon">
                 <Delete class="delete" />
             </div>
         </div>
         <!--<img :src="post.blogCoverPhoto" alt="">-->
         <div class="info">
-            <h4>{{ post.blogTitle }}</h4>
-            <h6>Created on: {{ new Date(post.blogDate).toLocaleString('en-us', {dateStyle: "long"}) }}</h6> <!-- new Date(post.blogDate).toLocaleString('en-us', {dateStyle: "long"}) -->
-            <router-link class="link" :to="{name: 'ViewBlog', params: {blogid: this.post.blogID}}">View Class Decks <Arrow class="arrow" /></router-link>
+            <h4>{{ decks.deck_name }}</h4>
+            <h6>Created on: {{ new Date(decks.deck_created_on).toLocaleString('en-us', {dateStyle: "long"}) }}</h6> 
+            <router-link class="link" :to="{name: 'ViewFlashcards', params: {classId: decks.classId, deckId: decks.deckId}}"> 
+                View Deck Flashcards <Arrow class="arrow" />
+            </router-link> <!--:to="{name: 'ViewDecks', params: {classId: decks.classId, deckId: decks.deckId}}"-->
         </div>
     </div>
 </template>
@@ -23,24 +25,24 @@ import Edit from "../assets/Icons/edit-regular.svg"
 import Delete from "../assets/Icons/trash-regular.svg"
 
 export default {
-    name: "BlogCard",
-    props: ["post"],
+    name: "DeckCard",
+    props: ["decks"],
     components: {
         Arrow,
         Edit,
         Delete
     },
     methods: {
-        deletePost() {
-            this.$store.dispatch("deletePost", this.post.blogID);
+        deleteDeck() {
+            //this.$store.dispatch("deletePost", this.post.blogID);
         },
-        editBlog() {
-            this.$router.push({ name: 'EditBlog', params: { blogid: this.post.blogID } });
+        editDeck() {
+            //this.$router.push({ name: 'EditBlog', params: { blogid: this.post.blogID } });
         },
     },
     computed: {
-        editPost() {
-            return this.$store.state.editPost;
+        getEditDeck() {
+            return this.$store.state.editDeck;
         },
     }
 }
@@ -48,10 +50,10 @@ export default {
 
 
 <style lang="scss" scoped>
-.blog-card
+.card
 {
     position: relative;
-    cursor: pointer;
+    //cursor: pointer;
     display: flex;
     flex-direction: column;
     border-radius: 8px;

@@ -2,47 +2,47 @@
     <div class="card-wrap">
         <div class="cards container">
             <div class="toggle-edit">
-                <span>Toggle Editing Class </span>
-                <input type="checkbox" v-model="editClass" />
+                <span>Toggle Editing Flashcards </span>
+                <input type="checkbox" v-model="editFlashcard" />
             </div>
             
-            <ClassCard :classes="classes" v-for="(classes, index) in classes" :key="index" />
-            <NewClassCard />
+            <NewFlashcardCard />
+            <FlashcardCard :flashcards="flashcards" v-for="(flashcards, index) in flashcards" :key="index" />
         </div>
     </div>
 </template>
 
 <script>
-import ClassCard from "../components/ClassCard"
-import NewClassCard from "../components/NewClassCard"
+import FlashcardCard from "../components/FlashcardCard"
+import NewFlashcardCard from "../components/NewFlashcardCard"
 
 export default {
-    name: "ViewClasses",
+    name: "ViewFlashcards",
     components: { 
-        ClassCard,
-        NewClassCard,
+        FlashcardCard,
+        NewFlashcardCard,
     },
     computed: {
         blogPosts() {
             return this.$store.state.blogPosts;
         },
-        classes() {
-            return this.$store.state.classes;
+        flashcards() {
+            return this.$store.state.flashcards;
         },
-        editClass: {
+        editFlashcard: {
             get() {
-                return this.$store.state.editClass;
+                return this.$store.state.editFlashcard;
             },
             set(payload) {
-                this.$store.commit("toggleEditClass", payload);
+                this.$store.commit("toggleEditFlashcard", payload);
             }
         }
     },
     created() {
-        this.$store.dispatch("getUserClasses");
+        this.$store.dispatch("getUserClassDeckFlashcards", {deckId: this.$route.params.deckId, classId: this.$route.params.classId});
     },
     beforeDestroy() {
-        this.$store.commit("toggleEditClass", false);
+        this.$store.commit("toggleEditFlashcard", false);
     },
 }
 </script>
@@ -98,5 +98,11 @@ export default {
         }
     }
 }
-
+.card-wrap
+{
+    .cards
+    {
+        grid-template-columns: 1fr;
+    }
+}
 </style>

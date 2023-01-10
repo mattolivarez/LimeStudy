@@ -8,12 +8,16 @@ import ViewClasses from "../views/ViewClasses.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
+import ViewDecks from "../views/ViewDecks.vue"
+import ViewFlashcards from "../views/ViewFlashcards.vue"
+
 import Profile from "../views/Profile.vue";
 import Admin from "../views/Admin.vue";
 import CreatePost from "../views/CreatePost.vue";
 import BlogPreview from "../views/BlogPreview.vue";
 import ViewBlog from "../views/ViewBlog.vue";
 import EditBlog from "../views/EditBlog.vue";
+
 
 
 
@@ -39,7 +43,7 @@ const routes = [
     }
   },
   {
-    path: "/home",
+    path: "/home/classes",
     name: "ViewClasses",
     component: ViewClasses,
     meta: {
@@ -47,8 +51,8 @@ const routes = [
       requiresAuth: false,
     }
   },
-  /*{
-    path: "/home/:classId",
+  {
+    path: "/home/classes/:classId/decks",
     name: "ViewDecks",
     component: ViewDecks,
     meta: {
@@ -57,15 +61,15 @@ const routes = [
     }
   },
   {
-    path: "/home/:classId/:deckId",
-    name: "ViewCards",
-    component: ViewCards,
+    path: "/home/classes/:classId/decks/:deckId/flashcards",
+    name: "ViewFlashcards",
+    component: ViewFlashcards,
     meta: {
-      title: 'ViewCards',
+      title: 'ViewFlashcards',
       requiresAuth: false,
     }
   },
-  {
+  /*{
     path: "/home/:classId/:deckId/:cardId",
     name: "ViewCard",
     component: ViewCard,

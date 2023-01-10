@@ -83,11 +83,12 @@ export default {
                     console.log(response)
                     this.error = false;
                     this.errorMessage = "";
-                    localStorage.setItem("user", JSON.stringify(response.data.token));
-                    const user = JSON.parse(localStorage.getItem('user'));
-                    console.log(user);
+                    const token = response.data.token;
+                    localStorage.setItem("user", token);
+                    //const user = JSON.stringify(localStorage.getItem('user'));
+                    //console.log(user);
                     this.$store.dispatch("getCurrentUser", {email: this.email, password: this.password});
-                    this.$store.commit('loginSuccess', user);
+                    this.$store.commit('loginSuccess', token);
                     this.$router.push({ name: 'ViewClasses' });
                     return;
                 }).catch((err) => {
