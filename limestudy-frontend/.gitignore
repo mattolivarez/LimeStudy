@@ -2,7 +2,7 @@
 node_modules
 /dist
 functions
-/src/firebase
+src/firebase/
 
 
 # local env files
