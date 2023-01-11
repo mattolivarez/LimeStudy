@@ -1,4 +1,4 @@
-# fireblogs
+# limestudy-frontend
 
 ## Project setup
 ```
