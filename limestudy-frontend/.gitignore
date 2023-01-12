@@ -2,7 +2,8 @@
 node_modules
 /dist
 functions/
-firebase/
+firebaseInit.js
+
 
 # local env files
 .env.local
