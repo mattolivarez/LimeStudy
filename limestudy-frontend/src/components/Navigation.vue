@@ -116,7 +116,7 @@ export default {
         {
             localStorage.removeItem('user');
             this.$store.commit('logout')
-            window.location.reload();
+            this.$router.push({name: "Landing"});
         },
     },
     computed: {
