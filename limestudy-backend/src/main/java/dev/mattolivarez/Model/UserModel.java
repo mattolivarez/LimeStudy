@@ -8,15 +8,13 @@ public class UserModel
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
 
     public UserModel(){}
-    public UserModel(Integer userId, String firstName, String lastName, String email, String password) {
+    public UserModel(Integer userId, String firstName, String lastName, String email) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.password = password;
     }
 
     public Integer getUserId() {
@@ -51,11 +49,4 @@ public class UserModel
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

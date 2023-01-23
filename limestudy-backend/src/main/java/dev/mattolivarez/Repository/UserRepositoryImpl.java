@@ -16,9 +16,9 @@ import java.sql.Statement;
 
 
 @Repository
-public class UserRepositoryImpl implements UserRepository
+public class UserRepositoryImpl //implements UserRepository
 {
-
+/*
     private static final String SQL_CREATE = "INSERT INTO \"USER\"(USER_ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD) " +
                                              "VALUES(NEXTVAL('USER_SEQ'), ?, ?, ?, ?)";
 
@@ -92,5 +92,5 @@ public class UserRepositoryImpl implements UserRepository
                 rs.getString("LAST_NAME"),
                 rs.getString("EMAIL"),
                 rs.getString("PASSWORD"));
-    });
+    }); */
 }

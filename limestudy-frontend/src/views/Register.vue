@@ -39,7 +39,6 @@ import Email from "../assets/Icons/envelope-regular.svg"
 import Password from "../assets/Icons/lock-alt-solid.svg"
 import axios from "axios"
 
-
 export default {
     name: "Register",
     components: { 
@@ -103,10 +102,9 @@ export default {
             .catch(error => console.log(error.response.data.message));*/
             if (this.email !== "" && this.password !== "" && this.firstName !== "" && this.lastName !== "" && this.username !== "")
             {
-                
                 await axios({
                     method: 'POST',
-                    url: '/api/users/register',
+                    url: 'http://localhost:5000/auth/register',
                     headers: {
                         //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
                         'Content-Type': 'application/json'
@@ -119,24 +117,18 @@ export default {
                     }
                 })
                 .then((response) => {
+                    this.error = false;
+                    this.errorMessage = "";
                     console.log(response);
-                    localStorage.setItem("user", JSON.stringify(response.data.token));
-                    /*const details = {
-                        firstName: this.firstName,
-                        lastName: this.lastName,
-                        email: this.email
-                    }*/
-                    //this.$store.commit('setUserDetails', details);
-                    this.$router.push({ name: 'Home' });
-                    return;
                 })
                 .catch((err) => {
                     console.error(err)
                     this.error = true;
                     this.errorMessage = JSON.stringify(err.response.data.message);
                     console.log(err.response.data.message);
-                    return;
                 });
+                this.$store.dispatch("loginUser", {email: this.email, password: this.password});
+                this.$router.push({ name: 'ViewClasses' });
             }
             else
             {

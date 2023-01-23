@@ -32,15 +32,15 @@ export default {
         return {
             welcomeScreen: {
                 title: "Welcome!",
-                statement: "Weekly blog articles with all things programming including HTML, CSS, JavaScript, and more. Register today to never miss a post!",
+                statement: "Limestudy is an all-encompassing study application that intends to make studying more efficient.",
                 welcomeScreen: true,
-                photo: "coding",
+                photo: "desk-study",
             },
             aboutScreen: {
                 title: "About Us",
                 statement: "Limestudy utilizes many different techniques to improve the efficiency of studying.",
                 welcomeScreen: false,
-                photo: "designed-for-everyone"
+                photo: "laptop-study"
             }
         };
     },
@@ -55,8 +55,9 @@ export default {
             console.log(localStorage.getItem("user"));
             console.log(this.$store.state.loggedIn);
             this.$router.push({name: 'ViewClasses'});
-        }*/
+        }
         console.log(this.$store.state.loggedIn);
+        */
     },
 };
 </script>

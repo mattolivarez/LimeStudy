@@ -3,11 +3,14 @@ package dev.mattolivarez.Controller;
 import dev.mattolivarez.Constants;
 import dev.mattolivarez.Model.UserModel;
 import dev.mattolivarez.Service.UserService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -19,17 +22,30 @@ import java.util.Map;
 @RequestMapping("/api/users")
 public class UserController
 {
-
+/*
     @Autowired
-    UserService userService;
+    UserService userService;*/
 
 
+    @PostMapping("/get-user-token")
+    public ResponseEntity<Map<String, String>> getUserToken(@RequestBody Map<String, Object> userMap)
+    {
+        int userId = (Integer) userMap.get("userId");
+        String email = (String) userMap.get("email");
+        String firstName = (String) userMap.get("firstName");
+        String lastName = (String) userMap.get("lastName");
+        UserModel userModel = new UserModel(userId, email, firstName, lastName);
+
+        return new ResponseEntity<>(generateJWTToken(userModel), HttpStatus.OK);
+    }
+    /*
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> loginUser(@RequestBody Map<String, Object> userMap)
     {
         String email = (String) userMap.get("email");
         String password = (String) userMap.get("password");
         UserModel userModel = userService.validateUser(email, password);
+
         return new ResponseEntity<>(generateJWTToken(userModel), HttpStatus.OK);
     }
 
@@ -53,7 +69,7 @@ public class UserController
         UserModel userModel = userService.validateUser(email, password);
         return new ResponseEntity<>(userModel, HttpStatus.OK);
     }
-
+    */
     private Map<String, String> generateJWTToken(UserModel userModel)
     {
         long timestamp = System.currentTimeMillis();
@@ -69,4 +85,5 @@ public class UserController
         map.put("token", token);
         return map;
     }
+
 }

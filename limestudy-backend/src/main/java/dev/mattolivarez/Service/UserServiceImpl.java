@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 
 @Service
 @Transactional
-public class UserServiceImpl implements UserService
+public class UserServiceImpl //implements UserService
 {
-
+/*
     @Autowired
     UserRepository userRepository;
 
@@ -44,5 +44,5 @@ public class UserServiceImpl implements UserService
         }
         Integer userId = userRepository.create(firsName, lastName, email, password);
         return userRepository.findById(userId);
-    }
+    }*/
 }

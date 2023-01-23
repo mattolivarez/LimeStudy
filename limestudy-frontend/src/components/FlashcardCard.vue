@@ -10,18 +10,18 @@
         </div>
         <!--<img :src="post.blogCoverPhoto" alt="">-->
         <div class="info">
-            <h4>{{ flashcards.question }}</h4>
-            <h4>{{ flashcards.answer }}</h4>
-            <h6>Created on: {{ new Date(flashcards.flashcard_created_on).toLocaleString('en-us', {dateStyle: "long"}) }}</h6> 
-            <router-link class="link" to="#"> 
+            <h4>Question: <span class="details">{{ flashcards.question }}</span></h4>
+            <h4>Answer: <span class="details">{{ flashcards.answer }}</span></h4>
+            <h4>Created on: {{ new Date(flashcards.flashcard_created_on).toLocaleString('en-us', {dateStyle: "long"}) }}</h4> 
+            <!--<router-link class="link" to="#"> 
                 View Flashcard <Arrow class="arrow" />
-            </router-link> <!--:to="{name: 'ViewDecks', params: {classId: decks.classId, deckId: decks.deckId}}"-->
+            </router-link> :to="{name: 'ViewDecks', params: {classId: decks.classId, deckId: decks.deckId}}"-->
         </div>
     </div>
 </template>
 
 <script>
-import Arrow from "../assets/Icons/arrow-right-light.svg"
+//import Arrow from "../assets/Icons/arrow-right-light.svg"
 import Edit from "../assets/Icons/edit-regular.svg"
 import Delete from "../assets/Icons/trash-regular.svg"
 
@@ -29,7 +29,7 @@ export default {
     name: "FlashcardCard",
     props: ["flashcards"],
     components: {
-        Arrow,
+        //Arrow,
         Edit,
         Delete
     },
@@ -130,11 +130,12 @@ export default {
     .info
     {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         height: 100%;
         z-index: 3;
         padding: 32px 16px;
         color: #000;
+        justify-content: space-evenly;
 
         h4
         {
@@ -170,6 +171,11 @@ export default {
             {
                 width: 10px;
             }
+        }
+
+        .details
+        {
+            text-overflow: ellipsis;
         }
     }
 }

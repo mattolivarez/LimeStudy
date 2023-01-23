@@ -39,7 +39,7 @@ export default new Vuex.Store({
         profileEmail: null,
         profileFirstName: null,
         profileLastName: null,
-        profileID: null,
+        profileUserId: null,
         profileInitials: null,
     },
     getters: {
@@ -93,7 +93,7 @@ export default new Vuex.Store({
             state.user = payload;
         },
         setProfileInfo(state, doc) {
-            state.profileID = doc.id;
+            state.profileUserId = doc.id;
             state.profileEmail = doc.data().email;
             state.profileFirstName = doc.data().firstName;
             state.profileLastName = doc.data().lastName;
@@ -102,25 +102,35 @@ export default new Vuex.Store({
             state.profileEmail = details.email;
             state.profileFirstName = details.firstName;
             state.profileLastName = details.lastName;
+            state.profileUserId = details.userId;
+        },
+        removeUserDetails(state) {
+            state.profileEmail = "";
+            state.profileFirstName = "";
+            state.profileLastName = "";
+            state.profileUserId = null;
         },
         setProfileInitials(state) {
             state.profileInitials = state.profileFirstName.match(/(\b\S)?/g).join("") + 
                                     state.profileLastName.match(/(\b\S)?/g).join("");
         },
+        removeProfileInitials(state) {
+            state.profileInitials = "";
+        },
         setProfileAdmin(state, payload) {
             state.profileAdmin = payload;
         },
-        loginSuccess(state, user) {
+        loginSuccess(state) {
             state.loggedIn = true;
-            state.user = user;
+            //state.user = user;
         },
         loginFailure(state) {
             state.loggedIn = false;
-            state.user = null;
+            //state.user = null;
         },
         logout(state) {
             state.loggedIn = false;
-            state.user = null;
+            //state.user = null;
         },
         registerSuccess(state) {
             state.loggedIn = false;
@@ -128,10 +138,6 @@ export default new Vuex.Store({
         registerFailure(state) {
             state.loggedIn = false;
         },
-        refreshToken(state, accessToken) {
-            state.loggedIn = true;
-            state.user = { ...state.user, accessToken: accessToken };
-        }
     },
     actions: {
         async getCurrentUser({ commit }, user) {
@@ -152,7 +158,8 @@ export default new Vuex.Store({
                 const details = {
                     firstName: response.data.firstName,
                     lastName: response.data.lastName,
-                    email: response.data.email
+                    email: response.data.email,
+                    userId: response.data.userId
                 }
                 commit('setUserDetails', details);
                 commit('setProfileInitials');
@@ -163,17 +170,8 @@ export default new Vuex.Store({
                 return;
             });
         },
-        /*async getCurrentUser({commit}, user) {
-            const dataBase = await db.collection('users').doc(firebase.auth().currentUser.uid);
-            const dbResults = await dataBase.get();
-            commit("setProfileInfo", dbResults);
-            commit("setProfileInitials");
-            const token = await user.getIdTokenResult();
-            const admin = await token.claims.admin;
-            commit('setProfileAdmin', admin);
-        },*/
         async updateUserSettings({commit, state}) {
-            const dataBase = await db.collection('users').doc(state.profileID);
+            const dataBase = await db.collection('users').doc(state.profileUserId);
             await dataBase.update({
                 firstName: state.profileFirstName,
                 lastName: state.profileLastName,
@@ -209,17 +207,111 @@ export default new Vuex.Store({
             await getPost.delete();
             commit("filterBlogPost", payload);
         },
-        async loginUser(user) {
+        async logoutUserSession({commit}) {
             await axios({
                 method: 'POST',
-                url: '/api/users/register',
+                url: 'http://localhost:5000/auth/logout',
+                withCredentials: true,
+                headers: {
+                    //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log(response);
+                console.log("logged out");
+                commit("logout");
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+        },
+        async loginUser({commit}, user) {
+            await axios({
+                method: 'POST',
+                url: 'http://localhost:5000/auth/login',
+                withCredentials: true,
+                headers: {
+                    //'Access-Control-Allow-Origin': 'http://localhost:5000',
+                    'Content-Type': 'application/json'
+                    //'Authorization': 'Bearer ' + localStorage.getItem('user')
+                },
+                data: {
+                    email: user.email,
+                    password: user.password
+                }
+            })
+            .then((response) => {
+                commit('loginSuccess');
+                console.log(response)
+                return;
+            }).catch((err) => {
+                this.error = true;
+                this.errorMessage = err.response.data.message;
+                //console.log(err.response.data.message);
+                //console.log("login fail")
+                commit('loginFailure');
+                return;
+            })
+        },
+        async registerUser(user) {
+            await axios({
+                method: 'POST',
+                url: 'http://localhost:5000/auth/register',
                 headers: {
                     //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
                     'Content-Type': 'application/json'
                 },
                 data: {
-                    user
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    password: user.password
                 }
+            })
+            .then((response) => {
+                console.log(response);
+                //localStorage.setItem("user", JSON.stringify(response.data.token));
+                /*const details = {
+                    firstName: this.firstName,
+                    lastName: this.lastName,
+                    email: this.email
+                }*/
+                //this.$store.commit('setUserDetails', details);
+                //this.$router.push({ name: 'Home' });
+                return;
+            })
+            .catch((err) => {
+                console.error(err)
+                this.error = true;
+                //this.errorMessage = JSON.stringify(err.response.data.message);
+                console.log(err.response.data.message);
+                return;
+            });
+        },
+        async getUserToken({state}) {
+            await axios({
+                method: 'POST',
+                url: '/api/users/get-user-token',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    userId: state.profileUserId,
+                    firstName: state.profileFirstName,
+                    lastName: state.profileLastName,
+                    email: state.profileEmail,
+                },
+            })
+            .then((response) => {
+                const token = response.data.token;
+                localStorage.setItem("user", token);
+                const user = JSON.stringify(localStorage.getItem('user'));
+                console.log(user)
+            })
+            .catch((err) => {
+                console.log(err);
+                console.log("Token not set");
             })
         },
         async getUserClasses({state}) {
@@ -318,6 +410,30 @@ export default new Vuex.Store({
                 console.log(err);
                 return;
             });
+        },
+        async createNewClass(newClass) {
+            await axios({
+                method: 'POST',
+                url: "/api/classes",
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    className: newClass.className,
+                    class_created_on: Date.now()
+                }
+            })
+            .then((response) => {
+                console.log(response)
+                console.log("Class created");
+                return 1;
+            })
+            .catch((err) => {
+                console.log(err);
+                console.log("Class not created");
+                return 0;
+            })
         },
     },
     modules: {

@@ -32,8 +32,6 @@ import Email from "../assets/Icons/envelope-regular.svg"
 import Password from "../assets/Icons/lock-alt-solid.svg"
 import axios from "axios"
 
-
-
 export default {
     name: "Login",
     components: {
@@ -63,7 +61,7 @@ export default {
                 this.errorMessage = err.message;
             });
         }*/
-        async signIn() {
+        /*async signIn() {
             if (this.email !== "" && this.password !== "")
             {
                 await axios({
@@ -105,7 +103,94 @@ export default {
                 this.errorMessage = "Please fill out all the fields!";
                 return;
             }
-        }
+        }*/
+        async signIn() {
+            if (this.email !== "" && this.password !== "")
+            {
+                await axios({
+                    method: 'POST',
+                    url: 'http://localhost:5000/auth/login',
+                    withCredentials: true,
+                    headers: {
+                        //'Access-Control-Allow-Origin': 'http://localhost:5000',
+                        'Content-Type': 'application/json'
+                        //'Authorization': 'Bearer ' + localStorage.getItem('user')
+                    },
+                    data: {
+                        email: this.email,
+                        password: this.password
+                    }
+                })
+                .then((response) => {
+                    this.error = false;
+                    this.errorMessage = "";
+                    this.$store.commit('loginSuccess');
+                    console.log(response)
+                    
+                }).catch((err) => {
+                    this.error = true;
+                    this.errorMessage = err.response.data.message;
+                    //console.log(err.response.data.message);
+                    //console.log("login fail")
+                    this.$store.commit('loginFailure');
+                })
+                await axios({
+                    method: 'GET',
+                    url: 'http://localhost:5000/user',
+                    withCredentials: true,
+                    headers: {
+                        //'Access-Control-Allow-Origin': 'http://localhost:5000',
+                        'Content-Type': 'application/json'
+                        //'Authorization': 'Bearer ' + localStorage.getItem('user')
+                    },
+                })
+                .then((response) => {
+                    console.log(response)
+                    const data = {
+                        userId: response.data.user_id,
+                        firstName: response.data.first_name,
+                        lastName: response.data.last_name,
+                        email: response.data.email,
+                    }
+                    this.$store.state.loggedIn = true
+                    this.$store.commit("setUserDetails", data);
+                    this.$store.commit('setProfileInitials');
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+                await axios({
+                    method: 'POST',
+                    url: '/api/users/get-user-token',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: {
+                        userId: this.$store.state.profileUserId,
+                        firstName: this.$store.state.profileFirstName,
+                        lastName: this.$store.state.profileLastName,
+                        email: this.$store.state.profileEmail,
+                    },
+                })
+                .then((response) => {
+                    const token = response.data.token;
+                    localStorage.setItem("user", token);
+                    const user = JSON.stringify(localStorage.getItem('user'));
+                    console.log(user)
+                })
+                .catch((err) => {
+                    console.log(err);
+                    console.log("Token not set");
+                })
+                this.$router.push({ name: 'ViewClasses' });
+            }
+            else
+            {
+                this.error = true;
+                this.errorMessage = "Please fill out all the fields!";
+                return;
+            }
+        },
     }
 };
 </script>
@@ -234,7 +319,7 @@ export default {
         display: none;
         flex: 2;
         background-size: cover;
-        background-image: url("../assets/background.png");
+        background-image: url("../assets/backpack-study.jpg");
         width: 100%;
         height: 100%;
         @media (min-width: 900px)

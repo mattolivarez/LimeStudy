@@ -11,11 +11,11 @@
                     <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewClasses' }">Classes</router-link>
                     <router-link v-if="loggedIn" class="link" to="#">Notes</router-link>
                     <router-link v-if="loggedIn" class="link" to="#">Connects</router-link>
-                    <router-link class="link" :to="{ name: 'CreatePost' }">Create Post</router-link>
+                    <router-link v-if="loggedIn" class="link" :to="{ name: 'CreatePost' }">Create New Class</router-link>
                     <router-link v-if="this.$store.state.flashcardsLoaded" class="link" to="#">Study</router-link>
                     <router-link v-if="!loggedIn" class="link" :to="{ name: 'Login' }">Login/Register</router-link>
                 </ul>
-                <div @click="toggleProfileMenu" class="profile" ref="profile" v-if="user">
+                <div @click="toggleProfileMenu" class="profile" ref="profile" v-if="loggedIn">
                     <span>{{ this.$store.state.profileInitials }}</span>
                     <div class="profile-menu" v-show="profileMenu">
                         <div class="info">
@@ -68,6 +68,7 @@ import adminIcon from '../assets/Icons/user-crown-light.svg';
 import signOutIcon from '../assets/Icons/sign-out-alt-regular.svg';
 //import firebase from "firebase/app"
 import "firebase/auth"
+import axios from "axios"
 
 export default {
     name: 'Navigation',
@@ -76,6 +77,34 @@ export default {
         userIcon,
         adminIcon,
         signOutIcon,
+    },
+    async beforeMount() {
+        await axios({
+            method: 'GET',
+            url: 'http://localhost:5000/user',
+            withCredentials: true,
+            headers: {
+                //'Access-Control-Allow-Origin': 'http://localhost:5000',
+                'Content-Type': 'application/json'
+                //'Authorization': 'Bearer ' + localStorage.getItem('user')
+            },
+        })
+        .then((response) => {
+            console.log(response)
+            const data = {
+                userId: response.data.user_id,
+                firstName: response.data.first_name,
+                lastName: response.data.last_name,
+                email: response.data.email,
+            }
+            this.$store.state.loggedIn = true
+            this.$store.commit("setUserDetails", data);
+            this.$store.commit('setProfileInitials');
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+        this.$router.push({name: "ViewClasses"})
     },
     data() {
         return {
@@ -116,8 +145,8 @@ export default {
         signOut() 
         {
             localStorage.removeItem('user');
-            this.$store.commit('logout')
-            this.$router.push({name: "Landing"});
+            this.$store.dispatch("logoutUserSession")
+            this.$router.push({name: "Landing"})
         },
     },
     computed: {

@@ -4,10 +4,14 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import Landing from "../views/Landing.vue";
 import About from "../views/About.vue";
-import ViewClasses from "../views/ViewClasses.vue";
+
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
+
+import ViewClasses from "../views/ViewClasses.vue";
+import CreateNewClass from "../views/CreateNewClass.vue"
+
 import ViewDecks from "../views/ViewDecks.vue"
 import ViewFlashcards from "../views/ViewFlashcards.vue"
 
@@ -48,6 +52,15 @@ const routes = [
     component: ViewClasses,
     meta: {
       title: 'ViewClasses',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/create-new-class",
+    name: "CreateNewClass",
+    component: CreateNewClass,
+    meta: {
+      title: 'CreateNewClass',
       requiresAuth: false,
     }
   },
@@ -120,8 +133,7 @@ const routes = [
     component: Admin,
     meta: {
       title: 'Admin',
-      requiresAuth: true,
-      requiresAdmin: true,
+      requiresAuth: false,
     }
   },
   {
@@ -130,8 +142,7 @@ const routes = [
     component: CreatePost,
     meta: {
       title: 'Create Post',
-      requiresAuth: true,
-      requiresAdmin: true,
+      requiresAuth: false,
     }
   },
   {
@@ -140,8 +151,7 @@ const routes = [
     component: BlogPreview,
     meta: {
       title: 'Preview Blog Post',
-      requiresAuth: true,
-      requiresAdmin: true,
+      requiresAuth: false,
     }
   },
   {
@@ -160,7 +170,6 @@ const routes = [
     meta: {
       title: 'Edit Blog Post',
       requiresAuth: true,
-      requiresAdmin: true,
     }
   },
 ];

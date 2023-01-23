@@ -2,11 +2,16 @@ module.exports = {
   devServer: {
     port: 3000,
     proxy: {
+      '/auth': {
+          target: 'http://127.0.0.1:5000',
+          ws: true,
+          changeOrigin: true,
+        },
         '/api': {
           target: 'http://localhost:8080',
           ws: true,
           changeOrigin: true
-        }
+        },
     }
   },
   chainWebpack: (config) => {

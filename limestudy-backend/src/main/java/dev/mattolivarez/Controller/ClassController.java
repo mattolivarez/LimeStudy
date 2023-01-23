@@ -40,7 +40,7 @@ public class ClassController
     public ResponseEntity<ClassModel> addClass(HttpServletRequest request, @RequestBody Map<String, Object> classMap)
     {
         int userId = (Integer) request.getAttribute("userId");
-        String class_name = (String) classMap.get("name");
+        String class_name = (String) classMap.get("className");
         Long class_created_on = (Long) classMap.get("class_created_on");
         ClassModel classModel = classService.addClass(userId, class_name, class_created_on);
         return new ResponseEntity<>(classModel, HttpStatus.CREATED);
