@@ -2,7 +2,7 @@
     <div class="profile">
         <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
         <div class="container">
-            <h2>Create New Class</h2>
+            <h2>Create New Deck</h2>
             <div class="profile-info">
                 <div class="initials">{{ $store.state.profileInitials }}</div>
                 <!--<div class="admin-badge">
@@ -14,10 +14,14 @@
                     <input type="text" id="userId" v-model="userId" disabled>
                 </div>
                 <div class="input">
-                    <label for="className">Class Name: </label>
-                    <input type="text" id="className" v-model="className">
+                    <label for="classId">Class Id: </label>
+                    <input type="text" id="classId" v-model="classId" disabled>
                 </div>
-                <button @click="createNewClass">Submit</button>
+                <div class="input">
+                    <label for="deckName">Deck Name: </label>
+                    <input type="text" id="deckName" v-model="deckName">
+                </div>
+                <button @click="createNewDeck">Submit</button>
             </div>
         </div>
     </div>
@@ -36,40 +40,38 @@ export default {
     },
     data() {
         return {
-            modalMessage: "Class created!",
+            modalMessage: "Deck created!",
             modalActive: null,
-            className: "",
+            deckName: "",
         };
     },
     methods: {
-        async createNewClass() {
+        async createNewDeck() {
             await axios({
                 method: 'POST',
-                url: "/api/classes",
+                url: `/api/classes/${this.$route.params.classId}/decks`,
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user'),
                     'Content-Type': 'application/json'
                 },
                 data: {
-                    class_name: this.className,
-                    class_created_on: Date.now()
+                    deck_name: this.deckName,
+                    deck_created_on: Date.now()
                 }
             })
             .then((response) => {
                 console.log(response)
-                console.log("Class created");
-                return 1;
+                console.log("Deck created");
             })
             .catch((err) => {
                 console.log(err);
-                console.log("Class not created");
-                return 0;
+                console.log("Deck not created");
             })
             this.modalActive = !this.modalActive;
         },
         closeModal() {
             this.modalActive = !this.modalActive;
-            this.$router.push({name: "ViewClasses"});
+            this.$router.push({name: "ViewDecks", params: { classId: this.$route.params.classId }});
         },
     },
     computed: {
@@ -78,6 +80,11 @@ export default {
                 return this.$store.state.profileUserId
             }
         },
+        classId: {
+            get() {
+                return this.$route.params.classId;
+            }
+        }
     },
 }
 </script>

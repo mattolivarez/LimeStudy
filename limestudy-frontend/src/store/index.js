@@ -16,11 +16,13 @@ export default new Vuex.Store({
     state: {
         blogPosts: [],
         postLoaded: null,
-        blogHTML: "Write your blog title here...",
+        blogHTML: "",
         blogTitle: "",
         blogPhotoName: "",
         blogPhotoFileURL: null,
         blogPhotoPreview: null,
+
+        temp: true,
 
         classesLoaded: null,
         decksLoaded: null,
@@ -210,7 +212,7 @@ export default new Vuex.Store({
         async logoutUserSession({commit}) {
             await axios({
                 method: 'POST',
-                url: 'http://localhost:5000/auth/logout',
+                url: 'http://localhost:8085/auth/logout',
                 withCredentials: true,
                 headers: {
                     //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
@@ -229,7 +231,7 @@ export default new Vuex.Store({
         async loginUser({commit}, user) {
             await axios({
                 method: 'POST',
-                url: 'http://localhost:5000/auth/login',
+                url: 'http://localhost:8085/auth/login',
                 withCredentials: true,
                 headers: {
                     //'Access-Control-Allow-Origin': 'http://localhost:5000',
@@ -257,7 +259,7 @@ export default new Vuex.Store({
         async registerUser(user) {
             await axios({
                 method: 'POST',
-                url: 'http://localhost:5000/auth/register',
+                url: 'http://localhost:8085/auth/register',
                 headers: {
                     //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
                     'Content-Type': 'application/json'
@@ -434,6 +436,27 @@ export default new Vuex.Store({
                 console.log("Class not created");
                 return 0;
             })
+        },
+        async deleteClass(classId) {
+            console.log("Payload from store: " + classId)
+            await axios({
+                method: 'DELETE',
+                url: `/api/classes/${classId}`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log(response)
+                console.log("Class deleted");
+
+            })
+            .catch((err) => {
+                console.log(err);
+                console.log("Class not deleted");
+            })
+
         },
     },
     modules: {

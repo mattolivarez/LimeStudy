@@ -45,7 +45,7 @@ public class DeckController
                                              @RequestBody Map<String, Object> deckMap)
     {
         int userId = (Integer) request.getAttribute("userId");
-        String deck_name = (String) deckMap.get("note");
+        String deck_name = (String) deckMap.get("deck_name");
         Long deck_created_on = (Long) deckMap.get("deck_created_on");
         DeckModel deckModel = deckService.addDeck(userId, classId, deck_name, deck_created_on);
         return new ResponseEntity<>(deckModel, HttpStatus.CREATED);

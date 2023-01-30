@@ -31,8 +31,8 @@ public class DeckRepositoryImpl implements DeckRepository
                                                "WHERE USER_ID = ? AND CLASS_ID = ?";
 
     private static final String SQL_UPDATE = "UPDATE \"DECK\" " +
-                                             "SET DECK_NAME = ? " +
-                                             "WHERE USER_ID = ? AND CLASS_ID = ? DECK_ID = ?";
+                                             "SET DECK_NAME = ?, DECK_CREATED_ON = ? " +
+                                             "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ?";
 
     private static final String SQL_DELETE = "DELETE FROM \"DECK\" " +
                                              "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ?";
@@ -82,7 +82,7 @@ public class DeckRepositoryImpl implements DeckRepository
     public void update(Integer userId, Integer classId, Integer deckId, DeckModel deckModel) throws BadRequestException {
         try
         {
-            jdbcTemplate.update(SQL_UPDATE, new Object[]{deckModel.getDeck_name(), userId, classId, deckId});
+            jdbcTemplate.update(SQL_UPDATE, new Object[]{deckModel.getDeck_name(), deckModel.getDeck_created_on(), userId, classId, deckId});
         }
         catch (Exception e)
         {

@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import firebase from "firebase/app";
 import "firebase/auth";
+
 import Landing from "../views/Landing.vue";
 import About from "../views/About.vue";
 
@@ -9,11 +10,18 @@ import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
 
-import ViewClasses from "../views/ViewClasses.vue";
-import CreateNewClass from "../views/CreateNewClass.vue"
+import ViewClasses from "../views/ViewClasses.vue"; // read classes
+import CreateNewClass from "../views/CreateNewClass.vue"; // create classes 
+import UpdateClass from "../views/UpdateClass.vue"; // update class
+// delete class is done inside ClassCard.vue component
 
-import ViewDecks from "../views/ViewDecks.vue"
-import ViewFlashcards from "../views/ViewFlashcards.vue"
+import ViewDecks from "../views/ViewDecks.vue"; // read decks
+import CreateNewDeck from "../views/CreateNewDeck.vue"; // create deck
+import UpdateDeck from "../views/UpdateDeck.vue"; // update deck
+// delete deck
+
+import ViewFlashcards from "../views/ViewFlashcards.vue"; // read flashcards
+import CreateNewFlashcard from "../views/CreateNewFlashcard.vue"; // create flashcards
 
 import Profile from "../views/Profile.vue";
 import Admin from "../views/Admin.vue";
@@ -51,16 +59,25 @@ const routes = [
     name: "ViewClasses",
     component: ViewClasses,
     meta: {
-      title: 'ViewClasses',
+      title: 'View Classes',
       requiresAuth: false,
     }
   },
   {
-    path: "/create-new-class",
+    path: "/home/classes/create-new-class",
     name: "CreateNewClass",
     component: CreateNewClass,
     meta: {
-      title: 'CreateNewClass',
+      title: 'Create New Class',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/home/classes/:classId/update-class",
+    name: "UpdateClass",
+    component: UpdateClass,
+    meta: {
+      title: 'Update Class',
       requiresAuth: false,
     }
   },
@@ -69,7 +86,25 @@ const routes = [
     name: "ViewDecks",
     component: ViewDecks,
     meta: {
-      title: 'ViewDecks',
+      title: 'View Decks',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/home/classes/:classId/create-new-deck",
+    name: "CreateNewDeck",
+    component: CreateNewDeck,
+    meta: {
+      title: 'Create New Deck',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/home/classes/:classId/update-deck",
+    name: "UpdateDeck",
+    component: UpdateDeck,
+    meta: {
+      title: 'Update Deck',
       requiresAuth: false,
     }
   },
@@ -78,19 +113,19 @@ const routes = [
     name: "ViewFlashcards",
     component: ViewFlashcards,
     meta: {
-      title: 'ViewFlashcards',
+      title: 'View Flashcards',
       requiresAuth: false,
     }
   },
-  /*{
-    path: "/home/:classId/:deckId/:cardId",
-    name: "ViewCard",
-    component: ViewCard,
+  {
+    path: "/home/classes/:classId/decks/:deckId/flashcards/create-new-flashcard",
+    name: "CreateNewFlashcard",
+    component: CreateNewFlashcard,
     meta: {
-      title: 'ViewCard',
+      title: 'Create New Flashcard',
       requiresAuth: false,
     }
-  },*/
+  },
   {
     path: "/login",
     name: "Login",

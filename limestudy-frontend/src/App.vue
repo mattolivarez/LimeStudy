@@ -167,6 +167,11 @@ button,
     background-color: rgba(128, 128, 128, 0.5) !important;
 }
 
+.editor-inactive
+{
+    display: none !important;
+}
+
 .error
 {
     text-align: center;

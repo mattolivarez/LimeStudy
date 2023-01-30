@@ -37,5 +37,5 @@ func Setup() {
 	router.Get("/auth/healthcheck", HealthCheck)
 	router.Get("/user", GetUser)
 
-	router.Listen("localhost:5000")
+	router.Listen("localhost:8085")
 }

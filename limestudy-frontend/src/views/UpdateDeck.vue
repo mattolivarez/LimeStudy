@@ -2,7 +2,7 @@
     <div class="profile">
         <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
         <div class="container">
-            <h2>Create New Class</h2>
+            <h2>Update {{ this.deckName }} Class</h2>
             <div class="profile-info">
                 <div class="initials">{{ $store.state.profileInitials }}</div>
                 <!--<div class="admin-badge">
@@ -14,10 +14,22 @@
                     <input type="text" id="userId" v-model="userId" disabled>
                 </div>
                 <div class="input">
-                    <label for="className">Class Name: </label>
-                    <input type="text" id="className" v-model="className">
+                    <label for="classId">Class Id: </label>
+                    <input type="text" id="classId" v-model="classId" disabled>
                 </div>
-                <button @click="createNewClass">Submit</button>
+                <div class="input">
+                    <label for="deckId">Deck Id: </label>
+                    <input type="text" id="deckId" v-model="deckId" disabled>
+                </div>
+                <div class="input">
+                    <label for="deckCreatedOnTemp">Deck Created On: </label>
+                    <input type="text" id="deckCreatedOnTemp" v-model="deckCreatedOnTemp" disabled>
+                </div>
+                <div class="input">
+                    <label for="deckName">Deck Name: </label>
+                    <input type="text" id="deckName" v-model="deckName">
+                </div>
+                <button @click="updateDeck">Submit</button>
             </div>
         </div>
     </div>
@@ -36,48 +48,70 @@ export default {
     },
     data() {
         return {
-            modalMessage: "Class created!",
+            modalMessage: "Deck updated!",
             modalActive: null,
-            className: "",
+            deckName: "",
+            deckCreatedOn: null,
+            classId: null,
+            userId: null,
+            deckId: null,
+            deckCreatedOnTemp: null,
         };
     },
     methods: {
-        async createNewClass() {
+        async updateDeck() {
             await axios({
-                method: 'POST',
-                url: "/api/classes",
+                method: 'PUT',
+                url: `/api/classes/${this.classId}/decks/${this.deckId}`,
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user'),
                     'Content-Type': 'application/json'
                 },
                 data: {
-                    class_name: this.className,
-                    class_created_on: Date.now()
+                    deck_name: this.deckName,
+                    deck_created_on: this.deckCreatedOn,
+                    classId: this.classId,
+                    userId: this.userId,
+                    deckId: this.deckId
                 }
             })
             .then((response) => {
                 console.log(response)
-                console.log("Class created");
-                return 1;
+                console.log("Deck updated");
+
             })
             .catch((err) => {
                 console.log(err);
-                console.log("Class not created");
-                return 0;
+                console.log("Deck not updated");
             })
             this.modalActive = !this.modalActive;
         },
         closeModal() {
             this.modalActive = !this.modalActive;
-            this.$router.push({name: "ViewClasses"});
+            this.$router.push({name: "ViewDecks", params: {classId: this.classId}});
         },
     },
-    computed: {
-        userId: {
-            get() {
-                return this.$store.state.profileUserId
-            }
-        },
+    async created() {
+        await axios({
+                method: 'GET',
+                url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log(response)
+                this.deckName = response.data.deck_name;
+                this.deckCreatedOn = response.data.deck_created_on;
+                this.deckCreatedOnTemp = new Date(response.data.deck_created_on).toLocaleString('en-us', {dateStyle: "long"})
+                this.classId = response.data.classId;
+                this.userId = response.data.userId;
+                this.deckId = response.data.deckId;
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     },
 }
 </script>

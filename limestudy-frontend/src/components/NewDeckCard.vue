@@ -2,7 +2,7 @@
     <div class="card">
         <div class="info">
             <Add class="addIcon" />
-            <router-link class="link" to="#">Add New Deck <Arrow class="arrow" /></router-link>
+            <router-link class="link" :to="{name: 'CreateNewDeck', params: { classId: this.$route.params.classId }}">Add New Deck <Arrow class="arrow" /></router-link>
         </div>
     </div>
 </template>

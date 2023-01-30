@@ -2,7 +2,7 @@
     <div class="profile">
         <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
         <div class="container">
-            <h2>Create New Class</h2>
+            <h2>Update {{ this.className }} Class</h2>
             <div class="profile-info">
                 <div class="initials">{{ $store.state.profileInitials }}</div>
                 <!--<div class="admin-badge">
@@ -14,10 +14,18 @@
                     <input type="text" id="userId" v-model="userId" disabled>
                 </div>
                 <div class="input">
+                    <label for="classId">Class Id: </label>
+                    <input type="text" id="classId" v-model="classId" disabled>
+                </div>
+                <div class="input">
+                    <label for="classCreatedOnTemp">Class Created On: </label>
+                    <input type="text" id="classCreatedOnTemp" v-model="classCreatedOnTemp" disabled>
+                </div>
+                <div class="input">
                     <label for="className">Class Name: </label>
                     <input type="text" id="className" v-model="className">
                 </div>
-                <button @click="createNewClass">Submit</button>
+                <button @click="updateClass">Submit</button>
             </div>
         </div>
     </div>
@@ -30,40 +38,46 @@ import axios from "axios"
 
 export default {
     name: "Profile",
+    //props: ["selected"],
     components: {
         Modal,
         //adminIcon,
     },
     data() {
         return {
-            modalMessage: "Class created!",
+            modalMessage: "Class updated!",
             modalActive: null,
             className: "",
+            classCreatedOn: null,
+            classId: null,
+            userId: null,
+            classCreatedOnTemp: null,
         };
     },
     methods: {
-        async createNewClass() {
+        async updateClass() {
             await axios({
-                method: 'POST',
-                url: "/api/classes",
+                method: 'PUT',
+                url: `/api/classes/${this.$route.params.classId}`,
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user'),
                     'Content-Type': 'application/json'
                 },
                 data: {
                     class_name: this.className,
-                    class_created_on: Date.now()
+                    class_created_on: this.classCreatedOn,
+                    classId: this.classId,
+                    userId: this.userId,
                 }
             })
             .then((response) => {
                 console.log(response)
-                console.log("Class created");
-                return 1;
+                console.log("Class updated");
+
             })
             .catch((err) => {
                 console.log(err);
-                console.log("Class not created");
-                return 0;
+                console.log("Class not updated");
             })
             this.modalActive = !this.modalActive;
         },
@@ -72,12 +86,26 @@ export default {
             this.$router.push({name: "ViewClasses"});
         },
     },
-    computed: {
-        userId: {
-            get() {
-                return this.$store.state.profileUserId
-            }
-        },
+    async created() {
+        await axios({
+                method: 'GET',
+                url: `/api/classes/${this.$route.params.classId}`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log(response)
+                this.className = response.data.class_name;
+                this.classCreatedOn = response.data.class_created_on;
+                this.classCreatedOnTemp = new Date(response.data.class_created_on).toLocaleString('en-us', {dateStyle: "long"})
+                this.classId = response.data.classId;
+                this.userId = response.data.userId;
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     },
 }
 </script>

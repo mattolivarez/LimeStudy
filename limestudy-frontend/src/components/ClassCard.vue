@@ -21,6 +21,7 @@
 import Arrow from "../assets/Icons/arrow-right-light.svg"
 import Edit from "../assets/Icons/edit-regular.svg"
 import Delete from "../assets/Icons/trash-regular.svg"
+import axios from "axios"
 
 export default {
     name: "ClassCard",
@@ -31,11 +32,34 @@ export default {
         Delete
     },
     methods: {
-        deleteClass() {
-            //this.$store.dispatch("deletePost", this.post.blogID);
+        async deleteClass() {
+            //console.log("classId from ClassCard: " + this.classes.classId)
+            //this.$store.dispatch("deleteClass", this.classes.classId);
+            //console.log("Payload from store: " + classId)
+            await axios({
+                method: 'DELETE',
+                url: `/api/classes/${this.classes.classId}`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log(response)
+                console.log("Class deleted");
+
+            })
+            .catch((err) => {
+                console.log(err);
+                console.log("Class not deleted");
+            })
+            setTimeout(() => {
+                window.location.reload()
+            }, 2500)
+            
         },
         editClass() {
-            //this.$router.push({ name: 'EditBlog', params: { blogid: this.post.blogID } });
+            this.$router.push({ name: 'UpdateClass', params: { classId: this.classes.classId } });
         },
     },
     computed: {

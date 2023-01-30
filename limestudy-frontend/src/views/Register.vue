@@ -104,7 +104,7 @@ export default {
             {
                 await axios({
                     method: 'POST',
-                    url: 'http://localhost:5000/auth/register',
+                    url: 'http://localhost:8085/auth/register',
                     headers: {
                         //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
                         'Content-Type': 'application/json'

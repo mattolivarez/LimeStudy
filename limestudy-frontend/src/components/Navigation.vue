@@ -81,7 +81,7 @@ export default {
     async beforeMount() {
         await axios({
             method: 'GET',
-            url: 'http://localhost:5000/user',
+            url: 'http://localhost:8085/user',
             withCredentials: true,
             headers: {
                 //'Access-Control-Allow-Origin': 'http://localhost:5000',
@@ -104,7 +104,10 @@ export default {
         .catch((err) => {
             console.log(err)
         })
-        this.$router.push({name: "ViewClasses"})
+        if (this.$store.state.loggedIn)
+        {
+            this.$router.push({name: "ViewClasses"})
+        }
     },
     data() {
         return {

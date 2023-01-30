@@ -2,7 +2,7 @@
     <div class="card">
         <div class="info">
             <Add class="addIcon" />
-            <router-link class="link" to="#">Add New Flashcard <Arrow class="arrow" /></router-link>
+            <router-link class="link" :to="{name: 'CreateNewFlashcard', params: { classId: this.$route.params.classId, deckId: this.$route.params.deckId }}">Add New Flashcard <Arrow class="arrow" /></router-link>
         </div>
     </div>
 </template>

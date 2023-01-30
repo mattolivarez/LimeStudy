@@ -28,12 +28,12 @@ func AuthMiddleware(c *fiber.Ctx) error {
 	}
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map {
-			"message": "not authorized",
+			"message": "Not Authorized due to " + err.Error(),
 		})
 	}
 	if sess.Get(AUTH_KEY) == nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map {
-			"message": "not authorized",
+			"message": "Not Authorized due to AUTH_KEY == nil",
 		})
 	}
 	return c.Next()
@@ -45,13 +45,13 @@ func Register(c *fiber.Ctx) error {
 	err := c.BodyParser(&data)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map {
-			"message": "server issue: " + err.Error(),
+			"message": "Server Issue: " + err.Error(),
 		})
 	}
 	password, bcErr := bcrypt.GenerateFromPassword([]byte(data.Password), 10)
 	if bcErr != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map {
-			"message": "server issue: " + err.Error(),
+			"message": "Server Issue: " + bcErr.Error(),
 		})
 	}
 	
@@ -64,11 +64,11 @@ func Register(c *fiber.Ctx) error {
 	err = model.CreateUser(&user)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map {
-			"message": "server issue: " + err.Error(),
+			"message": "Server Issue: " + err.Error(),
 		})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map {
-		"message": "registered",
+		"message": "User Registered",
 	})
 }
 
@@ -78,25 +78,25 @@ func Login(c *fiber.Ctx) error {
 	err := c.BodyParser(&data)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map {
-			"message": "server issue: " + err.Error(),
+			"message": "Server Issue: " + err.Error(),
 		})
 	}
 	var user model.UserModel
 	if !model.CheckEmail(data.Email, &user) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map {
-			"message": "unauthorized",
+			"message": "Email not recognized",
 		})
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(data.Password))
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map {
-			"message": "unauthorized",
+			"message": "Incorrect password",
 		})
 	}
 	sess, sessErr := store.Get(c)
 	if sessErr != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map {
-			"message": "server issue: " + sessErr.Error(),
+			"message": "Server Issue: " + sessErr.Error(),
 		})
 	}
 	sess.Set(AUTH_KEY, true)
@@ -108,7 +108,7 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map {
-		"message": "logged in",
+		"message": "User logged in",
 	})
 }
 
@@ -117,17 +117,17 @@ func Logout(c *fiber.Ctx) error {
 	sess, err := store.Get(c)
 	if err != nil {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map {
-			"message": "logged out (no session found)",
+			"message": "Logged out (No session found)",
 		})
 	}
 	err = sess.Destroy()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map {
-			"message": "server issue: " + err.Error(),
+			"message": "Server Issue: " + err.Error(),
 		})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map {
-		"message": "logged out",
+		"message": "User logged out",
 	})	
 }
 
@@ -136,17 +136,17 @@ func HealthCheck(c *fiber.Ctx) error {
 	sess, err := store.Get(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map {
-			"message": "unauthorized",
+			"message": "Not authorized due to " + err.Error(),
 		})
 	}
 	auth := sess.Get(AUTH_KEY)
 	if auth != nil {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map {
-			"message": "authenticated",
+			"message": "Authenticated",
 		})
 	} else {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map {
-			"message": "unauthorized",
+			"message": "Not authorized",
 		})
 	}
 }
@@ -156,25 +156,25 @@ func GetUser(c *fiber.Ctx) error {
 	sess, err := store.Get(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map {
-			"message": "unauthorized 1",
+			"message": "Not authorized due to " + err.Error(),
 		})
 	}
 	if sess.Get(AUTH_KEY) == nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map {
-			"message": "unauthorized 2",
+			"message": "Not authorized: Couldn't verify authorization key",
 		})
 	}
 	UserId := sess.Get(USER_ID)
 	if UserId == nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map {
-			"message": "unauthorized 3",
+			"message": "Not authorized: Couldn't verify user id",
 		})
 	}
 	var user model.UserModel
 	user, err = model.GetUser(fmt.Sprint(UserId))
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map {
-			"message": "unauthorized 4",
+			"message": "Not authorized due to " + err.Error(),
 		})
 	}
 	user.Password = ""
