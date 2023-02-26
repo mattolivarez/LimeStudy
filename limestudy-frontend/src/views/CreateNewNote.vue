@@ -7,23 +7,13 @@
                 <p><span>Error: </span>{{ this.errorMessage }}</p>
             </div>
             <div class="blog-info">
-                <input type="text" placeholder="Enter Flashcard Tags..." /> <!--v-model="blogTitle"-->
-                <div class="upload-file">
-                    <!--<label for="blog-photo">Upload Cover Photo</label>-->
-                    <!--<input type="file" ref="blogPhoto" id="blog-photo" @change="fileChange" accept=".png, .jpg, .jpeg" />-->
-                    <button class="preview" :class="{'button-inactive': showQuestion}" @click="changeCardSide">Question</button>
-                    <button class="preview" :class="{'button-inactive': showAnswer}" @click="changeCardSide">Answer</button>
-                    <!--<span>File Chosen: {{ this.$store.state.blogPhotoName }}</span>-->
-                </div>
+                <input type="text" placeholder="Enter note name..." v-model="noteName" /> <!--v-model="blogTitle"-->
             </div>
-            <div class="editor" :class="{'editor-inactive': !showQuestion}">
-                <vue-editor :editorOptions="editorSettingsQuestion" v-model="question" useCustomImageHandler @image-added="imageHandler" /> <!-- @image-added="imageHandler" -->
-            </div>
-            <div class="editor" :class="{'editor-inactive': !showAnswer}">
-                <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer" useCustomImageHandler @image-added="imageHandler" />
+            <div class="editor">
+                <vue-editor :editorOptions="editorSettings" v-model="noteBody" useCustomImageHandler @image-added="imageHandler" /> <!-- @image-added="imageHandler" -->
             </div>
             <div class="blog-actions">
-                <button @click="createNewFlashcard">Create</button>
+                <button @click="createNewNote">Create</button>
                 <!--<router-link class="router-button" :to="{name: 'BlogPreview'}">Post Preview</router-link>-->
             </div>
         </div>
@@ -44,7 +34,7 @@ const ImageResize = require("quill-image-resize-module").default;
 Quill.register("modules/imageResize", ImageResize);
 
 export default {
-    name: "CreateNewFlascard",
+    name: "CreateNewNote",
     components: {
         BlogCoverPreview,
         Loading,
@@ -55,16 +45,9 @@ export default {
             error: null,
             errorMessage: null,
             loading: null,
-            showQuestion: true,
-            showAnswer: false,
-            question: "question",
-            answer: "answer",
-            editorSettingsQuestion: {
-                modules: {
-                    imageResize: {},
-                },
-            },
-            editorSettingsAnswer: {
+            noteBody: "",
+            noteName: "",
+            editorSettings: {
                 modules: {
                     imageResize: {},
                 },
@@ -72,10 +55,6 @@ export default {
         };
     },
     methods: {
-        changeCardSide() {
-            this.showQuestion = !this.showQuestion;
-            this.showAnswer = !this.showAnswer;
-        },
         imageHandler(file, Editor, cursorLocation, resetUploader) {
             const storageRef = firebase.storage().ref();
             const docRef = storageRef.child(`documents/blogPostPhoto/${file.name}`);
@@ -89,39 +68,37 @@ export default {
                 resetUploader();
             });
         },
-        async createNewFlashcard() {
-            if (this.question.length !== 0 && this.answer.length !== 0)
+        async createNewNote() {
+            if (this.noteBody.length !== 0 && this.noteName.length !== 0)
             {
                 this.loading = true;
                 await axios({
                     method: 'POST',
-                    url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}/flashcards`,
+                    url: `/api/classes/${this.$route.params.classId}/notes`,
                     headers: {
                         'Authorization': 'Bearer ' + localStorage.getItem('user'),
                         'Content-Type': 'application/json'
                     },
                     data: {
-                        question: this.question,
-                        answer: this.answer,
-                        flashcard_created_on: Date.now()
+                        note_name: this.noteName,
+                        note_body: this.noteBody,
+                        note_created_on: Date.now()
                     }
                 })
                 .then((response) => {
                     console.log(response)
-                    console.log("Flashcard created");
+                    console.log("Note created");
                 })
                 .catch((err) => {
-                    console.log(err);
-                    console.log("Flashcard not created");
-                    console.log(JSON.stringify(this.question))
-                    console.log(this.answer)
+                    console.log(err.config.data);
+                    console.log("Note not created");
                 })
                 this.loading = false;
-                this.$router.push({name: "ViewFlashcards", params: {classId: this.$route.params.classId, deckId: this.$route.params.deckId}});
+                this.$router.push({name: "ViewDecks", params: {classId: this.$route.params.classId}});
                 return;
             }
             this.error = true;
-            this.errorMessage = "Please ensure question and answer are both filled out!";
+            this.errorMessage = "Please ensure name and body of note are both filled out!";
             setTimeout(() => {
                 this.error = false;
             }, 5000);

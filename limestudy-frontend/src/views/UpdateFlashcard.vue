@@ -23,7 +23,7 @@
                 <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer" useCustomImageHandler @image-added="imageHandler" />
             </div>
             <div class="blog-actions">
-                <button @click="createNewFlashcard">Create</button>
+                <button @click="updateFlashcard">Update</button>
                 <!--<router-link class="router-button" :to="{name: 'BlogPreview'}">Post Preview</router-link>-->
             </div>
         </div>
@@ -44,7 +44,7 @@ const ImageResize = require("quill-image-resize-module").default;
 Quill.register("modules/imageResize", ImageResize);
 
 export default {
-    name: "CreateNewFlascard",
+    name: "UpdateFlashcard",
     components: {
         BlogCoverPreview,
         Loading,
@@ -57,8 +57,8 @@ export default {
             loading: null,
             showQuestion: true,
             showAnswer: false,
-            question: "question",
-            answer: "answer",
+            question: "",
+            answer: "",
             editorSettingsQuestion: {
                 modules: {
                     imageResize: {},
@@ -69,6 +69,12 @@ export default {
                     imageResize: {},
                 },
             },
+            userId: null,
+            classId: null,
+            deckId: null,
+            flashcardId: null,
+            flashcardCreatedOn: null,
+            flashcardCreatedOnTemp: null
         };
     },
     methods: {
@@ -89,13 +95,13 @@ export default {
                 resetUploader();
             });
         },
-        async createNewFlashcard() {
+        async updateFlashcard() {
             if (this.question.length !== 0 && this.answer.length !== 0)
             {
                 this.loading = true;
                 await axios({
-                    method: 'POST',
-                    url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}/flashcards`,
+                    method: 'PUT',
+                    url: `/api/classes/${this.classId}/decks/${this.deckId}/flashcards/${this.flashcardId}`,
                     headers: {
                         'Authorization': 'Bearer ' + localStorage.getItem('user'),
                         'Content-Type': 'application/json'
@@ -103,18 +109,22 @@ export default {
                     data: {
                         question: this.question,
                         answer: this.answer,
-                        flashcard_created_on: Date.now()
+                        flashcard_created_on: this.flashcardCreatedOn,
+                        userId: this.userId,
+                        classId: this.classId,
+                        deckId: this.deckId,
+                        flashcardId: this.flashcardId
                     }
                 })
                 .then((response) => {
                     console.log(response)
-                    console.log("Flashcard created");
+                    console.log("Flashcard updated");
                 })
                 .catch((err) => {
                     console.log(err);
-                    console.log("Flashcard not created");
-                    console.log(JSON.stringify(this.question))
-                    console.log(this.answer)
+                    console.log("Flashcard not update");
+                    //console.log(JSON.stringify(this.question))
+                    //console.log(this.answer)
                 })
                 this.loading = false;
                 this.$router.push({name: "ViewFlashcards", params: {classId: this.$route.params.classId, deckId: this.$route.params.deckId}});
@@ -130,6 +140,30 @@ export default {
     },
     computed: {
 
+    },
+    async created() {
+        await axios({
+                method: 'GET',
+                url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}/flashcards/${this.$route.params.flashcardId}`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log(response)
+                this.question = response.data.question;
+                this.answer = response.data.answer;
+                this.flashcardCreatedOn = response.data.flashcard_created_on;
+                this.flashcardCreatedOnTemp = new Date(response.data.flashcard_created_on).toLocaleString('en-us', {dateStyle: "long"})
+                this.classId = response.data.classId;
+                this.userId = response.data.userId;
+                this.deckId = response.data.deckId;
+                this.flashcardId = response.data.flashcardId;
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     },
     beforeDestroy() {
         this.showQuestion = true;

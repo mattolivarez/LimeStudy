@@ -2,82 +2,83 @@
     <div class="card-wrap">
         <div class="cards container">
             <div class="toggle-edit">
-                <span>Toggle Editing Class </span>
-                <input type="checkbox" v-model="editClass" />
+                <span>Toggle Editing Notes </span>
+                <input type="checkbox" v-model="editNote" />
+            </div>
+
+            <div class="buttons">
+                <button class="preview" :class="{'button-inactive': showDecks}" @click.prevent="showOther">Decks</button>
+                <button class="preview" :class="{'button-inactive': showNotes}" @click.prevent="showOther">Notes</button>
             </div>
 
             <SearchBar class="search-bar" v-on:filter-page="filterPage" />
             
-
-            <ClassCard :classes="classes" v-for="(classes, index) in classes" :key="index" />
-            <NewClassCard />
-
+            <NoteCard :notes="notes" v-for="(notes, index) in notes" :key="index" />
+            <NewNoteCard />
         </div>
     </div>
 </template>
 
 <script>
-import ClassCard from "../components/ClassCard"
-import NewClassCard from "../components/NewClassCard"
 import SearchBar from "../components/SearchBar"
+import NewNoteCard from "../components/NewNoteCard"
+import NoteCard from "../components/NoteCard"
 
 export default {
-    name: "ViewClasses",
+    name: "ViewNotes",
     components: { 
-        ClassCard,
-        NewClassCard,
         SearchBar,
+        NewNoteCard,
+        NoteCard,
+    },
+    data() {
+
     },
     computed: {
-        blogPosts() {
-            return this.$store.state.blogPosts;
+        notes() {
+            return this.$store.state.notes;
         },
-        classes() {
-            //console.log(this.$store.state.classes.length)
-            return this.$store.state.classes;
-        },
-        editClass: {
+        editNote: {
             get() {
-                return this.$store.state.editClass;
+                return this.$store.state.editNote;
             },
             set(payload) {
-                this.$store.commit("toggleEditClass", payload);
+                this.$store.commit("toggleEditNote", payload);
             }
         }
     },
     methods: {
         filterPage() {
             // Declare variables
-            let searchBar, filter, classes, classNames, i, txtValue; //classInfo
+            let searchBar, filter, decks, deckNames, i, txtValue; //classInfo
             searchBar = document.querySelector('.search input');
             filter = searchBar.value.toUpperCase();
-            classes = document.querySelectorAll('.card');
+            decks = document.querySelectorAll('.card');
             //classInfo = document.querySelectorAll('.card-info');
-            classNames = document.getElementsByTagName('h4');
+            deckNames = document.getElementsByTagName('h4');
 
             // Loop through all list items, and hide those who don't match the search query
-            for (i = 0; i < this.$store.state.classes.length; i++) {
+            for (i = 0; i < this.$store.state.decks.length; i++) {
                 //a = [i].getElementsByTagName("a")[0];
-                txtValue = classNames[i].textContent || classNames[i].innerText;
+                txtValue = deckNames[i].textContent || deckNames[i].innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    classes[i].style.display = "";
+                    decks[i].style.display = "";
                 } else {
-                    classes[i].style.display = "none";
+                    decks[i].style.display = "none";
                 }
             }
 
             //console.log(classes)
             //console.log(classInfo)
-            //console.log(classNames)
+            //console.log(names)
             //console.log()
-        }
+        },
     },
     created() {
-        this.$store.dispatch("getUserClasses");
-        
+        this.$store.dispatch("getAllUserNotes");
     },
     beforeDestroy() {
-        this.$store.commit("toggleEditClass", false);
+        this.$store.commit("toggleEditNote", false);
     },
 }
 </script>
@@ -93,7 +94,7 @@ export default {
         align-items: center;
         position: absolute;
         top: -65px;
-        left: 0px;
+        left: 0;
 
         span
         {
@@ -132,6 +133,19 @@ export default {
             left: 52px;
         }
     }
+}
+.buttons
+{
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: -93px;
+    right: calc(100vw/2.5);
+}
+.preview
+{
+    margin-left: 16px;
+    text-transform: initial;
 }
 .search-bar
 {

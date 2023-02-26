@@ -6,45 +6,34 @@
             <div :class="{invisible: !error}" class="err-message">
                 <p><span>Error: </span>{{ this.errorMessage }}</p>
             </div>
-            <div class="blog-info">
-                <input type="text" placeholder="Enter Flashcard Tags..." /> <!--v-model="blogTitle"-->
-                <div class="upload-file">
-                    <!--<label for="blog-photo">Upload Cover Photo</label>-->
-                    <!--<input type="file" ref="blogPhoto" id="blog-photo" @change="fileChange" accept=".png, .jpg, .jpeg" />-->
-                    <button class="preview" :class="{'button-inactive': showQuestion}" @click="changeCardSide">Question</button>
-                    <button class="preview" :class="{'button-inactive': showAnswer}" @click="changeCardSide">Answer</button>
-                    <!--<span>File Chosen: {{ this.$store.state.blogPhotoName }}</span>-->
-                </div>
-            </div>
             <div class="editor" :class="{'editor-inactive': !showQuestion}">
-                <vue-editor :editorOptions="editorSettingsQuestion" v-model="question" useCustomImageHandler @image-added="imageHandler" /> <!-- @image-added="imageHandler" -->
+                <vue-editor :editorOptions="editorSettingsQuestion" v-model="question" disabled /> <!-- @image-added="imageHandler" -->
             </div>
             <div class="editor" :class="{'editor-inactive': !showAnswer}">
-                <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer" useCustomImageHandler @image-added="imageHandler" />
+                <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer" disabled />
             </div>
             <div class="blog-actions">
-                <button @click="createNewFlashcard">Create</button>
+                <button @click.prevent="flashcardResponse" id="good">Good</button>
+                <button @click.prevent="flashcardResponse" id="ok">Ok</button>
+                <button @click.prevent="flashcardResponse" id="bad">Bad</button>
                 <!--<router-link class="router-button" :to="{name: 'BlogPreview'}">Post Preview</router-link>-->
             </div>
         </div>
     </div>
 </template>
 
-
 <script>
 import Quill from "quill";
-import firebase from "firebase/app";
 import "firebase/storage";
 import BlogCoverPreview from "../components/BlogCoverPreview.vue";
 import Loading from "../components/Loading";
-import axios from "axios"
+
 
 window.Quill = Quill;
-const ImageResize = require("quill-image-resize-module").default;
-Quill.register("modules/imageResize", ImageResize);
+
 
 export default {
-    name: "CreateNewFlascard",
+    name: "TraditionalStudy",
     components: {
         BlogCoverPreview,
         Loading,
@@ -57,16 +46,17 @@ export default {
             loading: null,
             showQuestion: true,
             showAnswer: false,
-            question: "question",
-            answer: "answer",
+            question: "",
+            answer: "",
+            flashcards: null,
             editorSettingsQuestion: {
                 modules: {
-                    imageResize: {},
+                    toolbar: false
                 },
             },
             editorSettingsAnswer: {
                 modules: {
-                    imageResize: {},
+                    toolbar: false
                 },
             },
         };
@@ -76,60 +66,28 @@ export default {
             this.showQuestion = !this.showQuestion;
             this.showAnswer = !this.showAnswer;
         },
-        imageHandler(file, Editor, cursorLocation, resetUploader) {
-            const storageRef = firebase.storage().ref();
-            const docRef = storageRef.child(`documents/blogPostPhoto/${file.name}`);
-            docRef.put(file).on("state_changed", (snapshot) => {
-                console.log(snapshot)
-            }, (err) => {
-                console.log(err);
-            }, async () => {
-                const downloadURL = await docRef.getDownloadURL();
-                Editor.insertEmbed(cursorLocation, "image", downloadURL);
-                resetUploader();
-            });
+        getRandomCard() {
+            let index = Math.floor(Math.random() * this.$store.state.flashcards.length);
+            this.question = this.$store.state.flashcards[index].question;
+            this.answer = this.$store.state.flashcards[index].answer;
         },
-        async createNewFlashcard() {
-            if (this.question.length !== 0 && this.answer.length !== 0)
-            {
-                this.loading = true;
-                await axios({
-                    method: 'POST',
-                    url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}/flashcards`,
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('user'),
-                        'Content-Type': 'application/json'
-                    },
-                    data: {
-                        question: this.question,
-                        answer: this.answer,
-                        flashcard_created_on: Date.now()
-                    }
-                })
-                .then((response) => {
-                    console.log(response)
-                    console.log("Flashcard created");
-                })
-                .catch((err) => {
-                    console.log(err);
-                    console.log("Flashcard not created");
-                    console.log(JSON.stringify(this.question))
-                    console.log(this.answer)
-                })
-                this.loading = false;
-                this.$router.push({name: "ViewFlashcards", params: {classId: this.$route.params.classId, deckId: this.$route.params.deckId}});
-                return;
-            }
-            this.error = true;
-            this.errorMessage = "Please ensure question and answer are both filled out!";
+        flashcardResponse() {
+            this.changeCardSide();
             setTimeout(() => {
-                this.error = false;
-            }, 5000);
-            return;
+                this.changeCardSide();
+                this.getRandomCard();
+            },5000);
+
         },
     },
     computed: {
 
+    },
+    created() {
+        //this.$store.dispatch("getUserClassDeckFlashcards", {deckId: this.$route.params.deckId, classId: this.$route.params.classId});
+        let index = Math.floor(Math.random() * this.$store.state.flashcards.length);
+        this.question = this.$store.state.flashcards[index].question;
+        this.answer = this.$store.state.flashcards[index].answer;
     },
     beforeDestroy() {
         this.showQuestion = true;
@@ -267,6 +225,10 @@ export default {
         height: 60vh;
         display: flex;
         flex-direction: column;
+        ::-webkit-scrollbar
+        {
+            display: none;
+        }
 
 
         .quillWrapper
@@ -294,11 +256,65 @@ export default {
     .blog-actions
     {
         margin-top: 32px;
+        display: flex;
+        justify-content: center;
 
         button
         {
             margin-right: 16px;
+            flex: .15;
         }
     }
+}
+button#good
+{
+    background-color: green;
+    transition: .5s ease-in-out all;
+    align-self: center;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 20px;
+    padding: 12px 24px;
+    color: #fff;
+    //background-color: #303030;
+    text-decoration: none;
+}
+button#good:hover
+{
+    background-color: rgba(1, 50, 32, 0.7);
+}
+button#ok
+{
+    background-color: yellow;
+    transition: .5s ease-in-out all;
+    align-self: center;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 20px;
+    padding: 12px 24px;
+    color: #fff;
+    //background-color: #303030;
+    text-decoration: none;
+}
+button#ok:hover
+{
+    background-color: rgba(155, 135, 12, 0.7);
+}
+button#bad
+{
+    background-color: red;
+    transition: .5s ease-in-out all;
+    align-self: center;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 20px;
+    padding: 12px 24px;
+    color: #fff;
+    //background-color: #303030;
+    text-decoration: none;
+}
+button#bad:hover
+{
+    background-color: rgba(139, 0, 0, 0.7);
 }
 </style>

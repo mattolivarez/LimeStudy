@@ -11,8 +11,8 @@
                     <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewClasses' }">Classes</router-link>
                     <router-link v-if="loggedIn" class="link" to="#">Notes</router-link>
                     <router-link v-if="loggedIn" class="link" to="#">Connects</router-link>
-                    <router-link v-if="loggedIn" class="link" :to="{ name: 'CreatePost' }">Create New Class</router-link>
-                    <router-link v-if="this.$store.state.flashcardsLoaded" class="link" to="#">Study</router-link>
+                    <!-- <router-link v-if="loggedIn" class="link" :to="{ name: 'CreatePost' }">Create New Class</router-link> -->
+                    <!-- <router-link v-if="this.$store.state.flashcardsLoaded" class="link" to="#">Study</router-link> -->
                     <router-link v-if="!loggedIn" class="link" :to="{ name: 'Login' }">Login/Register</router-link>
                 </ul>
                 <div @click="toggleProfileMenu" class="profile" ref="profile" v-if="loggedIn">
@@ -53,8 +53,8 @@
             <ul class="mobile-nav" v-show="mobileNav">
                 <router-link class="link" :to="{ name: 'Landing' }">Home</router-link>
                 <router-link class="link" :to="{ name: 'About' }">About</router-link>
-                <router-link class="link" :to="{ name: 'ViewClasses' }">Class</router-link>
-                <router-link class="link" :to="{ name: 'CreatePost' }">Create Post</router-link>
+                <router-link class="link" :to="{ name: 'ViewClasses' }">Classes</router-link>
+                <!-- <router-link class="link" :to="{ name: 'CreatePost' }">Create Post</router-link> -->
                 <router-link v-if="!user" class="link" :to="{ name: 'Login' }">Login/Register</router-link>
             </ul>
         </transition>

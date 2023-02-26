@@ -1,21 +1,23 @@
 <template>
     <div class="card">
         <div class="info">
-            <Add class="addIcon" />
-            <router-link class="link" :to="{name: 'CreateNewFlashcard', params: { classId: this.$route.params.classId, deckId: this.$route.params.deckId }}">Add New Flashcard <Arrow class="arrow" /></router-link>
+            <Book class="addIcon" />
+            <router-link class="link" :to="{name: 'TraditionalStudy', params: { classId: this.$route.params.classId, deckId: this.$route.params.deckId }}">
+                Traditional Study <Arrow class="arrow" />
+            </router-link>
         </div>
     </div>
 </template>
 
 <script>
 import Arrow from "../assets/Icons/arrow-right-light.svg"
-import Add from "../assets/Icons/plus-solid.svg"
+import Book from "../assets/Icons/book-open-solid.svg"
 
 export default {
-    name: "NewFlashcardCard",
+    name: "TraditionalStudy",
     components: {
         Arrow,
-        Add
+        Book
     },
     methods: {
         addFlashcard() {

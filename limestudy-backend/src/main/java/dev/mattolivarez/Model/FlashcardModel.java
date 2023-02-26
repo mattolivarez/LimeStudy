@@ -2,10 +2,10 @@ package dev.mattolivarez.Model;
 
 public class FlashcardModel
 {
-    private Integer flashcard_id;
-    private Integer deck_id;
-    private Integer class_id;
-    private Integer user_id;
+    private Integer flashcardId;
+    private Integer deckId;
+    private Integer classId;
+    private Integer userId;
     private String question;
     private String answer;
     private Long flashcard_created_on;
@@ -13,46 +13,46 @@ public class FlashcardModel
 
     public FlashcardModel() {}
 
-    public FlashcardModel(Integer flashcard_id, Integer deck_id, Integer class_id, Integer user_id, String question, String answer, Long flashcard_created_on) {
-        this.flashcard_id = flashcard_id;
-        this.deck_id = deck_id;
-        this.class_id = class_id;
-        this.user_id = user_id;
+    public FlashcardModel(Integer flashcardId, Integer deckId, Integer classId, Integer userId, String question, String answer, Long flashcard_created_on) {
+        this.flashcardId = flashcardId;
+        this.deckId = deckId;
+        this.classId = classId;
+        this.userId = userId;
         this.question = question;
         this.answer = answer;
         this.flashcard_created_on = flashcard_created_on;
     }
 
-    public Integer getFlashcard_id() {
-        return flashcard_id;
+    public Integer getFlashcardId() {
+        return flashcardId;
     }
 
-    public void setFlashcard_id(Integer flashcard_id) {
-        this.flashcard_id = flashcard_id;
+    public void setFlashcardId(Integer flashcardId) {
+        this.flashcardId = flashcardId;
     }
 
-    public Integer getDeck_id() {
-        return deck_id;
+    public Integer getDeckId() {
+        return deckId;
     }
 
-    public void setDeck_id(Integer deck_id) {
-        this.deck_id = deck_id;
+    public void setDeckId(Integer deckId) {
+        this.deckId = deckId;
     }
 
-    public Integer getClass_id() {
-        return class_id;
+    public Integer getClassId() {
+        return classId;
     }
 
-    public void setClass_id(Integer class_id) {
-        this.class_id = class_id;
+    public void setClassId(Integer classId) {
+        this.classId = classId;
     }
 
-    public Integer getUser_id() {
-        return user_id;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getQuestion() {

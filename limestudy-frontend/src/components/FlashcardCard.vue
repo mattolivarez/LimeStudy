@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card flashcards">
         <div v-show="getEditFlashcard" class="icons">
             <div @click="editFlashcard" class="icon">
                 <Edit class="edit" />
@@ -9,9 +9,9 @@
             </div>
         </div>
         <!--<img :src="post.blogCoverPhoto" alt="">-->
-        <div class="info">
-            <h4>Question: <span class="details">{{ flashcards.question }}</span></h4>
-            <h4>Answer: <span class="details">{{ flashcards.answer }}</span></h4>
+        <div class="card-info">
+            <h4>Question: <span class="details questions">{{ this.replaceString(flashcards.question) }}</span></h4>
+            <h4>Answer: <span class="details answers">{{ this.replaceString(flashcards.answer) }}</span></h4>
             <h4>Created on: {{ new Date(flashcards.flashcard_created_on).toLocaleString('en-us', {dateStyle: "long"}) }}</h4> 
             <!--<router-link class="link" to="#"> 
                 View Flashcard <Arrow class="arrow" />
@@ -24,6 +24,7 @@
 //import Arrow from "../assets/Icons/arrow-right-light.svg"
 import Edit from "../assets/Icons/edit-regular.svg"
 import Delete from "../assets/Icons/trash-regular.svg"
+import axios from "axios"
 
 export default {
     name: "FlashcardCard",
@@ -34,11 +35,33 @@ export default {
         Delete
     },
     methods: {
-        deleteFlashcard() {
-            //this.$store.dispatch("deletePost", this.post.blogID);
+        async deleteFlashcard() {
+            await axios({
+                method: 'DELETE',
+                url: `/api/classes/${this.flashcards.classId}/decks/${this.flashcards.deckId}/flashcards/${this.flashcards.flashcardId}`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log(response)
+                console.log("Deck deleted");
+            })
+            .catch((err) => {
+                console.log(err);
+                console.log("Deck not deleted");
+            })
+            setTimeout(() => {
+                window.location.reload()
+            }, 2500)
         },
         editFlashcard() {
-            //this.$router.push({ name: 'EditBlog', params: { blogid: this.post.blogID } });
+            this.$router.push({ name: 'UpdateFlashcard', params: { classId: this.flashcards.classId, deckId: this.flashcards.deckId, flashcardId: this.flashcards.flashcardId } });
+        },
+        replaceString(word) {
+            word = word.replace(/(<([^>]+)>)/ig, "");
+            return word
         },
     },
     computed: {
@@ -59,14 +82,14 @@ export default {
     flex-direction: column;
     border-radius: 8px;
     background-color: #fff;
-    min-height: 255px; // original was 420px
+    min-height: 225px; // original was 420px 125
     transition: .5s ease all;
 
-    &:hover
-    {
-        transform: rotateZ(-1deg) scale(1.01);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
+    // &:hover
+    // {
+    //     transform: rotateZ(-1deg) scale(1.01);
+    //     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    // }
 
     .icons
     {
@@ -127,7 +150,7 @@ export default {
         object-fit: cover;
     }
 
-    .info
+    .card-info
     {
         display: flex;
         flex-direction: row;

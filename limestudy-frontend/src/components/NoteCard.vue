@@ -1,19 +1,21 @@
 <template>
     <div class="card">
-        <div v-show="getEditDeck" class="icons">
-            <div @click="editDeck" class="icon">
+        <div v-show="getEditNote" class="icons">
+            <div @click="editNote" class="icon">
                 <Edit class="edit" />
             </div>
-            <div @click="deleteDeck" class="icon">
+            <div @click="deleteNote" class="icon">
                 <Delete class="delete" />
             </div>
         </div>
         <!--<img :src="post.blogCoverPhoto" alt="">-->
         <div class="card-info">
-            <h4>{{ decks.deck_name }}</h4>
-            <h6>Created on: {{ new Date(decks.deck_created_on).toLocaleString('en-us', {dateStyle: "long"}) }}</h6> 
-            <router-link class="link" :to="{name: 'ViewFlashcards', params: {classId: decks.classId, deckId: decks.deckId}}"> 
-                View Deck Flashcards <Arrow class="arrow" />
+            <h4>{{ notes.note_name }}</h4>
+            <h6>Created on: {{ new Date(notes.note_created_on).toLocaleString('en-us', {dateStyle: "long"}) }}</h6>
+            <h6>Name: {{ notes.note_name }}</h6>
+            <h6 class="note-body">Body: {{ this.replaceString(notes.note_body) }}</h6>
+            <router-link class="link" :to="{name: 'ReadNote', params: {classId: notes.classId, noteId: notes.noteId}}"> 
+                View Note <Arrow class="arrow" />
             </router-link> <!--:to="{name: 'ViewDecks', params: {classId: decks.classId, deckId: decks.deckId}}"-->
         </div>
     </div>
@@ -26,22 +28,22 @@ import Delete from "../assets/Icons/trash-regular.svg"
 import axios from "axios"
 
 export default {
-    name: "DeckCard",
-    props: ["decks"],
+    name: "NoteCard",
+    props: ["notes"],
     components: {
         Arrow,
         Edit,
         Delete
     },
     methods: {
-        async deleteDeck() {
+        async deleteNote() {
             //this.$store.dispatch("deletePost", this.post.blogID);
             //console.log("classId from ClassCard: " + this.classes.classId)
             //this.$store.dispatch("deleteClass", this.classes.classId);
             //console.log("Payload from store: " + classId)
             await axios({
                 method: 'DELETE',
-                url: `/api/classes/${this.decks.classId}/decks/${this.decks.deckId}`,
+                url: `/api/classes/${this.notes.classId}/notes/${this.notes.deckId}`,
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user'),
                     'Content-Type': 'application/json'
@@ -49,23 +51,27 @@ export default {
             })
             .then((response) => {
                 console.log(response)
-                console.log("Deck deleted");
+                console.log("Note deleted");
             })
             .catch((err) => {
                 console.log(err);
-                console.log("Deck not deleted");
+                console.log("Note not deleted");
             })
             setTimeout(() => {
                 window.location.reload()
             }, 2500)
         },
-        editDeck() {
-            this.$router.push({ name: 'UpdateDeck', params: { classId: this.decks.classId, deckId: this.decks.deckId } });
+        editNote() {
+            this.$router.push({ name: 'UpdateNote', params: { classId: this.notes.classId, noteId: this.notes.noteId } });
+        },
+        replaceString(word) {
+            word = word.replace(/(<([^>]+)>)/ig, "");
+            return word
         },
     },
     computed: {
-        getEditDeck() {
-            return this.$store.state.editDeck;
+        getEditNote() {
+            return this.$store.state.editNote;
         },
     },
 }
@@ -194,5 +200,15 @@ export default {
             }
         }
     }
+}
+h6.note-body
+{
+    max-width: 300px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.note-body
+{
+    text-overflow: ellipsis;
 }
 </style>

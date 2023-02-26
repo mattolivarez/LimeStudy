@@ -40,7 +40,7 @@ export default {
     },
     data() {
         return {
-            modalMessage: "Deck created!",
+            modalMessage: "Deck updated!",
             modalActive: null,
             deckName: "",
         };

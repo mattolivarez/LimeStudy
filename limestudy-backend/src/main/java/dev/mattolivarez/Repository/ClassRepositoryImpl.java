@@ -3,6 +3,8 @@ package dev.mattolivarez.Repository;
 import dev.mattolivarez.Exception.BadRequestException;
 import dev.mattolivarez.Exception.ResourceNotFoundException;
 import dev.mattolivarez.Model.ClassModel;
+import dev.mattolivarez.Model.DeckModel;
+import dev.mattolivarez.Service.DeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -45,6 +47,9 @@ public class ClassRepositoryImpl implements ClassRepository
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+//    @Autowired
+//    DeckService deckService;
 
     @Override
     public List<ClassModel> findAll(Integer userId) throws ResourceNotFoundException {
@@ -101,10 +106,22 @@ public class ClassRepositoryImpl implements ClassRepository
         jdbcTemplate.update(SQL_DELETE, new Object[]{userId, classId});
     }
 
-    /*private void removeAllCatTransactions(Integer classId)
-    {
-        jdbcTemplate.update(SQL_DELETE_ALL_TRANSACTIONS, new Object[]{classId});
-    }*/
+//    private void removeAllClassDecks(Integer classId)
+//    {
+//        jdbcTemplate.update(SQL_DELETE_ALL_DECKS, new Object[]{classId});
+//    }
+//
+//    private void removeAllClassDecksFlashcards(Integer userId, Integer classId)
+//    {
+//        // get all decks
+//        List<DeckModel> deckModels = deckService.fetchAllDecks(userId, classId);
+//        // loop thru decks
+//        for (DeckModel deckModel : deckModels)
+//        {
+//            // delete decks' flashcards
+//        }
+//        jdbcTemplate.update(SQL_DELETE_ALL_FLASHCARDS, new Object[]{classId});
+//    }
 
     private RowMapper<ClassModel> classRowMapper = ((rs, rowNum) -> {
         return new ClassModel(rs.getInt("CLASS_ID"),

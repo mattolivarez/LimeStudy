@@ -3,25 +3,40 @@ import VueRouter from "vue-router";
 import firebase from "firebase/app";
 import "firebase/auth";
 
+// general
 import Landing from "../views/Landing.vue";
 import About from "../views/About.vue";
 
+// auth
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
 
+// classes
 import ViewClasses from "../views/ViewClasses.vue"; // read classes
 import CreateNewClass from "../views/CreateNewClass.vue"; // create classes 
 import UpdateClass from "../views/UpdateClass.vue"; // update class
 // delete class is done inside ClassCard.vue component
 
+// decks
 import ViewDecks from "../views/ViewDecks.vue"; // read decks
 import CreateNewDeck from "../views/CreateNewDeck.vue"; // create deck
 import UpdateDeck from "../views/UpdateDeck.vue"; // update deck
 // delete deck
 
+// flashcards
 import ViewFlashcards from "../views/ViewFlashcards.vue"; // read flashcards
 import CreateNewFlashcard from "../views/CreateNewFlashcard.vue"; // create flashcards
+import UpdateFlashcard from "../views/UpdateFlashcard.vue" // update flashcard
+// delete flashcard
+import TraditionalStudy from "../views/TraditionalStudy.vue" // traditional study
+import MultiChoiceStudy from "../views/MultiChoiceStudy.vue" // multiple choice study
+
+// notes
+import CreateNewNote from "../views/CreateNewNote.vue" // create note
+import ReadNote from "../views/ReadNote.vue"
+import ViewNotes from "../views/ViewNotes.vue"
+ 
 
 import Profile from "../views/Profile.vue";
 import Admin from "../views/Admin.vue";
@@ -100,7 +115,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/update-deck",
+    path: "/home/classes/:classId/decks/:deckId/update-deck",
     name: "UpdateDeck",
     component: UpdateDeck,
     meta: {
@@ -123,6 +138,60 @@ const routes = [
     component: CreateNewFlashcard,
     meta: {
       title: 'Create New Flashcard',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/home/classes/:classId/decks/:deckId/flashcards/:flashcardId/update-flashcard",
+    name: "UpdateFlashcard",
+    component: UpdateFlashcard,
+    meta: {
+      title: 'Update Flashcard',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/home/classes/:classId/decks/:deckId/flashcards/traditional-study",
+    name: "TraditionalStudy",
+    component: TraditionalStudy,
+    meta: {
+      title: 'Traditional Study',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/home/classes/:classId/decks/:deckId/flashcards/multi-choice-study",
+    name: "MultiChoiceStudy",
+    component: MultiChoiceStudy,
+    meta: {
+      title: 'Multiple Choice Study',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/home/classes/:classId/create-new-note",
+    name: "CreateNewNote",
+    component: CreateNewNote,
+    meta: {
+      title: 'Create New Note',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/home/classes/:classId/notes/:noteId",
+    name: "ReadNote",
+    component: ReadNote,
+    meta: {
+      title: 'Study Note',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/home/notes",
+    name: "ViewNotes",
+    component: ViewNotes,
+    meta: {
+      title: 'View All Notes',
       requiresAuth: false,
     }
   },

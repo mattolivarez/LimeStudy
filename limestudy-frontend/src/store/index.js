@@ -34,6 +34,8 @@ export default new Vuex.Store({
         editDeck: null,
         flashcards: [],
         editFlashcard: null,
+        notes: [],
+        editNote: null,
 
         user: null,
         loggedIn: false,
@@ -78,6 +80,9 @@ export default new Vuex.Store({
         },
         toggleEditFlashcard(state, payload) {
             state.editFlashcard = payload;
+        },
+        toggleEditNote(state, payload) {
+            state.editNote = payload;
         },
 
 
@@ -370,7 +375,7 @@ export default new Vuex.Store({
                     }
                     state.decks.push(newDeck);
                 });
-                //console.log(state.classes);
+                //console.log(state.decks);
                 return;
             }).catch((err) => {
                 console.log("error starts here")
@@ -392,7 +397,7 @@ export default new Vuex.Store({
             })
             .then((response) => {
                 console.log("response starts here")
-                //console.log(response.data);
+                console.log(response.data);
                 response.data.forEach((userClassDeckFlashcard) => {
                     const newFlashcard = {
                         flashcardId: userClassDeckFlashcard.flashcardId,
@@ -405,7 +410,73 @@ export default new Vuex.Store({
                     }
                     state.flashcards.push(newFlashcard);
                 });
-                //console.log(state.classes);
+                console.log(state.flashcards);
+                return;
+            }).catch((err) => {
+                console.log("error starts here")
+                console.log(err);
+                return;
+            });
+        },
+        async getUserClassNotes({state}, classId) {
+            //console.log(classId)
+            state.notes = [];
+            await axios({
+                method: 'GET',
+                url: `/api/classes/${classId}/notes`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log("response starts here")
+                //console.log(response.data);
+                response.data.forEach((userClassNote) => {
+                    const newNote = {
+                        noteId: userClassNote.note_id,
+                        classId: userClassNote.class_id,
+                        userId: userClassNote.user_id,
+                        note_name: userClassNote.note_name,
+                        note_body: userClassNote.note_body,
+                        note_created_on: userClassNote.note_created_on,
+                    }
+                    state.notes.push(newNote);
+                });
+                console.log(state.notes);
+                return;
+            }).catch((err) => {
+                console.log("error starts here")
+                console.log(err);
+                return;
+            });
+        },
+        async getAllUserNotes({state}, classId) {
+            //console.log(classId)
+            state.notes = [];
+            await axios({
+                method: 'GET',
+                url: `/api/classes/${classId}/notes`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log("response starts here")
+                //console.log(response.data);
+                response.data.forEach((userClassNote) => {
+                    const newNote = {
+                        noteId: userClassNote.note_id,
+                        classId: userClassNote.class_id,
+                        userId: userClassNote.user_id,
+                        note_name: userClassNote.note_name,
+                        note_body: userClassNote.note_body,
+                        note_created_on: userClassNote.note_created_on,
+                    }
+                    state.notes.push(newNote);
+                });
+                console.log(state.notes);
                 return;
             }).catch((err) => {
                 console.log("error starts here")

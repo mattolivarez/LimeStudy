@@ -24,8 +24,8 @@
                         <router-link v-if="!loggedIn" class="link" :to="{ name: 'Landing' }">Home</router-link>
                         <router-link v-if="!loggedIn" class="link" :to="{ name: 'About' }">About</router-link>
                         <router-link v-if="!loggedIn" class="link" :to="{ name: 'ViewClasses' }">Class</router-link>
-                        <router-link v-if="admin" class="link" :to="{ name: 'CreatePost' }">Create Post</router-link>
-                        <router-link v-if="!user" class="link" :to="{ name: 'Login' }">Log in / Register</router-link>
+                        <!-- <router-link v-if="admin" class="link" :to="{ name: 'CreatePost' }">Create Post</router-link> -->
+                        <router-link v-if="!loggedIn" class="link" :to="{ name: 'Login' }">Log in / Register</router-link>
                     </ul>
                 </div>
             </div>

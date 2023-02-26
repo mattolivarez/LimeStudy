@@ -9,7 +9,7 @@
             </div>
         </div>
         <!--<img :src="post.blogCoverPhoto" alt="">-->
-        <div class="info">
+        <div class="card-info">
             <h4>{{ classes.class_name }}</h4>
             <h6>Created on: {{ new Date(classes.class_created_on).toLocaleString('en-us', {dateStyle: "long"}) }}</h6> <!-- new Date(post.blogDate).toLocaleString('en-us', {dateStyle: "long"}) -->
             <router-link class="link" :to="{name: 'ViewDecks', params: { classId: classes.classId }}">View Class Decks <Arrow class="arrow" /></router-link> <!--:to="{name: 'ViewBlog', params: {blogid: this.post.blogID}}"-->
@@ -148,7 +148,7 @@ export default {
         object-fit: cover;
     }
 
-    .info
+    .card-info
     {
         display: flex;
         flex-direction: column;
