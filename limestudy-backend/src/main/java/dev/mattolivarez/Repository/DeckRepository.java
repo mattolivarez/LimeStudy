@@ -12,7 +12,7 @@ public interface DeckRepository
 
     DeckModel findById(Integer userId, Integer classId, Integer deckId) throws ResourceNotFoundException;
 
-    Integer create(Integer userId, Integer classId, String deck_name, Long deck_created_on) throws BadRequestException;
+    Integer create(Integer userId, Integer classId, String deck_name, String deck_created_on) throws BadRequestException;
 
     void update(Integer userId, Integer classId, Integer deckId, DeckModel deckModel) throws BadRequestException;
 

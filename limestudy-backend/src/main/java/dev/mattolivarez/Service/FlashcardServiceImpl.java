@@ -29,8 +29,13 @@ public class FlashcardServiceImpl implements FlashcardService
     }
 
     @Override
-    public FlashcardModel addFlashcard(Integer userId, Integer classId, Integer deckId, String question, String answer, Long flashcard_created_on) throws BadRequestException {
-        int flashcardId = flashcardRepository.create(userId, classId, deckId, question, answer, flashcard_created_on);
+    public FlashcardModel addFlashcard(Integer userId, Integer classId, Integer deckId, String question, String answer,
+                                       String flashcard_created_on, Integer correct, Integer incorrect, String last_studied_on,
+                                       Double occurrence_rate, Integer occurrence_rate_input)
+            throws BadRequestException
+    {
+        int flashcardId = flashcardRepository.create(userId, classId, deckId, question, answer, flashcard_created_on,
+                correct, incorrect, last_studied_on, occurrence_rate, occurrence_rate_input);
         return flashcardRepository.findById(userId, classId, deckId, flashcardId);
     }
 

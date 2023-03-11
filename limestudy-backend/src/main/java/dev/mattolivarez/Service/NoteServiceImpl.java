@@ -20,28 +20,44 @@ public class NoteServiceImpl implements NoteService
     NoteRepository noteRepository;
 
     @Override
-    public List<NoteModel> fetchAllNotes(Integer userId, Integer classId) {
-        return noteRepository.findAll(userId, classId);
+    public List<NoteModel> fetchAllNotes(Integer userId) {
+        return noteRepository.findAll(userId);
     }
 
     @Override
-    public NoteModel fetchNoteById(Integer userId, Integer classId, Integer noteId) throws ResourceNotFoundException {
-        return noteRepository.findById(userId, classId, noteId);
+    public List<NoteModel> fetchAllNotesBelongingToClass(Integer userId, Integer classId){
+        return noteRepository.findAllBelongingToClass(userId, classId);
     }
 
     @Override
-    public NoteModel addNote(Integer userId, Integer classId, String note_name, String note_body, Long note_created_on) throws BadRequestException {
+    public NoteModel fetchNoteById(Integer userId, Integer noteId) throws ResourceNotFoundException {
+        return noteRepository.findById(userId, noteId);
+    }
+
+    @Override
+    public NoteModel addNote(Integer userId, Integer classId, String note_name, String note_body, String note_created_on) throws BadRequestException {
         int noteId = noteRepository.create(userId, classId, note_name, note_body, note_created_on);
-        return noteRepository.findById(userId, classId, noteId);
+        return noteRepository.findById(userId, noteId);
     }
 
     @Override
-    public void updateNote(Integer userId, Integer classId, Integer noteId, NoteModel noteModel) throws BadRequestException {
-        noteRepository.update(userId, classId, noteId, noteModel);
+    public NoteModel addNoteNoClass(Integer userId, String note_name, String note_body, String note_created_on) throws BadRequestException {
+        int noteId = noteRepository.createWithNoClass(userId, note_name, note_body, note_created_on);
+        return noteRepository.findById(userId, noteId);
     }
 
     @Override
-    public void removeNote(Integer userId, Integer classId, Integer noteId) throws ResourceNotFoundException {
-        noteRepository.removeById(userId, classId, noteId);
+    public void updateNote(Integer userId, Integer noteId, NoteModel noteModel) throws BadRequestException {
+        noteRepository.update(userId, noteId, noteModel);
+    }
+
+    @Override
+    public void updateNoteNoClass(Integer userId, Integer noteId, NoteModel noteModel) throws BadRequestException {
+        noteRepository.updateNoClass(userId, noteId, noteModel);
+    }
+
+    @Override
+    public void removeNote(Integer userId, Integer noteId) throws ResourceNotFoundException {
+        noteRepository.removeById(userId, noteId);
     }
 }

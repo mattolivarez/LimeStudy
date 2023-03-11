@@ -59,6 +59,17 @@ export default {
             showAnswer: false,
             question: "",
             answer: "",
+            userId: null,
+            classId: null,
+            deckId: null,
+            flashcardId: null,
+            flashcardCreatedOn: null,
+            flashcardCreatedOnTemp: null,
+            correct: null,
+            incorrect: null,
+            last_studied_on: null,
+            occurrence_rate: null,
+            occurence_rate_input: null,
             editorSettingsQuestion: {
                 modules: {
                     imageResize: {},
@@ -69,12 +80,6 @@ export default {
                     imageResize: {},
                 },
             },
-            userId: null,
-            classId: null,
-            deckId: null,
-            flashcardId: null,
-            flashcardCreatedOn: null,
-            flashcardCreatedOnTemp: null
         };
     },
     methods: {
@@ -113,7 +118,12 @@ export default {
                         userId: this.userId,
                         classId: this.classId,
                         deckId: this.deckId,
-                        flashcardId: this.flashcardId
+                        flashcardId: this.flashcardId,
+                        correct: this.correct,
+                        incorrect: this.incorrect,
+                        last_studied_on: this.last_studied_on,
+                        occurrence_rate: this.occurrence_rate,
+                        occurence_rate_input: this.occurence_rate_input
                     }
                 })
                 .then((response) => {
@@ -160,6 +170,11 @@ export default {
                 this.userId = response.data.userId;
                 this.deckId = response.data.deckId;
                 this.flashcardId = response.data.flashcardId;
+                this.correct = response.data.correct;
+                this.incorrect = response.data.incorrect;
+                this.last_studied_on = response.data.last_studied_on;
+                this.occurrence_rate = response.data.occurrence_rate;
+                this.occurence_rate_input = response.data.occurence_rate_input;
             })
             .catch((err) => {
                 console.log(err)

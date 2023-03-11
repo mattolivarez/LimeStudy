@@ -14,7 +14,7 @@ public interface DeckService
 
     DeckModel fetchDeckById(Integer userId, Integer classId, Integer deckId) throws ResourceNotFoundException;
 
-    DeckModel addDeck(Integer userId, Integer classId, String deck_name, Long deck_created_on) throws BadRequestException;
+    DeckModel addDeck(Integer userId, Integer classId, String deck_name, String deck_created_on) throws BadRequestException;
 
     void updateDeck(Integer userId, Integer classId, Integer deckId, DeckModel deckModel) throws BadRequestException;
 

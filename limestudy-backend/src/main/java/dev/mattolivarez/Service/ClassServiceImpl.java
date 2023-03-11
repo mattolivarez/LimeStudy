@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,19 +30,19 @@ public class ClassServiceImpl implements ClassService
     }
 
     @Override
-    public ClassModel addClass(Integer userId, String class_name, Long class_created_on) throws BadRequestException {
-        int categoryId = classRepository.create(userId, class_name, class_created_on);
-        return classRepository.findById(userId, categoryId);
+    public ClassModel addClass(Integer userId, String class_name, String class_created_on) throws BadRequestException {
+        int classId = classRepository.create(userId, class_name, class_created_on);
+        return classRepository.findById(userId, classId);
     }
 
     @Override
-    public void updateClass(Integer userId, Integer categoryId, ClassModel classModel) throws BadRequestException {
-        classRepository.update(userId, categoryId, classModel);
+    public void updateClass(Integer userId, Integer classId, ClassModel classModel) throws BadRequestException {
+        classRepository.update(userId, classId, classModel);
     }
 
     @Override
-    public void removeClassWithAllDecks(Integer userId, Integer categoryId) throws ResourceNotFoundException {
-        this.fetchClassById(userId, categoryId);
-        classRepository.removeById(userId, categoryId);
+    public void removeClassWithAllDecks(Integer userId, Integer classId) throws ResourceNotFoundException {
+        //this.fetchClassById(userId, classId);
+        classRepository.removeById(userId, classId);
     }
 }

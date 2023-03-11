@@ -169,7 +169,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/create-new-note",
+    path: "/home/notes/create-new-note",
     name: "CreateNewNote",
     component: CreateNewNote,
     meta: {
@@ -178,7 +178,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/notes/:noteId",
+    path: "/home/notes/:noteId",
     name: "ReadNote",
     component: ReadNote,
     meta: {

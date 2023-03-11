@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class ClassController
     {
         int userId = (Integer) request.getAttribute("userId");
         String class_name = (String) classMap.get("class_name");
-        Long class_created_on = (Long) classMap.get("class_created_on");
+        String class_created_on = (String) classMap.get("class_created_on");
         ClassModel classModel = classService.addClass(userId, class_name, class_created_on);
         return new ResponseEntity<>(classModel, HttpStatus.CREATED);
     }

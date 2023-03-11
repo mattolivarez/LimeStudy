@@ -74,15 +74,16 @@ export default {
                 this.loading = true;
                 await axios({
                     method: 'POST',
-                    url: `/api/classes/${this.$route.params.classId}/notes`,
+                    url: `/api/notes`,
                     headers: {
                         'Authorization': 'Bearer ' + localStorage.getItem('user'),
                         'Content-Type': 'application/json'
                     },
                     data: {
+                        classId: this.classId,
                         note_name: this.noteName,
                         note_body: this.noteBody,
-                        note_created_on: Date.now()
+                        note_created_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"})
                     }
                 })
                 .then((response) => {
@@ -94,7 +95,8 @@ export default {
                     console.log("Note not created");
                 })
                 this.loading = false;
-                this.$router.push({name: "ViewDecks", params: {classId: this.$route.params.classId}});
+                //this.$router.push({name: "View", params: {classId: this.$route.params.classId}});
+                this.$router.push({name: "Landing"})
                 return;
             }
             this.error = true;

@@ -14,6 +14,7 @@ type UserAuth struct {
 	LastName string `json:"last_name"`
 	Email string `json:"email"`
 	Password string `json:"password"`
+	AccountCreatedOn string `json:"account_created_on"`
 }
 
 
@@ -60,6 +61,7 @@ func Register(c *fiber.Ctx) error {
 		LastName: data.LastName,
 		Email: data.Email,
 		Password: string(password),
+		AccountCreatedOn: data.AccountCreatedOn,
 	}
 	err = model.CreateUser(&user)
 	if err != nil {

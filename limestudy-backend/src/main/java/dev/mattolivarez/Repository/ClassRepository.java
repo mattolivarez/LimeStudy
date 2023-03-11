@@ -12,7 +12,7 @@ public interface ClassRepository
 
     ClassModel findById(Integer userId, Integer classId) throws ResourceNotFoundException;
 
-    Integer create(Integer userId, String name, Long class_created_on) throws BadRequestException;
+    Integer create(Integer userId, String name, String class_created_on) throws BadRequestException;
 
     void update(Integer userId, Integer classId, ClassModel classModel) throws BadRequestException;
 

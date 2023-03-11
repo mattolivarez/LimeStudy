@@ -6,13 +6,16 @@ public class DeckModel
     private Integer classId;
     private Integer userId;
     private String deck_name;
-    private Long deck_created_on;
+    private String deck_created_on;
     //private Integer number_of_flashcards;
+    //private Double deck_accuracy_percentage;
+    //private Double deck_accuracy_percentage_for_week;
+    //private Double deck_accuracy_percentage_for_month;
     //private String deck_color_code;
 
     public DeckModel() {}
 
-    public DeckModel(Integer deckId, Integer classId, Integer userId, String deck_name, Long deck_created_on) {
+    public DeckModel(Integer deckId, Integer classId, Integer userId, String deck_name, String deck_created_on) {
         this.deckId = deckId;
         this.classId = classId;
         this.userId = userId;
@@ -52,11 +55,11 @@ public class DeckModel
         this.deck_name = deck_name;
     }
 
-    public Long getDeck_created_on() {
+    public String getDeck_created_on() {
         return deck_created_on;
     }
 
-    public void setDeck_created_on(Long deck_created_on) {
+    public void setDeck_created_on(String deck_created_on) {
         this.deck_created_on = deck_created_on;
     }
 }

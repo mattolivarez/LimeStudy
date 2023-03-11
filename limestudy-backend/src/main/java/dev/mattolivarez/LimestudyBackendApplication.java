@@ -41,6 +41,8 @@ public class LimestudyBackendApplication {
 		AuthFilter authFilter = new AuthFilter();
 		registrationBean.setFilter(authFilter);
 		registrationBean.addUrlPatterns("/api/classes/*");
+		registrationBean.addUrlPatterns("/api/notes/*");
+		registrationBean.addUrlPatterns("/api/events/*");
 		return registrationBean;
 	}
 

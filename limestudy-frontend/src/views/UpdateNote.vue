@@ -82,7 +82,7 @@ export default {
                 this.loading = true;
                 await axios({
                     method: 'PUT',
-                    url: `/api/classes/${this.classId}/notes/${this.noteId}`,
+                    url: `/api/notes/${this.noteId}`,
                     headers: {
                         'Authorization': 'Bearer ' + localStorage.getItem('user'),
                         'Content-Type': 'application/json'
@@ -93,7 +93,7 @@ export default {
                         note_created_on: this.noteCreatedOn,
                         userId: this.userId,
                         classId: this.classId,
-                        neckId: this.neckId
+                        noteId: this.noteId
                     }
                 })
                 .then((response) => {
@@ -107,7 +107,8 @@ export default {
                     //console.log(this.answer)
                 })
                 this.loading = false;
-                this.$router.push({name: "ViewDecks", params: {classId: this.$route.params.classId}});
+                //this.$router.push({name: "ViewDecks", params: {classId: this.$route.params.classId}});
+                this.$router.push({name: "Landing"});
                 return;
             }
             this.error = true;
@@ -121,29 +122,8 @@ export default {
     computed: {
 
     },
-    async created() {
-        await axios({
-                method: 'GET',
-                url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}/flashcards/${this.$route.params.flashcardId}`,
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then((response) => {
-                console.log(response)
-                this.question = response.data.question;
-                this.answer = response.data.answer;
-                this.flashcardCreatedOn = response.data.flashcard_created_on;
-                this.flashcardCreatedOnTemp = new Date(response.data.flashcard_created_on).toLocaleString('en-us', {dateStyle: "long"})
-                this.classId = response.data.classId;
-                this.userId = response.data.userId;
-                this.deckId = response.data.deckId;
-                this.flashcardId = response.data.flashcardId;
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+    created() {
+
     },
     beforeDestroy() {
         this.showQuestion = true;

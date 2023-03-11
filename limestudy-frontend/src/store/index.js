@@ -36,6 +36,8 @@ export default new Vuex.Store({
         editFlashcard: null,
         notes: [],
         editNote: null,
+        events: [],
+        editEvent: null,
 
         user: null,
         loggedIn: false,
@@ -407,6 +409,11 @@ export default new Vuex.Store({
                         question: userClassDeckFlashcard.question,
                         answer: userClassDeckFlashcard.answer,
                         flashcard_created_on: userClassDeckFlashcard.flashcard_created_on,
+                        correct: userClassDeckFlashcard.correct,
+                        incorrect: userClassDeckFlashcard.incorrect,
+                        last_studied_on: userClassDeckFlashcard.last_studied_on,
+                        occurrence_rate: userClassDeckFlashcard.occurrence_rate,
+                        occurrence_rate_input: userClassDeckFlashcard.occurrence_rate_input
                     }
                     state.flashcards.push(newFlashcard);
                 });
@@ -423,7 +430,7 @@ export default new Vuex.Store({
             state.notes = [];
             await axios({
                 method: 'GET',
-                url: `/api/classes/${classId}/notes`,
+                url: `/api/notes/classes/${classId}`,
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user'),
                     'Content-Type': 'application/json'
@@ -434,9 +441,9 @@ export default new Vuex.Store({
                 //console.log(response.data);
                 response.data.forEach((userClassNote) => {
                     const newNote = {
-                        noteId: userClassNote.note_id,
-                        classId: userClassNote.class_id,
-                        userId: userClassNote.user_id,
+                        noteId: userClassNote.noteId,
+                        classId: userClassNote.classId,
+                        userId: userClassNote.userId,
                         note_name: userClassNote.note_name,
                         note_body: userClassNote.note_body,
                         note_created_on: userClassNote.note_created_on,
@@ -451,12 +458,12 @@ export default new Vuex.Store({
                 return;
             });
         },
-        async getAllUserNotes({state}, classId) {
+        async getAllUserNotes({state}) {
             //console.log(classId)
             state.notes = [];
             await axios({
                 method: 'GET',
-                url: `/api/classes/${classId}/notes`,
+                url: `/api/notes`,
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user'),
                     'Content-Type': 'application/json'
@@ -467,9 +474,9 @@ export default new Vuex.Store({
                 //console.log(response.data);
                 response.data.forEach((userClassNote) => {
                     const newNote = {
-                        noteId: userClassNote.note_id,
-                        classId: userClassNote.class_id,
-                        userId: userClassNote.user_id,
+                        noteId: userClassNote.noteId,
+                        classId: userClassNote.classId,
+                        userId: userClassNote.userId,
                         note_name: userClassNote.note_name,
                         note_body: userClassNote.note_body,
                         note_created_on: userClassNote.note_created_on,
@@ -484,50 +491,37 @@ export default new Vuex.Store({
                 return;
             });
         },
-        async createNewClass(newClass) {
+        async getAllUserEvents({state}) {
+            //console.log(classId)
+            state.events = [];
             await axios({
-                method: 'POST',
-                url: "/api/classes",
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
-                    'Content-Type': 'application/json'
-                },
-                data: {
-                    className: newClass.className,
-                    class_created_on: Date.now()
-                }
-            })
-            .then((response) => {
-                console.log(response)
-                console.log("Class created");
-                return 1;
-            })
-            .catch((err) => {
-                console.log(err);
-                console.log("Class not created");
-                return 0;
-            })
-        },
-        async deleteClass(classId) {
-            console.log("Payload from store: " + classId)
-            await axios({
-                method: 'DELETE',
-                url: `/api/classes/${classId}`,
+                method: 'GET',
+                url: `/api/events`,
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user'),
                     'Content-Type': 'application/json'
                 },
             })
             .then((response) => {
-                console.log(response)
-                console.log("Class deleted");
-
-            })
-            .catch((err) => {
+                console.log("response starts here")
+                //console.log(response.data);
+                response.data.forEach((userEvent) => {
+                    const newEvent = {
+                        eventId: userEvent.eventId,
+                        userId: userEvent.userId,
+                        event_date: userEvent.event_date,
+                        event_description: userEvent.event_description,
+                        event_created_on: userEvent.event_created_on,
+                    }
+                    state.events.push(newEvent);
+                });
+                console.log(state.notes);
+                return;
+            }).catch((err) => {
+                console.log("error starts here")
                 console.log(err);
-                console.log("Class not deleted");
-            })
-
+                return;
+            });
         },
     },
     modules: {

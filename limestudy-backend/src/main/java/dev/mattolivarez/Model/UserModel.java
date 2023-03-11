@@ -1,6 +1,8 @@
 package dev.mattolivarez.Model;
 
 
+import java.util.Date;
+
 public class UserModel
 {
 
@@ -8,13 +10,16 @@ public class UserModel
     private String firstName;
     private String lastName;
     private String email;
+    private String account_created_on;
 
     public UserModel(){}
-    public UserModel(Integer userId, String firstName, String lastName, String email) {
+
+    public UserModel(Integer userId, String firstName, String lastName, String email, String account_created_on) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.account_created_on = account_created_on;
     }
 
     public Integer getUserId() {
@@ -49,4 +54,11 @@ public class UserModel
         this.email = email;
     }
 
+    public String getAccount_created_on() {
+        return account_created_on;
+    }
+
+    public void setAccount_created_on(String account_created_on) {
+        this.account_created_on = account_created_on;
+    }
 }

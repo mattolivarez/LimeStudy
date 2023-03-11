@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -22,7 +24,7 @@ public class ClassRepositoryImpl implements ClassRepository
 {
 
     private static final String SQL_CREATE = "INSERT INTO \"CLASS\"(CLASS_ID, USER_ID, CLASS_NAME, CLASS_CREATED_ON) " +
-                                             "VALUES(NEXTVAL('CLASS_SEQ'), ?, ?, ?)";
+                                             "VALUES(NEXTVAL('CLASS_SEQ'), ?, ?, ?) ";
 
     private static final String SQL_FIND_BY_ID = "SELECT CLASS_ID, USER_ID, CLASS_NAME, CLASS_CREATED_ON " +
                                                  "FROM \"CLASS\" " +
@@ -69,15 +71,18 @@ public class ClassRepositoryImpl implements ClassRepository
     }
 
     @Override
-    public Integer create(Integer userId, String class_name, Long class_created_on) throws BadRequestException {
+    public Integer create(Integer userId, String class_name, String class_created_on) throws BadRequestException {
         try
         {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            Date classCreatedDate = simpleDateFormat.parse(class_created_on);
+            java.sql.Date classCreatedOn = new java.sql.Date(classCreatedDate.getTime());
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
                 ps.setInt(1, userId);
                 ps.setString(2, class_name);
-                ps.setLong(3, class_created_on);
+                ps.setDate(3, classCreatedOn);
                 return ps;
             }, keyHolder);
             return (Integer) keyHolder.getKeys().get("CLASS_ID");
@@ -92,7 +97,10 @@ public class ClassRepositoryImpl implements ClassRepository
     public void update(Integer userId, Integer classId, ClassModel classModel) throws BadRequestException {
         try
         {
-            jdbcTemplate.update(SQL_UPDATE, new Object[]{classModel.getClass_name(), classModel.getClass_created_on(), userId, classId});
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            Date classCreatedDate = simpleDateFormat.parse(classModel.getClass_created_on());
+            java.sql.Date classCreatedOn = new java.sql.Date(classCreatedDate.getTime());
+            jdbcTemplate.update(SQL_UPDATE, new Object[]{classModel.getClass_name(), classCreatedOn, userId, classId});
         }
         catch(Exception e)
         {
@@ -127,6 +135,6 @@ public class ClassRepositoryImpl implements ClassRepository
         return new ClassModel(rs.getInt("CLASS_ID"),
                             rs.getInt("USER_ID"),
                             rs.getString("CLASS_NAME"),
-                            rs.getLong("CLASS_CREATED_ON"));
+                            rs.getString("CLASS_CREATED_ON"));
     });
 }

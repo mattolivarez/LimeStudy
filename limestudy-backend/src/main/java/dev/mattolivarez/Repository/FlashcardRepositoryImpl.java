@@ -13,25 +13,27 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Repository
 public class FlashcardRepositoryImpl implements FlashcardRepository
 {
 
-    private static final String SQL_CREATE = "INSERT INTO \"FLASHCARD\"(FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON) " +
-                                             "VALUES(NEXTVAL('FLASHCARD_SEQ'), ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_CREATE = "INSERT INTO \"FLASHCARD\"(FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON, CORRECT, INCORRECT, LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT) " +
+                                             "VALUES(NEXTVAL('FLASHCARD_SEQ'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    private static final String SQL_FIND_BY_ID = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON " +
+    private static final String SQL_FIND_BY_ID = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON, CORRECT, INCORRECT, LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
                                                  "FROM \"FLASHCARD\" " +
                                                  "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? AND FLASHCARD_ID = ?";
 
-    private static final String SQL_FIND_ALL = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON " +
+    private static final String SQL_FIND_ALL = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON, CORRECT, INCORRECT, LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
                                                "FROM \"FLASHCARD\" " +
                                                "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ?";
 
     private static final String SQL_UPDATE = "UPDATE \"FLASHCARD\" " +
-                                             "SET QUESTION = ?, ANSWER = ? " +
+                                             "SET QUESTION = ?, ANSWER = ?, FLASHCARD_CREATED_ON = ?, CORRECT = ?, INCORRECT = ?, LAST_STUDIED_ON = ?, OCCURRENCE_RATE = ?, OCCURRENCE_RATE_INPUT = ? " +
                                              "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? AND FLASHCARD_ID = ?";
 
     private static final String SQL_DELETE = "DELETE FROM \"FLASHCARD\" " +
@@ -48,7 +50,9 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
     }
 
     @Override
-    public FlashcardModel findById(Integer userId, Integer classId, Integer deckId, Integer flashcardId) throws ResourceNotFoundException {
+    public FlashcardModel findById(Integer userId, Integer classId, Integer deckId, Integer flashcardId)
+            throws ResourceNotFoundException
+    {
         try
         {
             return jdbcTemplate.queryForObject(SQL_FIND_BY_ID, new Object[]{userId, classId, deckId, flashcardId}, flashcardRowMapper);
@@ -60,9 +64,19 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
     }
 
     @Override
-    public Integer create(Integer userId, Integer classId, Integer deckId, String question, String answer, Long flashcard_created_on) throws BadRequestException {
+    public Integer create(Integer userId, Integer classId, Integer deckId, String question, String answer,
+                          String flashcard_created_on, Integer correct, Integer incorrect, String last_studied_on,
+                          Double occurrence_rate, Integer occurrence_rate_input)
+            throws BadRequestException
+    {
         try
         {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            Date flashcardCreatedDate = simpleDateFormat.parse(flashcard_created_on);
+            java.sql.Date flashcardCreatedOn = new java.sql.Date(flashcardCreatedDate.getTime());
+
+            Date lastStudiedDate = simpleDateFormat.parse(last_studied_on);
+            java.sql.Date lastStudiedOn = new java.sql.Date(lastStudiedDate.getTime());
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
@@ -71,7 +85,12 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
                 ps.setInt(3, userId);
                 ps.setString(4, question);
                 ps.setString(5, answer);
-                ps.setLong(6, flashcard_created_on);
+                ps.setDate(6, flashcardCreatedOn);
+                ps.setInt(7, correct);
+                ps.setInt(8, incorrect);
+                ps.setDate(9, lastStudiedOn);
+                ps.setDouble(10, occurrence_rate);
+                ps.setDouble(11, occurrence_rate_input);
                 return ps;
             }, keyHolder);
             return (Integer) keyHolder.getKeys().get("FLASHCARD_ID");
@@ -83,10 +102,28 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
     }
 
     @Override
-    public void update(Integer userId, Integer classId, Integer deckId, Integer flashcardId, FlashcardModel flashcardModel) throws BadRequestException {
+    public void update(Integer userId, Integer classId, Integer deckId, Integer flashcardId, FlashcardModel flashcardModel)
+            throws BadRequestException
+    {
         try
         {
-            jdbcTemplate.update(SQL_UPDATE, new Object[]{flashcardModel.getQuestion(), flashcardModel.getAnswer(), userId, classId, deckId, flashcardId});
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            Date flashcardCreatedDate = simpleDateFormat.parse(flashcardModel.getFlashcard_created_on());
+            java.sql.Date flashcardCreatedOn = new java.sql.Date(flashcardCreatedDate.getTime());
+
+            Date lastStudiedDate = simpleDateFormat.parse(flashcardModel.getLast_studied_on());
+            java.sql.Date lastStudiedOn = new java.sql.Date(lastStudiedDate.getTime());
+            jdbcTemplate.update(SQL_UPDATE,
+                    new Object[]{
+                            flashcardModel.getQuestion(),
+                            flashcardModel.getAnswer(),
+                            flashcardCreatedOn,
+                            flashcardModel.getCorrect(),
+                            flashcardModel.getIncorrect(),
+                            lastStudiedOn,
+                            flashcardModel.getOccurrence_rate(),
+                            flashcardModel.getOccurrence_rate_input(),
+                            userId, classId, deckId, flashcardId});
         }
         catch (Exception e)
         {
@@ -95,7 +132,9 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
     }
 
     @Override
-    public void removeById(Integer userId, Integer classId, Integer deckId, Integer flashcardId) throws ResourceNotFoundException {
+    public void removeById(Integer userId, Integer classId, Integer deckId, Integer flashcardId)
+            throws ResourceNotFoundException
+    {
         int count = jdbcTemplate.update(SQL_DELETE, new Object[]{userId, classId, deckId, flashcardId});
         if (count == 0)
         {
@@ -110,6 +149,11 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
                 rs.getInt("USER_ID"),
                 rs.getString("QUESTION"),
                 rs.getString("ANSWER"),
-                rs.getLong("FLASHCARD_CREATED_ON"));
+                rs.getString("FLASHCARD_CREATED_ON"),
+                rs.getInt("CORRECT"),
+                rs.getInt("INCORRECT"),
+                rs.getString("LAST_STUDIED_ON"),
+                rs.getDouble("OCCURRENCE_RATE"),
+                rs.getInt("OCCURRENCE_RATE_INPUT"));
     });
 }

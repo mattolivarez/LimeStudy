@@ -30,7 +30,7 @@ public class DeckServiceImpl implements DeckService
     }
 
     @Override
-    public DeckModel addDeck(Integer userId, Integer classId, String deck_name, Long deck_created_on) throws BadRequestException {
+    public DeckModel addDeck(Integer userId, Integer classId, String deck_name, String deck_created_on) throws BadRequestException {
         int deckId = deckRepository.create(userId, classId, deck_name, deck_created_on);
         return deckRepository.findById(userId, classId, deckId);
     }

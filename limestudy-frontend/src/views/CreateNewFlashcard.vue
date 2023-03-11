@@ -103,7 +103,12 @@ export default {
                     data: {
                         question: this.question,
                         answer: this.answer,
-                        flashcard_created_on: Date.now()
+                        flashcard_created_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"}),
+                        correct: 0,
+                        incorrect: 0,
+                        last_studied_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"}),
+                        occurrence_rate: 0.5,
+                        occurrence_rate_input: 0
                     }
                 })
                 .then((response) => {

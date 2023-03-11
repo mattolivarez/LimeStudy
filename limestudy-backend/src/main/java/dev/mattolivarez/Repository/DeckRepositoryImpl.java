@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -58,16 +60,19 @@ public class DeckRepositoryImpl implements DeckRepository
     }
 
     @Override
-    public Integer create(Integer userId, Integer classId, String deck_name, Long deck_created_on) throws BadRequestException {
+    public Integer create(Integer userId, Integer classId, String deck_name, String deck_created_on) throws BadRequestException {
         try
         {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            Date deckCreatedDate = simpleDateFormat.parse(deck_created_on);
+            java.sql.Date deckCreatedOn = new java.sql.Date(deckCreatedDate.getTime());
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
                 ps.setInt(1, classId);
                 ps.setInt(2, userId);
                 ps.setString(3, deck_name);
-                ps.setLong(4, deck_created_on);
+                ps.setDate(4, deckCreatedOn);
                 return ps;
             }, keyHolder);
             return (Integer) keyHolder.getKeys().get("DECK_ID");
@@ -82,7 +87,10 @@ public class DeckRepositoryImpl implements DeckRepository
     public void update(Integer userId, Integer classId, Integer deckId, DeckModel deckModel) throws BadRequestException {
         try
         {
-            jdbcTemplate.update(SQL_UPDATE, new Object[]{deckModel.getDeck_name(), deckModel.getDeck_created_on(), userId, classId, deckId});
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            Date deckCreatedDate = simpleDateFormat.parse(deckModel.getDeck_created_on());
+            java.sql.Date deckCreatedOn = new java.sql.Date(deckCreatedDate.getTime());
+            jdbcTemplate.update(SQL_UPDATE, new Object[]{deckModel.getDeck_name(), deckCreatedOn, userId, classId, deckId});
         }
         catch (Exception e)
         {
@@ -104,6 +112,6 @@ public class DeckRepositoryImpl implements DeckRepository
                                rs.getInt("CLASS_ID"),
                                rs.getInt("USER_ID"),
                                rs.getString("DECK_NAME"),
-                               rs.getLong("DECK_CREATED_ON"));
+                               rs.getString("DECK_CREATED_ON"));
     });
 }

@@ -5,6 +5,7 @@ import dev.mattolivarez.Model.FlashcardModel;
 import dev.mattolivarez.Service.FlashcardService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,8 +52,14 @@ public class FlashcardController
         int userId = (Integer) request.getAttribute("userId");
         String question = (String) flashcardMap.get("question");
         String answer = (String) flashcardMap.get("answer");
-        Long flashcard_created_on = (Long) flashcardMap.get("flashcard_created_on");
-        FlashcardModel flashcardModel = flashcardService.addFlashcard(userId, classId, deckId, question, answer, flashcard_created_on);
+        String flashcard_created_on = (String) flashcardMap.get("flashcard_created_on");
+        Integer correct = (Integer) flashcardMap.get("correct");
+        Integer incorrect = (Integer) flashcardMap.get("incorrect");
+        String last_studied_on = (String) flashcardMap.get("last_studied_on");
+        Double occurrence_rate = (Double) flashcardMap.get("occurrence_rate");
+        Integer occurrence_rate_input = (Integer) flashcardMap.get("occurrence_rate_input");
+        FlashcardModel flashcardModel = flashcardService.addFlashcard(userId, classId, deckId,
+                question, answer, flashcard_created_on, correct, incorrect, last_studied_on, occurrence_rate, occurrence_rate_input);
         return new ResponseEntity<>(flashcardModel, HttpStatus.CREATED);
     }
 

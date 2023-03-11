@@ -1,17 +1,20 @@
 package dev.mattolivarez.Model;
 
+import java.util.Date;
+
 public class ClassModel
 {
     private Integer classId;
     private Integer userId;
     private String class_name;
-    private Long class_created_on;
+    private String class_created_on;
     //private Integer number_of_decks;
+    //private Double class_accuracy_percentage;
     //private String class_color_code;
 
     public ClassModel() {}
 
-    public ClassModel(Integer classId, Integer userId, String class_name, Long class_created_on) {
+    public ClassModel(Integer classId, Integer userId, String class_name, String class_created_on) {
         this.classId = classId;
         this.userId = userId;
         this.class_name = class_name;
@@ -42,11 +45,11 @@ public class ClassModel
         this.class_name = class_name;
     }
 
-    public Long getClass_created_on() {
+    public String getClass_created_on() {
         return class_created_on;
     }
 
-    public void setClass_created_on(Long class_created_on) {
+    public void setClass_created_on(String class_created_on) {
         this.class_created_on = class_created_on;
     }
 }

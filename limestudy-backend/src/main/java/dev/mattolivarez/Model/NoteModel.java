@@ -2,45 +2,49 @@ package dev.mattolivarez.Model;
 
 public class NoteModel
 {
-    private Integer note_id;
-    private Integer class_id;
-    private Integer user_id;
+    private Integer noteId;
+    private Integer classId;
+    private Integer userId;
     private String note_name;
     private String note_body;
-    private Long note_created_on;
+    private String note_created_on;
 
     public NoteModel() {};
-    public NoteModel(Integer note_id, Integer class_id, Integer user_id, String note_name, String note_body, Long note_created_on) {
-        this.note_id = note_id;
-        this.class_id = class_id;
-        this.user_id = user_id;
+    public NoteModel(Integer noteId, Integer userId, String note_name, String note_body, String note_created_on)
+    {
+        this(noteId, null, userId, note_name, note_body, note_created_on);
+    }
+    public NoteModel(Integer noteId, Integer classId, Integer userId, String note_name, String note_body, String note_created_on) {
+        this.noteId = noteId;
+        this.classId = classId;
+        this.userId = userId;
         this.note_name = note_name;
         this.note_body = note_body;
         this.note_created_on = note_created_on;
     }
 
-    public Integer getNote_id() {
-        return note_id;
+    public Integer getNoteId() {
+        return noteId;
     }
 
-    public void setNote_id(Integer note_id) {
-        this.note_id = note_id;
+    public void setNoteId(Integer note_id) {
+        this.noteId = noteId;
     }
 
-    public Integer getClass_id() {
-        return class_id;
+    public Integer getClassId() {
+        return classId;
     }
 
-    public void setClass_id(Integer class_id) {
-        this.class_id = class_id;
+    public void setClassId(Integer classId) {
+        this.classId = classId;
     }
 
-    public Integer getUser_id() {
-        return user_id;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getNote_name() {
@@ -59,11 +63,11 @@ public class NoteModel
         this.note_body = note_body;
     }
 
-    public Long getNote_created_on() {
+    public String getNote_created_on() {
         return note_created_on;
     }
 
-    public void setNote_created_on(Long note_created_on) {
+    public void setNote_created_on(String note_created_on) {
         this.note_created_on = note_created_on;
     }
 }

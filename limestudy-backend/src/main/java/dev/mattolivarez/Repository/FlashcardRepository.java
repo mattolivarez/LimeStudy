@@ -10,11 +10,17 @@ public interface FlashcardRepository
 {
     List<FlashcardModel> findAll(Integer userId, Integer classId, Integer deckId);
 
-    FlashcardModel findById(Integer userId, Integer classId, Integer deckId, Integer flashcardId) throws ResourceNotFoundException;
+    FlashcardModel findById(Integer userId, Integer classId, Integer deckId, Integer flashcardId)
+            throws ResourceNotFoundException;
 
-    Integer create(Integer userId, Integer classId, Integer deckId, String question, String answer, Long flashcard_created_on) throws BadRequestException;
+    Integer create(Integer userId, Integer classId, Integer deckId, String question, String answer,
+                   String flashcard_created_on, Integer correct, Integer incorrect, String last_studied_on,
+                   Double occurrence_rate, Integer occurrence_rate_input)
+            throws BadRequestException;
 
-    void update(Integer userId, Integer classId, Integer deckId, Integer flashcardId, FlashcardModel flashcardModel) throws BadRequestException;
+    void update(Integer userId, Integer classId, Integer deckId, Integer flashcardId, FlashcardModel flashcardModel)
+            throws BadRequestException;
 
-    void removeById(Integer userId, Integer classId, Integer deckId, Integer flashcardId) throws ResourceNotFoundException;
+    void removeById(Integer userId, Integer classId, Integer deckId, Integer flashcardId)
+            throws ResourceNotFoundException;
 }

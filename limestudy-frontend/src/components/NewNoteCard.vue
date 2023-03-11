@@ -2,7 +2,7 @@
     <div class="card">
         <div class="info">
             <Add class="addIcon" />
-            <router-link class="link" :to="{name: 'CreateNewNote', params: { classId: this.$route.params.classId }}">Add New Note <Arrow class="arrow" /></router-link>
+            <router-link class="link" :to="{name: 'CreateNewNote'}">Add New Note <Arrow class="arrow" /></router-link>
         </div>
     </div>
 </template>

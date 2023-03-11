@@ -2,20 +2,22 @@ package dev.mattolivarez.Controller;
 
 import dev.mattolivarez.Constants;
 import dev.mattolivarez.Model.UserModel;
-import dev.mattolivarez.Service.UserService;
 import io.jsonwebtoken.*;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.catalina.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -34,10 +36,25 @@ public class UserController
         String email = (String) userMap.get("email");
         String firstName = (String) userMap.get("firstName");
         String lastName = (String) userMap.get("lastName");
-        UserModel userModel = new UserModel(userId, email, firstName, lastName);
+        String account_created_on = (String) userMap.get("accountCreatedOn");
+        UserModel userModel = new UserModel(userId, email, firstName, lastName, account_created_on);
 
         return new ResponseEntity<>(generateJWTToken(userModel), HttpStatus.OK);
     }
+    /*@GetMapping("/test")
+    public ResponseEntity<HttpResponse<String>> testingGoReq() throws URISyntaxException, IOException, InterruptedException {
+        HttpResponse<String> response = checkIfUserLoggedIn();
+        return new ResponseEntity<HttpResponse<String>>(response, HttpStatus.OK);
+    }*/
+    @GetMapping("/test")
+    public ResponseEntity<String> testingGoReq(HttpServletRequest httpServletRequest) throws URISyntaxException, IOException, InterruptedException {
+        Cookie[] cookies = httpServletRequest.getCookies();
+        System.out.println(cookies[0].getValue());
+        checkIfUserLoggedIn(httpServletRequest);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     /*
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> loginUser(@RequestBody Map<String, Object> userMap)
@@ -84,6 +101,18 @@ public class UserController
         Map<String, String> map = new HashMap<>();
         map.put("token", token);
         return map;
+    }
+
+    private void checkIfUserLoggedIn(HttpServletRequest httpServletRequest) throws URISyntaxException, IOException, InterruptedException {
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest golangReq = HttpRequest.newBuilder()
+                .uri(new URI("http://localhost:8085/auth/healthcheck"))
+                .headers("Content-Type", "application/json")
+                .GET()
+                .build();
+        HttpResponse<String> httpResponse = httpClient.send(golangReq, HttpResponse.BodyHandlers.ofString());
+        System.out.println(httpResponse);
+        //return httpResponse;
     }
 
 }

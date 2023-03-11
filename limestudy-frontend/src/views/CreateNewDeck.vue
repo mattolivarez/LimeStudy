@@ -56,7 +56,7 @@ export default {
                 },
                 data: {
                     deck_name: this.deckName,
-                    deck_created_on: Date.now()
+                    deck_created_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"})
                 }
             })
             .then((response) => {

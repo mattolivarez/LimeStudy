@@ -8,13 +8,19 @@ import java.util.List;
 
 public interface NoteRepository
 {
-    List<NoteModel> findAll(Integer userId, Integer classId);
+    List<NoteModel> findAll(Integer userId);
 
-    NoteModel findById(Integer userId, Integer classId, Integer noteId) throws ResourceNotFoundException;
+    List<NoteModel> findAllBelongingToClass(Integer userId, Integer classId);
 
-    Integer create(Integer userId, Integer classId, String note_name, String note_body, Long note_created_on) throws BadRequestException;
+    NoteModel findById(Integer userId, Integer noteId) throws ResourceNotFoundException;
 
-    void update(Integer userId, Integer classId, Integer noteId, NoteModel noteModel) throws BadRequestException;
+    Integer create(Integer userId, Integer classId, String note_name, String note_body, String note_created_on) throws BadRequestException;
 
-    void removeById(Integer userId, Integer classId, Integer noteId) throws ResourceNotFoundException;
+    Integer createWithNoClass(Integer userId, String note_name, String note_body, String note_created_on) throws BadRequestException;
+
+    void update(Integer userId, Integer noteId, NoteModel noteModel) throws BadRequestException;
+
+    void updateNoClass(Integer userId, Integer noteId, NoteModel noteModel) throws BadRequestException;
+
+    void removeById(Integer userId, Integer noteId) throws ResourceNotFoundException;
 }

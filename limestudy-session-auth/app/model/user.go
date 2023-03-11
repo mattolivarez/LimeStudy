@@ -1,17 +1,19 @@
 package model
 
 
+
 type UserModel struct {
 	UserId uint64 `json:"user_id"`
 	FirstName string `json:"first_name"`
 	LastName string `json:"last_name"`
 	Email string `json:"email"`
 	Password string `json:"password"`
+	AccountCreatedOn string `json:"account_created_on"`
 }
 
 func CreateUser(user *UserModel) error {
-	statement := `insert into "USER"(user_id, first_name, last_name, email, password) values(NEXTVAL('USER_SEQ'), $1, $2, $3, $4);`
-	_, err := db.Exec(statement, user.FirstName, user.LastName, user.Email, user.Password)
+	statement := `insert into "USER"(user_id, first_name, last_name, email, password, account_created_on) values(NEXTVAL('USER_SEQ'), $1, $2, $3, $4, $5);`
+	_, err := db.Exec(statement, user.FirstName, user.LastName, user.Email, user.Password, user.AccountCreatedOn)
 	return err
 }
 
@@ -23,7 +25,7 @@ func GetUser(UserId string) (UserModel, error) {
 		return UserModel{}, err
 	}
 	for rows.Next() {
-		err = rows.Scan(&user.UserId, &user.FirstName, &user.LastName, &user.Email, &user.Password)
+		err = rows.Scan(&user.UserId, &user.FirstName, &user.LastName, &user.Email, &user.Password, &user.AccountCreatedOn)
 		if err != nil {
 			return UserModel{}, err
 		}
@@ -32,13 +34,13 @@ func GetUser(UserId string) (UserModel, error) {
 }
 
 func CheckEmail(email string, user *UserModel) bool {
-	statement := `select user_id, first_name, last_name, email, password from "USER" where email=$1 limit 1;`
+	statement := `select user_id, first_name, last_name, email, password, account_created_on from "USER" where email=$1 limit 1;`
 	rows, err := db.Query(statement, email)
 	if err != nil {
 		return false
 	}
 	for rows.Next() {
-		err = rows.Scan(&user.UserId, &user.FirstName, &user.LastName, &user.Email, &user.Password)
+		err = rows.Scan(&user.UserId, &user.FirstName, &user.LastName, &user.Email, &user.Password, &user.AccountCreatedOn)
 		if err != nil {
 			return false
 		}

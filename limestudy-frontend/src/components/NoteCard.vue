@@ -14,7 +14,7 @@
             <h6>Created on: {{ new Date(notes.note_created_on).toLocaleString('en-us', {dateStyle: "long"}) }}</h6>
             <h6>Name: {{ notes.note_name }}</h6>
             <h6 class="note-body">Body: {{ this.replaceString(notes.note_body) }}</h6>
-            <router-link class="link" :to="{name: 'ReadNote', params: {classId: notes.classId, noteId: notes.noteId}}"> 
+            <router-link class="link" :to="{name: 'ReadNote', params: {noteId: notes.noteId}}"> 
                 View Note <Arrow class="arrow" />
             </router-link> <!--:to="{name: 'ViewDecks', params: {classId: decks.classId, deckId: decks.deckId}}"-->
         </div>
@@ -43,7 +43,7 @@ export default {
             //console.log("Payload from store: " + classId)
             await axios({
                 method: 'DELETE',
-                url: `/api/classes/${this.notes.classId}/notes/${this.notes.deckId}`,
+                url: `/api/notes/${this.notes.noteId}`,
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user'),
                     'Content-Type': 'application/json'
@@ -62,7 +62,7 @@ export default {
             }, 2500)
         },
         editNote() {
-            this.$router.push({ name: 'UpdateNote', params: { classId: this.notes.classId, noteId: this.notes.noteId } });
+            this.$router.push({ name: 'UpdateNote', params: { noteId: this.notes.noteId } });
         },
         replaceString(word) {
             word = word.replace(/(<([^>]+)>)/ig, "");
