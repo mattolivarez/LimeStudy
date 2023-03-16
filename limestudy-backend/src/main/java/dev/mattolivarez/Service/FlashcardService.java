@@ -24,4 +24,6 @@ public interface FlashcardService
 
     void removeFlashcard(Integer userId, Integer classId, Integer deckId, Integer flashcardId)
             throws ResourceNotFoundException;
+
+    List<FlashcardModel> fetchTraditionalStudySet(Integer userId, Integer classId, Integer deckId);
 }

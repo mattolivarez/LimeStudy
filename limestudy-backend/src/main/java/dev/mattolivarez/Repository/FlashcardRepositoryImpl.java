@@ -39,6 +39,10 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
     private static final String SQL_DELETE = "DELETE FROM \"FLASHCARD\" " +
                                              "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? AND FLASHCARD_ID = ?";
 
+    private static final String SQL_FIND_TRADITIONAL_STUDY_SET = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON, CORRECT, INCORRECT, LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
+            "FROM \"FLASHCARD\" " +
+            "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? AND LAST_STUDIED_ON >= CURRENT_DATE - INTERVAL '1' DAY * (SELECT FLASHCARD_DELAY_SETTING FROM \"USER\" WHERE USER_ID = ?) AND OCCURRENCE_RATE >= 0.5 " +
+            "ORDER BY OCCURRENCE_RATE DESC";
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -140,6 +144,11 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
         {
             throw new ResourceNotFoundException("Flashcard not found");
         }
+    }
+
+    @Override
+    public List<FlashcardModel> findTraditionalStudySet(Integer userId, Integer classId, Integer deckId) {
+        return jdbcTemplate.query(SQL_FIND_TRADITIONAL_STUDY_SET, new Object[]{userId, classId, deckId, userId}, flashcardRowMapper);
     }
 
     private RowMapper<FlashcardModel> flashcardRowMapper = ((rs, rowNum) -> {

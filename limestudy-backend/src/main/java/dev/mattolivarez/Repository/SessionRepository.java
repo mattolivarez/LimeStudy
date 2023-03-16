@@ -23,4 +23,7 @@ public interface SessionRepository
 
     void removeById(Integer userId, Integer classId, Integer deckId, Integer flashcardId, Integer sessionId)
             throws ResourceNotFoundException;
+
+    SessionModel findByIdIfExists(Integer userId, Integer classId, Integer deckId, Integer flashcardId)
+            throws ResourceNotFoundException;
 }

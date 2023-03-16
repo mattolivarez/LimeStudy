@@ -2,16 +2,19 @@
     <header>
         <nav class="container">
             <div class="branding">
-                <router-link class="header" :to="{ name: 'Landing' }">Limestudy</router-link>
+                <router-link class="header" :to="{ name: 'Landing' }">
+                    <Lime class="lime" /> 
+                    Limestudy
+                </router-link>
             </div>
             <div class="nav-links">
                 <ul v-show="!mobile">
                     <router-link v-if="!loggedIn" class="link" :to="{ name: 'Landing' }">Home</router-link>
                     <router-link v-if="!loggedIn" class="link" :to="{ name: 'About' }">About</router-link>
-                    <router-link v-if="loggedIn" class="link" to="#">Dashboard</router-link>
+                    <router-link v-if="loggedIn" class="link" :to="{ name: 'Dashboard' }">Dashboard</router-link>
                     <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewClasses' }">Classes</router-link>
                     <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewNotes' }">Notes</router-link>
-                    <router-link v-if="loggedIn" class="link" to="#">Calendar</router-link>
+                    <router-link v-if="loggedIn" class="link" :to="{ name: 'Calendar' }">Calendar</router-link>
                     <router-link v-if="loggedIn" class="link" to="#">Statistics</router-link>
                     <!-- <router-link v-if="loggedIn" class="link" :to="{ name: 'CreatePost' }">Create New Class</router-link> -->
                     <!-- <router-link v-if="this.$store.state.flashcardsLoaded" class="link" to="#">Study</router-link> -->
@@ -55,10 +58,10 @@
             <ul class="mobile-nav" v-show="mobileNav">
                 <router-link v-if="!loggedIn" class="link" :to="{ name: 'Landing' }">Home</router-link>
                 <router-link v-if="!loggedIn" class="link" :to="{ name: 'About' }">About</router-link>
-                <router-link v-if="loggedIn" class="link" to="#">Dashboard</router-link>
+                <router-link v-if="loggedIn" class="link" :to="{ name: 'Dashboard' }">Dashboard</router-link>
                 <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewClasses' }">Classes</router-link>
                 <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewNotes' }">Notes</router-link>
-                <router-link v-if="loggedIn" class="link" to="#">Calendar</router-link>
+                <router-link v-if="loggedIn" class="link" :to="{ name: 'Calendar' }">Calendar</router-link>
                 <router-link v-if="loggedIn" class="link" to="#">Statistics</router-link>
                 <!-- <router-link v-if="loggedIn" class="link" :to="{ name: 'CreatePost' }">Create New Class</router-link> -->
                 <!-- <router-link v-if="this.$store.state.flashcardsLoaded" class="link" to="#">Study</router-link> -->
@@ -73,6 +76,7 @@ import menuIcon from '../assets/Icons/bars-regular.svg';
 import userIcon from '../assets/Icons/user-alt-light.svg';
 import adminIcon from '../assets/Icons/user-crown-light.svg';
 import signOutIcon from '../assets/Icons/sign-out-alt-regular.svg';
+import Lime from '../assets/Icons/lemon-solid.svg'
 //import firebase from "firebase/app"
 import "firebase/auth"
 import axios from "axios"
@@ -84,6 +88,7 @@ export default {
         userIcon,
         adminIcon,
         signOutIcon,
+        Lime,
     },
     async beforeMount() {
         await axios({
@@ -91,7 +96,7 @@ export default {
             url: 'http://localhost:8085/user',
             withCredentials: true,
             headers: {
-                //'Access-Control-Allow-Origin': 'http://localhost:5000',
+                //'Access-Control-Allow-Origin': 'http://localhost:8000/',
                 'Content-Type': 'application/json'
                 //'Authorization': 'Bearer ' + localStorage.getItem('user')
             },
@@ -103,6 +108,8 @@ export default {
                 firstName: response.data.first_name,
                 lastName: response.data.last_name,
                 email: response.data.email,
+                accountCreatedOn: response.data.account_created_on,
+                flashcard_delay_setting: response.data.flashcard_delay_setting
             }
             this.$store.state.loggedIn = true
             this.$store.commit("setUserDetails", data);
@@ -189,7 +196,7 @@ header
 
         &:hover
         {
-            color: #1eb8b8;
+            color: var(--lime);
         }
     }
     nav
@@ -382,5 +389,16 @@ header
         transform: translateX(-250px);
     }
 }
+.header
+{
+    display: flex;
 
+    .lime
+    {
+        width: 30px;
+        max-width: 25px;
+        margin-right: 10px;
+        fill: var(--lime);
+    }
+}
 </style>

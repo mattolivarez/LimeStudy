@@ -56,6 +56,15 @@ export default {
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
 
+:root
+{
+    --primary: #FFCE00;
+    --secondary: #FE4880;
+    --dark: #212121;
+    --light: #F3F3F3;
+    --lime: #32CD32;
+}
+
 * 
 {
     margin: 0;

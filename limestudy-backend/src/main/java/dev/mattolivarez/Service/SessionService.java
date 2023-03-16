@@ -23,4 +23,7 @@ public interface SessionService
 
     void removeSession(Integer userId, Integer classId, Integer deckId, Integer flashcardId, Integer sessionId)
             throws ResourceNotFoundException;
+
+    SessionModel fetchSessionIfExists(Integer userId, Integer classId, Integer deckId, Integer flashcardId)
+            throws ResourceNotFoundException;
 }

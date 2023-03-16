@@ -12,6 +12,10 @@ import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
 
+// other user pages
+import Dashboard from "../views/Dashboard.vue"
+import Calendar from "../views/Calendar.vue"
+
 // classes
 import ViewClasses from "../views/ViewClasses.vue"; // read classes
 import CreateNewClass from "../views/CreateNewClass.vue"; // create classes 
@@ -70,7 +74,25 @@ const routes = [
     }
   },
   {
-    path: "/home/classes",
+    path: "/dashboard",
+    name: "Dashboard",
+    component: Dashboard,
+    meta: {
+      title: 'Dashboard',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/dashboard/calendar",
+    name: "Calendar",
+    component: Calendar,
+    meta: {
+      title: 'Calendar',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/dashboard/classes",
     name: "ViewClasses",
     component: ViewClasses,
     meta: {
@@ -79,7 +101,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/create-new-class",
+    path: "/dashboard/classes/create-new-class",
     name: "CreateNewClass",
     component: CreateNewClass,
     meta: {
@@ -88,7 +110,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/update-class",
+    path: "/dashboard/classes/:classId/update-class",
     name: "UpdateClass",
     component: UpdateClass,
     meta: {
@@ -97,7 +119,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/decks",
+    path: "/dashboard/classes/:classId/decks",
     name: "ViewDecks",
     component: ViewDecks,
     meta: {
@@ -106,7 +128,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/create-new-deck",
+    path: "/dashboard/classes/:classId/create-new-deck",
     name: "CreateNewDeck",
     component: CreateNewDeck,
     meta: {
@@ -115,7 +137,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/decks/:deckId/update-deck",
+    path: "/dashboard/classes/:classId/decks/:deckId/update-deck",
     name: "UpdateDeck",
     component: UpdateDeck,
     meta: {
@@ -124,7 +146,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/decks/:deckId/flashcards",
+    path: "/dashboard/classes/:classId/decks/:deckId/flashcards",
     name: "ViewFlashcards",
     component: ViewFlashcards,
     meta: {
@@ -133,7 +155,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/decks/:deckId/flashcards/create-new-flashcard",
+    path: "/dashboard/classes/:classId/decks/:deckId/flashcards/create-new-flashcard",
     name: "CreateNewFlashcard",
     component: CreateNewFlashcard,
     meta: {
@@ -142,7 +164,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/decks/:deckId/flashcards/:flashcardId/update-flashcard",
+    path: "/dashboard/classes/:classId/decks/:deckId/flashcards/:flashcardId/update-flashcard",
     name: "UpdateFlashcard",
     component: UpdateFlashcard,
     meta: {
@@ -151,7 +173,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/decks/:deckId/flashcards/traditional-study",
+    path: "/dashboard/classes/:classId/decks/:deckId/flashcards/traditional-study",
     name: "TraditionalStudy",
     component: TraditionalStudy,
     meta: {
@@ -160,7 +182,7 @@ const routes = [
     }
   },
   {
-    path: "/home/classes/:classId/decks/:deckId/flashcards/multi-choice-study",
+    path: "/dashboard/classes/:classId/decks/:deckId/flashcards/multi-choice-study",
     name: "MultiChoiceStudy",
     component: MultiChoiceStudy,
     meta: {
@@ -169,7 +191,7 @@ const routes = [
     }
   },
   {
-    path: "/home/notes/create-new-note",
+    path: "/dashboard/notes/create-new-note",
     name: "CreateNewNote",
     component: CreateNewNote,
     meta: {
@@ -178,7 +200,7 @@ const routes = [
     }
   },
   {
-    path: "/home/notes/:noteId",
+    path: "/dashboard/notes/:noteId",
     name: "ReadNote",
     component: ReadNote,
     meta: {
@@ -187,7 +209,7 @@ const routes = [
     }
   },
   {
-    path: "/home/notes",
+    path: "/dashboard/notes",
     name: "ViewNotes",
     component: ViewNotes,
     meta: {
@@ -285,7 +307,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = `${to.meta.title} | FireBlogs`;
+  document.title = `${to.meta.title} | Limestudy`;
   next();
 });
 

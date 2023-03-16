@@ -8,6 +8,7 @@
             </div>
             <div class="blog-info">
                 <input type="text" placeholder="Enter note name..." v-model="noteName" /> <!--v-model="blogTitle"-->
+                <input type="text" placeholder="Enter class id..." v-model="classId" />
             </div>
             <div class="editor">
                 <vue-editor :editorOptions="editorSettings" v-model="noteBody" useCustomImageHandler @image-added="imageHandler" /> <!-- @image-added="imageHandler" -->
@@ -47,6 +48,7 @@ export default {
             loading: null,
             noteBody: "",
             noteName: "",
+            classId: null,
             editorSettings: {
                 modules: {
                     imageResize: {},
@@ -194,6 +196,7 @@ export default {
     {
         display: flex;
         margin-bottom: 32px;
+        justify-content: space-between;
 
         input:nth-child(1)
         {

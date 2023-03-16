@@ -47,6 +47,8 @@ export default new Vuex.Store({
         profileLastName: null,
         profileUserId: null,
         profileInitials: null,
+        profileAccountCreatedOn: null,
+        profileFlashcardDelaySetting: null,
     },
     getters: {
         blogPostsFeed(state) {
@@ -112,6 +114,8 @@ export default new Vuex.Store({
             state.profileFirstName = details.firstName;
             state.profileLastName = details.lastName;
             state.profileUserId = details.userId;
+            state.profileAccountCreatedOn = details.accountCreatedOn;
+            state.profileFlashcardDelaySetting = details.flashcard_delay_setting;
         },
         removeUserDetails(state) {
             state.profileEmail = "";
@@ -168,7 +172,7 @@ export default new Vuex.Store({
                     firstName: response.data.firstName,
                     lastName: response.data.lastName,
                     email: response.data.email,
-                    userId: response.data.userId
+                    userId: response.data.userId,
                 }
                 commit('setUserDetails', details);
                 commit('setProfileInitials');
@@ -310,6 +314,8 @@ export default new Vuex.Store({
                     firstName: state.profileFirstName,
                     lastName: state.profileLastName,
                     email: state.profileEmail,
+                    accountCreatedOn: state.profileAccountCreatedOn,
+                    flashcard_delay_setting: state.profileFlashcardDelaySetting
                 },
             })
             .then((response) => {
@@ -515,7 +521,44 @@ export default new Vuex.Store({
                     }
                     state.events.push(newEvent);
                 });
-                console.log(state.notes);
+                console.log(state.events);
+                return;
+            }).catch((err) => {
+                console.log("error starts here")
+                console.log(err);
+                return;
+            });
+        },
+        async updateUserSession({state}, payload) {
+            await axios({
+                method: 'GET',
+                url: `/api/classes/${payload.classId}/decks/${payload.deckId}/flashcards/${payload.flashcardId}/sessions/${payload.sessionId}`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log("response starts here")
+                console.log(response.data);
+                response.data.forEach((userClassDeckFlashcard) => {
+                    const newFlashcard = {
+                        flashcardId: userClassDeckFlashcard.flashcardId,
+                        deckId: userClassDeckFlashcard.deckId,
+                        classId: userClassDeckFlashcard.classId,
+                        userId: userClassDeckFlashcard.userId,
+                        question: userClassDeckFlashcard.question,
+                        answer: userClassDeckFlashcard.answer,
+                        flashcard_created_on: userClassDeckFlashcard.flashcard_created_on,
+                        correct: userClassDeckFlashcard.correct,
+                        incorrect: userClassDeckFlashcard.incorrect,
+                        last_studied_on: userClassDeckFlashcard.last_studied_on,
+                        occurrence_rate: userClassDeckFlashcard.occurrence_rate,
+                        occurrence_rate_input: userClassDeckFlashcard.occurrence_rate_input
+                    }
+                    state.flashcards.push(newFlashcard);
+                });
+                console.log(state.flashcards);
                 return;
             }).catch((err) => {
                 console.log("error starts here")

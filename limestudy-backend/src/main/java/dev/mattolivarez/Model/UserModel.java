@@ -11,15 +11,17 @@ public class UserModel
     private String lastName;
     private String email;
     private String account_created_on;
+    private Integer flashcard_delay_setting;
 
     public UserModel(){}
 
-    public UserModel(Integer userId, String firstName, String lastName, String email, String account_created_on) {
+    public UserModel(Integer userId, String firstName, String lastName, String email, String account_created_on, Integer flashcard_delay_setting) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.account_created_on = account_created_on;
+        this.flashcard_delay_setting = flashcard_delay_setting;
     }
 
     public Integer getUserId() {
@@ -60,5 +62,13 @@ public class UserModel
 
     public void setAccount_created_on(String account_created_on) {
         this.account_created_on = account_created_on;
+    }
+
+    public Integer getFlashcard_delay_setting() {
+        return flashcard_delay_setting;
+    }
+
+    public void setFlashcard_delay_setting(Integer flashcard_delay_setting) {
+        this.flashcard_delay_setting = flashcard_delay_setting;
     }
 }

@@ -128,7 +128,7 @@ export default {
         }
         input:checked[type="checkbox"]:before
         {
-            background: #fff;
+            background: var(--lime);
             left: 52px;
         }
     }

@@ -37,6 +37,9 @@ public class SessionRepositoryImpl implements SessionRepository
     private static final String SQL_DELETE = "DELETE FROM \"SESSION\" " +
             "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? AND FLASHCARD_ID = ? AND SESSION_ID = ?";
 
+    private static final String SQL_FIND_IF_EXISTS = "SELECT SESSION_ID, FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, SESSION_DATE, SESSION_CORRECT, SESSION_INCORRECT " +
+            "FROM \"SESSION\" " +
+            "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? AND FLASHCARD_ID = ? AND SESSION_DATE = CURRENT_DATE";
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -123,6 +126,22 @@ public class SessionRepositoryImpl implements SessionRepository
     {
         int count = jdbcTemplate.update(SQL_DELETE, new Object[]{userId, classId, deckId, flashcardId, sessionId});
         if (count == 0)
+        {
+            throw new ResourceNotFoundException("Session not found");
+        }
+    }
+
+    @Override
+    public SessionModel findByIdIfExists(Integer userId, Integer classId, Integer deckId, Integer flashcardId)
+            throws ResourceNotFoundException
+    {
+        try
+        {
+            return jdbcTemplate.queryForObject(SQL_FIND_IF_EXISTS,
+                    new Object[]{userId, classId, deckId, flashcardId},
+                    sessionRowMapper);
+        }
+        catch (Exception e)
         {
             throw new ResourceNotFoundException("Session not found");
         }

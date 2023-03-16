@@ -2,99 +2,42 @@
     <div class="profile">
         <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
         <div class="container">
-            <h2>Create New Deck</h2>
             <div class="profile-info">
-                <div class="initials">{{ $store.state.profileInitials }}</div>
-                <!--<div class="admin-badge">
-                    <adminIcon class="icon" />
-                    <span>Admin</span>
-                </div>-->
                 <div class="input">
-                    <label for="userId">User Id: </label>
-                    <input type="text" id="userId" v-model="userId" disabled>
+                    <h4 v-html="studyFlashcards.question"></h4>
                 </div>
                 <div class="input">
-                    <label for="classId">Class Id: </label>
-                    <input type="text" id="classId" v-model="classId" disabled>
+                    <h4 v-html="studyFlashcards.answer"></h4>
                 </div>
-                <div class="input">
-                    <label for="deckName">Deck Name: </label>
-                    <input type="text" id="deckName" v-model="deckName">
-                </div>
-                <button @click="createNewDeck">Submit</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import Modal from "../components/Modal";
-import axios from "axios"
-//import adminIcon from "../assets/Icons/user-crown-light.svg";
 
 export default {
-    name: "Profile",
-    components: {
-        Modal,
-        //adminIcon,
-    },
+    name: "StudyCard",
+    props: ["studyFlashcards"],
     data() {
         return {
-            modalMessage: "Deck created!",
-            modalActive: null,
-            deckName: "",
-        };
-    },
-    methods: {
-        async createNewDeck() {
-            await axios({
-                method: 'POST',
-                url: `/api/classes/${this.$route.params.classId}/decks`,
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
-                    'Content-Type': 'application/json'
-                },
-                data: {
-                    deck_name: this.deckName,
-                    deck_created_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"})
-                }
-            })
-            .then((response) => {
-                console.log(response)
-                console.log("Deck created");
-            })
-            .catch((err) => {
-                console.log(err);
-                console.log("Deck not created");
-            })
-            this.modalActive = !this.modalActive;
-        },
-        closeModal() {
-            this.modalActive = !this.modalActive;
-            this.$router.push({name: "ViewDecks", params: { classId: this.$route.params.classId }});
-        },
-    },
-    computed: {
-        userId: {
-            get() {
-                return this.$store.state.profileUserId
-            }
-        },
-        classId: {
-            get() {
-                return this.$route.params.classId;
-            }
+            modalActive: false,
+            modalMessage: "",
         }
     },
-}
-</script>
+    components: {
 
+    },
+}
+
+</script>
 
 <style lang="scss" scoped>
 .profile
 {
     .container
     {
+        position: absolute;
         max-width: 1000px;
         padding: 60px 25px;
 

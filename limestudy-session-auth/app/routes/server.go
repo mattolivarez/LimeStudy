@@ -20,8 +20,8 @@ func Setup() {
 		CookieHTTPOnly: true,
 		Expiration: time.Hour * 5,
 		CookiePath: "/", 
-		//CookieSecure: true, // for https
-		//CookieSameSite: "None",
+		CookieSecure: true, // for https
+		CookieSameSite: "None",
 	})
 
 	router.Use(NewMiddleware(), cors.New(cors.Config {

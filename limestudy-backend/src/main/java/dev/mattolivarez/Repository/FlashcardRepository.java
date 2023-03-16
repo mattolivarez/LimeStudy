@@ -23,4 +23,6 @@ public interface FlashcardRepository
 
     void removeById(Integer userId, Integer classId, Integer deckId, Integer flashcardId)
             throws ResourceNotFoundException;
+
+    List<FlashcardModel> findTraditionalStudySet(Integer userId, Integer classId, Integer deckId);
 }

@@ -37,7 +37,8 @@ public class UserController
         String firstName = (String) userMap.get("firstName");
         String lastName = (String) userMap.get("lastName");
         String account_created_on = (String) userMap.get("accountCreatedOn");
-        UserModel userModel = new UserModel(userId, email, firstName, lastName, account_created_on);
+        Integer flashcard_delay_setting = (Integer) userMap.get("flashcard_delay_setting");
+        UserModel userModel = new UserModel(userId, email, firstName, lastName, account_created_on, flashcard_delay_setting);
 
         return new ResponseEntity<>(generateJWTToken(userModel), HttpStatus.OK);
     }

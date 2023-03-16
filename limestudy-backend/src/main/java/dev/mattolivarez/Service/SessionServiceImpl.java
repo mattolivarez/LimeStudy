@@ -48,4 +48,11 @@ public class SessionServiceImpl implements SessionService
             throws ResourceNotFoundException {
         sessionRepository.removeById(userId, classId, deckId, flashcardId, sessionId);
     }
+
+    @Override
+    public SessionModel fetchSessionIfExists(Integer userId, Integer classId, Integer deckId, Integer flashcardId)
+            throws ResourceNotFoundException
+    {
+        return sessionRepository.findByIdIfExists(userId, classId, deckId, flashcardId);
+    }
 }

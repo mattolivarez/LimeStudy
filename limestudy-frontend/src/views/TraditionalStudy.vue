@@ -6,16 +6,32 @@
             <div :class="{invisible: !error}" class="err-message">
                 <p><span>Error: </span>{{ this.errorMessage }}</p>
             </div>
-            <div class="editor" :class="{'editor-inactive': !showQuestion}">
-                <vue-editor :editorOptions="editorSettingsQuestion" v-model="question" disabled /> <!-- @image-added="imageHandler" -->
-            </div>
+            <!-- <div class="editor" :class="{'editor-inactive': !showQuestion}">
+                <vue-editor :editorOptions="editorSettingsQuestion" v-model="question" disabled /> @image-added="imageHandler" -->
+            <!--</div>
             <div class="editor" :class="{'editor-inactive': !showAnswer}">
                 <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer" disabled />
+            </div> -->
+            <div class="editor">
+                <div v-if="currentFlashcard" class="card">
+                    <div class="card-inner">
+                        <div class="card-face card-face-front">
+                            <p v-html="currentFlashcard.question"></p>
+                        </div>
+                        <div class="card-face card-face-back">
+                            <p v-html="currentFlashcard.answer"></p>
+                        </div>
+                    </div>
+                </div>
+                <h2 v-else>Today's flashcard set completed!</h2>
             </div>
+            
             <div class="blog-actions">
-                <button @click.prevent="flashcardResponse" id="good">Good</button>
-                <button @click.prevent="flashcardResponse" id="ok">Ok</button>
-                <button @click.prevent="flashcardResponse" id="bad">Bad</button>
+                <button v-if="currentFlashcard.noteId">View Relevant Note</button>
+                <button v-if="!cardAnswered" @click.prevent="showLess">Show less often</button> 
+                <button v-if="!cardAnswered" @click.prevent="showSame">Show at same rate</button>
+                <button v-if="!cardAnswered" @click.prevent="showMore">Show more often</button>
+                <button v-if="cardAnswered" @click.prevent="showNextCard">Get Next Card</button>
                 <!--<router-link class="router-button" :to="{name: 'BlogPreview'}">Post Preview</router-link>-->
             </div>
         </div>
@@ -27,38 +43,46 @@ import Quill from "quill";
 import "firebase/storage";
 import BlogCoverPreview from "../components/BlogCoverPreview.vue";
 import Loading from "../components/Loading";
-
+// import StudyCard from "../components/StudyCard";
+import axios from 'axios';
 
 window.Quill = Quill;
 
+// const card = document.querySelector('.card-inner')
+// card.addEventListener('click', () => {
+//     card.classList.toggle('is-flipped');
+// })
 
 export default {
     name: "TraditionalStudy",
     components: {
         BlogCoverPreview,
         Loading,
+        // StudyCard
     },
     data() {
         return {
-            file: null,
+            studyFlashcards: [],
+            currentFlashcard: null,
+            count: 0,
+            showQuestion: null,
+            showAnswer: null,
+            loading: false,
             error: null,
-            errorMessage: null,
-            loading: null,
-            showQuestion: true,
-            showAnswer: false,
-            question: "",
-            answer: "",
-            flashcards: null,
-            editorSettingsQuestion: {
-                modules: {
-                    toolbar: false
-                },
-            },
-            editorSettingsAnswer: {
-                modules: {
-                    toolbar: false
-                },
-            },
+            errorMessage: "",
+            cardAnswered: false,
+            flipped: false,
+            existingSession: null,
+            // editorSettingsQuestion: {
+            //     modules: {
+            //         toolbar: false
+            //     },
+            // },
+            // editorSettingsAnswer: {
+            //     modules: {
+            //         toolbar: false
+            //     },
+            // },
         };
     },
     methods: {
@@ -77,27 +101,121 @@ export default {
                 this.changeCardSide();
                 this.getRandomCard();
             },5000);
+        },
+        getNextCard() {
+            if (this.count < this.studyFlashcards.length)
+            {
+                this.currentFlashcard = this.studyFlashcards[this.count];
+                this.count++;
+            }
+            else
+            {
+                this.currentFlashcard = null;
+            }
+        },
+        flipCard() {
+            const card = document.querySelector('.card-inner')
+            card.classList.toggle('is-flipped');
+            this.flipped = true;
+        },
+        showNextCard() {
 
+        },
+        showLess() {
+            this.checkForExistingSession();
+            if (this.existingSession)
+            {
+                // update session
+                // this.$store.dispatch("updateUserSession", {flashcard: currentFlashcard, correct:  })
+            }
+            else
+            {
+                // add session
+            }
+        },
+        showSame() {},
+        showMore() {},
+        async checkForExistingSession() {
+            await axios({
+                method: 'GET',
+                url: `/api/classes/${this.currentFlashcard.classId}/decks/${this.currentFlashcard.deckId}/flashcards/${this.currentFlashcard.flashcardId}/sessions/check-for-session`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log("response starts here")
+                console.log(response.data)
+                this.existingSession = response.data.sessionId;
+                return;
+            }).catch((err) => {
+                console.log("error starts here")
+                console.log(err);
+                this.existingSession = null;
+                return;
+            });
         },
     },
     computed: {
 
     },
-    created() {
-        //this.$store.dispatch("getUserClassDeckFlashcards", {deckId: this.$route.params.deckId, classId: this.$route.params.classId});
-        let index = Math.floor(Math.random() * this.$store.state.flashcards.length);
-        this.question = this.$store.state.flashcards[index].question;
-        this.answer = this.$store.state.flashcards[index].answer;
+    async created() {
+        this.loading = true;
+        this.studyFlashcards = [];
+        await axios({
+            method: 'GET',
+            url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}/flashcards/traditional-study`,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                'Content-Type': 'application/json'
+            },
+        })
+        .then((response) => {
+            console.log("response starts here")
+            console.log(response.data);
+            response.data.forEach((studySetFlashcard) => {
+                const newFlashcard = {
+                    flashcardId: studySetFlashcard.flashcardId,
+                    deckId: studySetFlashcard.deckId,
+                    classId: studySetFlashcard.classId,
+                    userId: studySetFlashcard.userId,
+                    question: studySetFlashcard.question,
+                    answer: studySetFlashcard.answer,
+                    flashcard_created_on: studySetFlashcard.flashcard_created_on,
+                    correct: studySetFlashcard.correct,
+                    incorrect: studySetFlashcard.incorrect,
+                    last_studied_on: studySetFlashcard.last_studied_on,
+                    occurrence_rate: studySetFlashcard.occurrence_rate,
+                    occurrence_rate_input: studySetFlashcard.occurrence_rate_input
+                }
+                this.studyFlashcards.push(newFlashcard);
+            });
+            console.log(this.studyFlashcards);
+            return;
+        }).catch((err) => {
+            console.log("error starts here")
+            console.log(err);
+            return;
+        });
+        this.getNextCard();
+        console.log(this.currentFlashcard);
+        this.loading = false;
     },
     beforeDestroy() {
         this.showQuestion = true;
         this.showAnswer = false;
+        if (this.flipped)
+        {
+            this.flipCard();
+            this.flipped = false;
+        }
     },
 };
 </script>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 .create-post
 {
     position: relative;
@@ -225,6 +343,9 @@ export default {
         height: 60vh;
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
         ::-webkit-scrollbar
         {
             display: none;
@@ -266,55 +387,61 @@ export default {
         }
     }
 }
-button#good
+.card
 {
-    background-color: green;
-    transition: .5s ease-in-out all;
-    align-self: center;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 20px;
-    padding: 12px 24px;
-    color: #fff;
-    //background-color: #303030;
-    text-decoration: none;
+    margin: 100px auto 0;
+    width: 400px;
+    height: 600px;
 }
-button#good:hover
+.card-inner 
 {
-    background-color: rgba(1, 50, 32, 0.7);
+    width: 100%;
+    height: 100%;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+    //cursor: pointer;
+    position: relative;
 }
-button#ok
+.card-inner.is-flipped
 {
-    background-color: yellow;
-    transition: .5s ease-in-out all;
-    align-self: center;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 20px;
-    padding: 12px 24px;
-    color: #fff;
-    //background-color: #303030;
-    text-decoration: none;
+    transform: rotateY(180deg);
 }
-button#ok:hover
+.card-face
 {
-    background-color: rgba(155, 135, 12, 0.7);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0px 3px 18px 3px rgba(0, 0, 0, 0.2);
+    //text-transform: uppercase;
+    text-align: center;
 }
-button#bad
+.card-face-front
 {
-    background-color: red;
-    transition: .5s ease-in-out all;
-    align-self: center;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 20px;
-    padding: 12px 24px;
-    color: #fff;
-    //background-color: #303030;
-    text-decoration: none;
+    background-image: linear-gradient(to bottom right, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-button#bad:hover
+.card-face-front p
 {
-    background-color: rgba(139, 0, 0, 0.7);
+    color: #000;
+    font-size: 32px;
+}
+.card-face-back
+{
+    background-image: linear-gradient(to bottom right, var(--primary), var(--secondary));
+    transform: rotateY(180deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card-face-back p
+{
+    color: #000;
+    font-size: 32px;
 }
 </style>

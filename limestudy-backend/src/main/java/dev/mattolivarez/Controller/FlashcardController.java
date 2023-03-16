@@ -89,4 +89,14 @@ public class FlashcardController
         map.put("success", true);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
+
+    @GetMapping("/traditional-study")
+    public ResponseEntity<List<FlashcardModel>> getFlashcardsForTraditionalStudy(HttpServletRequest request,
+                                                                 @PathVariable("classId") Integer classId,
+                                                                 @PathVariable("deckId") Integer deckId)
+    {
+        int userId = (Integer) request.getAttribute("userId");
+        List<FlashcardModel> flashcardModels = flashcardService.fetchTraditionalStudySet(userId, classId, deckId);
+        return new ResponseEntity<>(flashcardModels, HttpStatus.OK);
+    }
 }

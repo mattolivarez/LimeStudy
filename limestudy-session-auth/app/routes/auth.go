@@ -15,6 +15,7 @@ type UserAuth struct {
 	Email string `json:"email"`
 	Password string `json:"password"`
 	AccountCreatedOn string `json:"account_created_on"`
+	FlashcardDelaySetting uint64 `json:"flashcard_delay_setting"`
 }
 
 
@@ -62,6 +63,7 @@ func Register(c *fiber.Ctx) error {
 		Email: data.Email,
 		Password: string(password),
 		AccountCreatedOn: data.AccountCreatedOn,
+		FlashcardDelaySetting: data.FlashcardDelaySetting,
 	}
 	err = model.CreateUser(&user)
 	if err != nil {

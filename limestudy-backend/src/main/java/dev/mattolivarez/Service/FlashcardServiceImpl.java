@@ -48,4 +48,9 @@ public class FlashcardServiceImpl implements FlashcardService
     public void removeFlashcard(Integer userId, Integer classId, Integer deckId, Integer flashcardId) throws ResourceNotFoundException {
         flashcardRepository.removeById(userId, classId, deckId, flashcardId);
     }
+
+    @Override
+    public List<FlashcardModel> fetchTraditionalStudySet(Integer userId, Integer classId, Integer deckId) {
+        return flashcardRepository.findTraditionalStudySet(userId, classId, deckId);
+    }
 }

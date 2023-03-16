@@ -6,10 +6,10 @@
                 <input type="checkbox" v-model="editNote" />
             </div>
 
-            <div class="buttons">
+            <!-- <div class="buttons">
                 <button class="preview" :class="{'button-inactive': showDecks}" @click.prevent="showOther">Decks</button>
                 <button class="preview" :class="{'button-inactive': showNotes}" @click.prevent="showOther">Notes</button>
-            </div>
+            </div> -->
 
             <SearchBar class="search-bar" v-on:filter-page="filterPage" />
             
@@ -31,11 +31,9 @@ export default {
         NewNoteCard,
         NoteCard,
     },
-    data() {
-
-    },
     computed: {
         notes() {
+            //console.log(this.$store.state.notes);
             return this.$store.state.notes;
         },
         editNote: {
@@ -129,7 +127,7 @@ export default {
         }
         input:checked[type="checkbox"]:before
         {
-            background: #fff;
+            background: var(--lime);
             left: 52px;
         }
     }
