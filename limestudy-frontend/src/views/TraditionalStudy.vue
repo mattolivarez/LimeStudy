@@ -95,13 +95,6 @@ export default {
             this.question = this.$store.state.flashcards[index].question;
             this.answer = this.$store.state.flashcards[index].answer;
         },
-        flashcardResponse() {
-            this.changeCardSide();
-            setTimeout(() => {
-                this.changeCardSide();
-                this.getRandomCard();
-            },5000);
-        },
         getNextCard() {
             if (this.count < this.studyFlashcards.length)
             {
@@ -112,6 +105,7 @@ export default {
             {
                 this.currentFlashcard = null;
             }
+            this.count += 1;
         },
         flipCard() {
             const card = document.querySelector('.card-inner')
@@ -119,22 +113,74 @@ export default {
             this.flipped = true;
         },
         showNextCard() {
-
+            this.loading = true;
+            this.getNextCard();
+            this.cardAnswered = false;
+            this.loading = false;
         },
-        showLess() {
-            this.checkForExistingSession();
+        async showLess() {
+            this.loading = true;
+            await this.checkForExistingSession();
             if (this.existingSession)
             {
                 // update session
-                // this.$store.dispatch("updateUserSession", {flashcard: currentFlashcard, correct:  })
+                this.existingSession.session_correct += 1;
+                this.$store.dispatch("updateUserSession", { flashcard: this.currentFlashcard, session: this.existingSession });
             }
             else
             {
                 // add session
+                let answer = { correct: 1, incorrect: 0 }
+                this.$store.dispatch("createUserSession", { flashcard: this.currentFlashcard, answer: answer });
             }
+            this.currentFlashcard.correct += 1;
+            this.currentFlashcard.occurrence_rate_input += 1;
+            await this.$store.dispatch("updateUserFlashcard", { flashcard: this.currentFlashcard });
+            this.cardAnswered = true;
+            this.flipCard();
+            this.loading = false;
         },
-        showSame() {},
-        showMore() {},
+        async showSame() {
+            this.loading = true;
+            await this.checkForExistingSession();
+            if (this.existingSession)
+            {
+                // update session
+                this.$store.dispatch("updateUserSession", { flashcard: this.currentFlashcard, session: this.existingSession });
+            }
+            else
+            {
+                // add session
+                let answer = { correct: 0, incorrect: 0 }
+                this.$store.dispatch("createUserSession", { flashcard: this.currentFlashcard, answer: answer });
+            }
+            await this.$store.dispatch("updateUserFlashcard", { flashcard: this.currentFlashcard });
+            this.cardAnswered = true;
+            this.flipCard();
+            this.loading = false;
+        },
+        async showMore() {
+            this.loading = true;
+            await this.checkForExistingSession();
+            if (this.existingSession)
+            {
+                // update session
+                this.existingSession.session_incorrect += 1;
+                this.$store.dispatch("updateUserSession", { flashcard: this.currentFlashcard, session: this.existingSession });
+            }
+            else
+            {
+                // add session
+                let answer = { correct: 0, incorrect: 1 }
+                this.$store.dispatch("createUserSession", { flashcard: this.currentFlashcard, answer: answer });
+            }
+            this.currentFlashcard.incorrect += 1;
+            this.currentFlashcard.occurrence_rate_input -= 1;
+            await this.$store.dispatch("updateUserFlashcard", { flashcard: this.currentFlashcard });
+            this.cardAnswered = true;
+            this.flipCard();
+            this.loading = false;
+        },
         async checkForExistingSession() {
             await axios({
                 method: 'GET',
@@ -147,7 +193,16 @@ export default {
             .then((response) => {
                 console.log("response starts here")
                 console.log(response.data)
-                this.existingSession = response.data.sessionId;
+                this.existingSession = {
+                    sessionId: response.data.sessionId,
+                    flashcardId: response.data.flashcardId,
+                    deckId: response.data.deckId,
+                    classId: response.data.classId,
+                    userId: response.data.userId,
+                    session_date: response.data.session_date,
+                    session_correct: response.data.session_correct,
+                    session_incorrect: response.data.session_incorrect
+                }
                 return;
             }).catch((err) => {
                 console.log("error starts here")
@@ -210,6 +265,7 @@ export default {
             this.flipCard();
             this.flipped = false;
         }
+        this.existingSession = null;
     },
 };
 </script>

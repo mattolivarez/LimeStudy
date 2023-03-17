@@ -7,47 +7,17 @@
             <div :class="{invisible: !error}" class="err-message">
                 <p><span>Error: </span>{{ this.errorMessage }}</p>
             </div>
-            <div class="editor main-editor" :class="{'editor-inactive': !showQuestion}">
-                <vue-editor :editorOptions="editorSettingsQuestion" v-model="question" disabled /> <!-- @image-added="imageHandler" -->
-            </div>
-            <div class="editor  main-editor" :class="{'editor-inactive': !showAnswer}">
-                <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer" disabled />
-            </div>
             <div class="choices">
                 <div class="choice">
-                    <div class="editor" :class="{'editor-inactive': showQuestion}">
-                        <vue-editor :editorOptions="editorSettingsQuestion" v-model="question1" disabled /> <!-- @image-added="imageHandler" -->
-                    </div>
-                    <div class="editor" :class="{'editor-inactive': showAnswer}">
-                        <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer1" disabled />
-                    </div>
                     <button class="select-button" @click.prevent="cardSelected1">Select</button>
                 </div>
                 <div class="choice">
-                    <div class="editor" :class="{'editor-inactive': showQuestion}">
-                        <vue-editor :editorOptions="editorSettingsQuestion" v-model="question2" disabled /> <!-- @image-added="imageHandler" -->
-                    </div>
-                    <div class="editor" :class="{'editor-inactive': showAnswer}">
-                        <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer2" disabled />
-                    </div>
                     <button class="select-button" @click.prevent="cardSelected2">Select</button>
                 </div>
                 <div class="choice">
-                    <div class="editor" :class="{'editor-inactive': showQuestion}">
-                        <vue-editor :editorOptions="editorSettingsQuestion" v-model="question3" disabled /> <!-- @image-added="imageHandler" -->
-                    </div>
-                    <div class="editor" :class="{'editor-inactive': showAnswer}">
-                        <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer3" disabled />
-                    </div>
                     <button class="select-button" @click.prevent="cardSelected3">Select</button>
                 </div>
                 <div class="choice">
-                    <div class="editor" :class="{'editor-inactive': showQuestion}">
-                        <vue-editor :editorOptions="editorSettingsQuestion" v-model="question4" disabled /> <!-- @image-added="imageHandler" -->
-                    </div>
-                    <div class="editor" :class="{'editor-inactive': showAnswer}">
-                        <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer4" disabled />
-                    </div>
                     <button class="select-button" @click.prevent="cardSelected4">Select</button>
                 </div>
             </div>
@@ -61,6 +31,7 @@ import "firebase/storage";
 import BlogCoverPreview from "../components/BlogCoverPreview.vue";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
+import axios from "axios";
 
 
 window.Quill = Quill;
@@ -100,7 +71,7 @@ export default {
             tempQ: "",
             tempA: "",
             tempCard: null,
-            flashcards: [],
+            practiceFlashcards: [],
             modalMessage: "Correct!",
             modalActive: null,
             editorSettingsQuestion: {
@@ -121,7 +92,7 @@ export default {
             this.showAnswer = !this.showAnswer;
         },
         getKeyCard() {
-            let index = Math.floor(Math.random() * this.$store.state.flashcards.length);
+            let index = Math.floor(Math.random() * 4);
             this.question = this.$store.state.flashcards[index].question;
             this.answer = this.$store.state.flashcards[index].answer;
             this.cardId = this.$store.state.flashcards[index].flashcardId;
@@ -188,52 +159,6 @@ export default {
                 console.log("Not Correct")
             }
         },
-        getFourRandomCards() {
-            if (!this.newGame) {
-                this.getKeyCard();
-            }
-            for(let i = 0; i < 3; i++)
-            {
-                let data = this.getRandomCard()
-                this.flashcards.push(data)
-            }
-        },
-        storeCards() {
-            this.question1 = this.flashcards[0].question;
-            this.answer1 = this.flashcards[0].answer;
-            this.cardId1 = this.flashcards[0].cardId;
-
-            this.question2 = this.flashcards[1].question;
-            this.answer2 = this.flashcards[1].answer;
-            this.cardId2 = this.flashcards[1].cardId1;
-
-            this.question3 = this.flashcards[2].question;
-            this.answer3 = this.flashcards[2].answer;
-            this.cardId3 = this.flashcards[2].cardId1;
-
-            this.question4 = this.flashcards[3].question;
-            this.answer4 = this.flashcards[3].answer;
-            this.cardId4 = this.flashcards[3].cardId1;
-        },
-        shuffleCards() {
-            for (let i = 3; i > 0; i--) {
-            
-                // Generate random number
-                var j = Math.floor(Math.random() * (i + 1));
-                            
-                var temp = this.flashcards[i];
-                this.flashcards[i] = this.flashcards[j];
-                this.flashcards[j] = temp;
-            }
-            
-            //return this.flashcards;
-        },
-        resetCards() {
-            this.flashcards = [];
-            this.getFourRandomCards();
-            this.shuffleCards();
-            this.storeCards();
-        },
         closeModal() {
             this.modalActive = !this.modalActive;
             //this.$router.push({name: "ViewDecks", params: {classId: this.classId}});
@@ -243,22 +168,49 @@ export default {
     computed: {
 
     },
-    created() {
-        //this.$store.dispatch("getUserClassDeckFlashcards", {deckId: this.$route.params.deckId, classId: this.$route.params.classId});
-        let index = Math.floor(Math.random() * this.$store.state.flashcards.length);
-        this.question = this.$store.state.flashcards[index].question;
-        this.answer = this.$store.state.flashcards[index].answer;
-        this.cardId = this.$store.state.flashcards[index].flashcardId;
-        let data = {
-            question: this.question,
-            answer: this.answer,
-            cardId: this.cardId
-        }
-        this.flashcards.push(data)
-        this.getFourRandomCards();
-        this.shuffleCards();
-        this.storeCards();
-        this.newGame = false;
+    async created() {
+        this.practiceFlashcards = [];
+        await axios({
+            method: 'GET',
+            url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}/flashcards/practice`,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                'Content-Type': 'application/json'
+            },
+        })
+        .then((response) => {
+            console.log("practice set \n" + response.data);
+            if (response.data)
+            {
+                response.data.forEach((practiceFlashcard) => {
+                    const newFlashcard = {
+                        flashcardId: practiceFlashcard.flashcardId,
+                        deckId: practiceFlashcard.deckId,
+                        classId: practiceFlashcard.classId,
+                        userId: practiceFlashcard.userId,
+                        question: practiceFlashcard.question,
+                        answer: practiceFlashcard.answer,
+                        flashcard_created_on: practiceFlashcard.flashcard_created_on,
+                        correct: practiceFlashcard.correct,
+                        incorrect: practiceFlashcard.incorrect,
+                        last_studied_on: practiceFlashcard.last_studied_on,
+                        occurrence_rate: practiceFlashcard.occurrence_rate,
+                        occurrence_rate_input: practiceFlashcard.occurrence_rate_input
+                    }
+                    this.practiceFlashcards.push(newFlashcard);
+                });
+                console.log(this.practiceFlashcards);
+            }
+            else
+            {
+                console.log("None and/or not enough cards to make practice set")
+            }
+            return;
+        }).catch((err) => {
+            console.log("practice set error")
+            console.log(err);
+            return;
+        });
     },
     beforeDestroy() {
         this.showQuestion = true;

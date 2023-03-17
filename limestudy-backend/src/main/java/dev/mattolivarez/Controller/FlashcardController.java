@@ -99,4 +99,18 @@ public class FlashcardController
         List<FlashcardModel> flashcardModels = flashcardService.fetchTraditionalStudySet(userId, classId, deckId);
         return new ResponseEntity<>(flashcardModels, HttpStatus.OK);
     }
+
+    @GetMapping("/practice")
+    public ResponseEntity<List<FlashcardModel>> getFlashcardsForPractice(HttpServletRequest request,
+                                                                                 @PathVariable("classId") Integer classId,
+                                                                                 @PathVariable("deckId") Integer deckId)
+    {
+        int userId = (Integer) request.getAttribute("userId");
+        List<FlashcardModel> flashcardModels = flashcardService.fetchPracticeStudySet(userId, classId, deckId);
+        if (flashcardModels.size() < 4)
+        {
+            flashcardModels = null;
+        }
+        return new ResponseEntity<>(flashcardModels, HttpStatus.OK);
+    }
 }

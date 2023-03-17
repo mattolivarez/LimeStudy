@@ -25,4 +25,7 @@ public interface FlashcardRepository
             throws ResourceNotFoundException;
 
     List<FlashcardModel> findTraditionalStudySet(Integer userId, Integer classId, Integer deckId);
+
+    List<FlashcardModel> findPracticeStudySet(Integer userId, Integer classId, Integer deckId);
+
 }

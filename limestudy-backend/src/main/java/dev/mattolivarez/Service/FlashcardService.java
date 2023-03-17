@@ -26,4 +26,7 @@ public interface FlashcardService
             throws ResourceNotFoundException;
 
     List<FlashcardModel> fetchTraditionalStudySet(Integer userId, Integer classId, Integer deckId);
+
+    List<FlashcardModel> fetchPracticeStudySet(Integer userId, Integer classId, Integer deckId);
+
 }

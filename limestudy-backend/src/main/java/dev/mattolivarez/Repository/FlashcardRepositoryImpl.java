@@ -2,8 +2,8 @@ package dev.mattolivarez.Repository;
 
 import dev.mattolivarez.Exception.BadRequestException;
 import dev.mattolivarez.Exception.ResourceNotFoundException;
-import dev.mattolivarez.Model.DeckModel;
 import dev.mattolivarez.Model.FlashcardModel;
+import dev.mattolivarez.NecessaryFunctions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -43,6 +43,11 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
             "FROM \"FLASHCARD\" " +
             "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? AND LAST_STUDIED_ON >= CURRENT_DATE - INTERVAL '1' DAY * (SELECT FLASHCARD_DELAY_SETTING FROM \"USER\" WHERE USER_ID = ?) AND OCCURRENCE_RATE >= 0.5 " +
             "ORDER BY OCCURRENCE_RATE DESC";
+
+    private static final String SQL_FIND_PRACTICE_STUDY_SET = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON, CORRECT, INCORRECT, LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
+            "FROM \"FLASHCARD\" " +
+            "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? " +
+            "ORDER BY RANDOM() LIMIT 4";
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -117,6 +122,8 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
 
             Date lastStudiedDate = simpleDateFormat.parse(flashcardModel.getLast_studied_on());
             java.sql.Date lastStudiedOn = new java.sql.Date(lastStudiedDate.getTime());
+
+            Double newOccurrenceRate = NecessaryFunctions.logisticFunction(flashcardModel.getOccurrence_rate_input());
             jdbcTemplate.update(SQL_UPDATE,
                     new Object[]{
                             flashcardModel.getQuestion(),
@@ -125,7 +132,7 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
                             flashcardModel.getCorrect(),
                             flashcardModel.getIncorrect(),
                             lastStudiedOn,
-                            flashcardModel.getOccurrence_rate(),
+                            newOccurrenceRate,
                             flashcardModel.getOccurrence_rate_input(),
                             userId, classId, deckId, flashcardId});
         }
@@ -149,6 +156,11 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
     @Override
     public List<FlashcardModel> findTraditionalStudySet(Integer userId, Integer classId, Integer deckId) {
         return jdbcTemplate.query(SQL_FIND_TRADITIONAL_STUDY_SET, new Object[]{userId, classId, deckId, userId}, flashcardRowMapper);
+    }
+
+    @Override
+    public List<FlashcardModel> findPracticeStudySet(Integer userId, Integer classId, Integer deckId) {
+        return jdbcTemplate.query(SQL_FIND_PRACTICE_STUDY_SET, new Object[]{userId, classId, deckId}, flashcardRowMapper);
     }
 
     private RowMapper<FlashcardModel> flashcardRowMapper = ((rs, rowNum) -> {

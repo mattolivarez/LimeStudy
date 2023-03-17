@@ -53,4 +53,9 @@ public class FlashcardServiceImpl implements FlashcardService
     public List<FlashcardModel> fetchTraditionalStudySet(Integer userId, Integer classId, Integer deckId) {
         return flashcardRepository.findTraditionalStudySet(userId, classId, deckId);
     }
+
+    @Override
+    public List<FlashcardModel> fetchPracticeStudySet(Integer userId, Integer classId, Integer deckId) {
+        return flashcardRepository.findPracticeStudySet(userId, classId, deckId);
+    }
 }

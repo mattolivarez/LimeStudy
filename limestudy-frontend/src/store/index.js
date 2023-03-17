@@ -530,35 +530,84 @@ export default new Vuex.Store({
             });
         },
         async updateUserSession({state}, payload) {
+            console.log(state.blogTitle)
             await axios({
-                method: 'GET',
-                url: `/api/classes/${payload.classId}/decks/${payload.deckId}/flashcards/${payload.flashcardId}/sessions/${payload.sessionId}`,
+                method: 'PUT',
+                url: `/api/classes/${payload.session.classId}/decks/${payload.session.deckId}/flashcards/${payload.session.flashcardId}/sessions/${payload.session.sessionId}`,
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user'),
                     'Content-Type': 'application/json'
                 },
+                data: {
+                    sessionId: payload.session.sessionId,
+                    flashcardId: payload.session.flashcardId,
+                    deckId: payload.session.deckId,
+                    classId: payload.session.classId,
+                    userId: payload.session.userId,
+                    session_date: payload.session.session_date,
+                    session_correct: payload.session.session_correct,
+                    session_incorrect: payload.session.session_incorrect
+                }
             })
-            .then((response) => {
+            .then(() => {
                 console.log("response starts here")
-                console.log(response.data);
-                response.data.forEach((userClassDeckFlashcard) => {
-                    const newFlashcard = {
-                        flashcardId: userClassDeckFlashcard.flashcardId,
-                        deckId: userClassDeckFlashcard.deckId,
-                        classId: userClassDeckFlashcard.classId,
-                        userId: userClassDeckFlashcard.userId,
-                        question: userClassDeckFlashcard.question,
-                        answer: userClassDeckFlashcard.answer,
-                        flashcard_created_on: userClassDeckFlashcard.flashcard_created_on,
-                        correct: userClassDeckFlashcard.correct,
-                        incorrect: userClassDeckFlashcard.incorrect,
-                        last_studied_on: userClassDeckFlashcard.last_studied_on,
-                        occurrence_rate: userClassDeckFlashcard.occurrence_rate,
-                        occurrence_rate_input: userClassDeckFlashcard.occurrence_rate_input
-                    }
-                    state.flashcards.push(newFlashcard);
-                });
-                console.log(state.flashcards);
+                return;
+            }).catch((err) => {
+                console.log("error starts here")
+                console.log(err);
+                return;
+            });
+        },
+        async createUserSession({state}, payload) {
+            console.log(state.blogTitle)
+            await axios({
+                method: 'POST',
+                url: `/api/classes/${payload.flashcard.classId}/decks/${payload.flashcard.deckId}/flashcards/${payload.flashcard.flashcardId}/sessions`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    session_date: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"}),
+                    session_correct: payload.answer.correct,
+                    session_incorrect: payload.answer.incorrect
+                }
+            })
+            .then(() => {
+                console.log("response starts here")
+                return;
+            }).catch((err) => {
+                console.log("error starts here")
+                console.log(err);
+                return;
+            });
+        },
+        async updateUserFlashcard({state}, payload) {
+            console.log(state.blogTitle)
+            await axios({
+                method: 'PUT',
+                url: `/api/classes/${payload.flashcard.classId}/decks/${payload.flashcard.deckId}/flashcards/${payload.flashcard.flashcardId}`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    question: payload.flashcard.question,
+                    answer: payload.flashcard.answer,
+                    flashcard_created_on: payload.flashcard.flashcard_created_on,
+                    userId: payload.flashcard.userId,
+                    classId: payload.flashcard.classId,
+                    deckId: payload.flashcard.deckId,
+                    flashcardId: payload.flashcard.flashcardId,
+                    correct: payload.flashcard.correct,
+                    incorrect: payload.flashcard.incorrect,
+                    last_studied_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"}),
+                    occurrence_rate: payload.flashcard.occurrence_rate,
+                    occurence_rate_input: payload.flashcard.occurence_rate_input
+                }
+            })
+            .then(() => {
+                console.log("response starts here")
                 return;
             }).catch((err) => {
                 console.log("error starts here")

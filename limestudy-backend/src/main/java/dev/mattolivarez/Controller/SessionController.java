@@ -88,15 +88,13 @@ public class SessionController
     }
 
     @RequestMapping("/check-for-session")
-    public ResponseEntity<Map<String, Integer>> checkForExistingSessionWithDate(HttpServletRequest request,
+    public ResponseEntity<SessionModel> checkForExistingSessionWithDate(HttpServletRequest request,
                                                                         @PathVariable("classId") Integer classId,
                                                                         @PathVariable("deckId") Integer deckId,
                                                                         @PathVariable("flashcardId") Integer flashcardId)
     {
         int userId = (Integer) request.getAttribute("userId");
         SessionModel sessionModel = sessionService.fetchSessionIfExists(userId, classId, deckId, flashcardId);
-        Map<String, Integer> map = new HashMap<>();
-        map.put("sessionId", sessionModel.getSessionId());
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return new ResponseEntity<>(sessionModel, HttpStatus.OK);
     }
 }
