@@ -117,7 +117,7 @@ export default {
 
             &:hover
             {
-                background-color: #303030;
+                background-color: var(--lime);
 
 
                 .edit,

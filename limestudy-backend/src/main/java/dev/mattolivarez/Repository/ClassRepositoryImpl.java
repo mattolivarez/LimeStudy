@@ -3,8 +3,6 @@ package dev.mattolivarez.Repository;
 import dev.mattolivarez.Exception.BadRequestException;
 import dev.mattolivarez.Exception.ResourceNotFoundException;
 import dev.mattolivarez.Model.ClassModel;
-import dev.mattolivarez.Model.DeckModel;
-import dev.mattolivarez.Service.DeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

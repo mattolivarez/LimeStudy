@@ -13,7 +13,7 @@
                 <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer" disabled />
             </div> -->
             <div class="editor">
-                <div v-if="currentFlashcard" class="card">
+                <div v-if="success" class="card">
                     <div class="card-inner">
                         <div class="card-face card-face-front">
                             <p v-html="currentFlashcard.question"></p>
@@ -27,7 +27,7 @@
             </div>
             
             <div class="blog-actions">
-                <button v-if="currentFlashcard.noteId">View Relevant Note</button>
+                <button v-if="!cardAnswered">View Relevant Note</button>
                 <button v-if="!cardAnswered" @click.prevent="showLess">Show less often</button> 
                 <button v-if="!cardAnswered" @click.prevent="showSame">Show at same rate</button>
                 <button v-if="!cardAnswered" @click.prevent="showMore">Show more often</button>
@@ -68,6 +68,7 @@ export default {
             showQuestion: null,
             showAnswer: null,
             loading: false,
+            success: null,
             error: null,
             errorMessage: "",
             cardAnswered: false,
@@ -108,7 +109,7 @@ export default {
             this.count += 1;
         },
         flipCard() {
-            const card = document.querySelector('.card-inner')
+            const card = document.querySelector('.card-inner');
             card.classList.toggle('is-flipped');
             this.flipped = true;
         },
@@ -227,34 +228,42 @@ export default {
             },
         })
         .then((response) => {
-            console.log("response starts here")
-            console.log(response.data);
-            response.data.forEach((studySetFlashcard) => {
-                const newFlashcard = {
-                    flashcardId: studySetFlashcard.flashcardId,
-                    deckId: studySetFlashcard.deckId,
-                    classId: studySetFlashcard.classId,
-                    userId: studySetFlashcard.userId,
-                    question: studySetFlashcard.question,
-                    answer: studySetFlashcard.answer,
-                    flashcard_created_on: studySetFlashcard.flashcard_created_on,
-                    correct: studySetFlashcard.correct,
-                    incorrect: studySetFlashcard.incorrect,
-                    last_studied_on: studySetFlashcard.last_studied_on,
-                    occurrence_rate: studySetFlashcard.occurrence_rate,
-                    occurrence_rate_input: studySetFlashcard.occurrence_rate_input
-                }
-                this.studyFlashcards.push(newFlashcard);
-            });
-            console.log(this.studyFlashcards);
-            return;
+            console.log("response starts here");
+            console.log(response.data.length);
+            if (response.data.length > 0)
+            {
+                response.data.forEach((studySetFlashcard) => {
+                    const newFlashcard = {
+                        flashcardId: studySetFlashcard.flashcardId,
+                        deckId: studySetFlashcard.deckId,
+                        classId: studySetFlashcard.classId,
+                        userId: studySetFlashcard.userId,
+                        question: studySetFlashcard.question,
+                        answer: studySetFlashcard.answer,
+                        flashcard_created_on: studySetFlashcard.flashcard_created_on,
+                        correct: studySetFlashcard.correct,
+                        incorrect: studySetFlashcard.incorrect,
+                        last_studied_on: studySetFlashcard.last_studied_on,
+                        occurrence_rate: studySetFlashcard.occurrence_rate,
+                        occurrence_rate_input: studySetFlashcard.occurrence_rate_input
+                    }
+                    this.studyFlashcards.push(newFlashcard);
+                });
+                this.success = true;
+                console.log(this.studyFlashcards);
+                this.getNextCard();
+                console.log(this.currentFlashcard);
+            }
+            else
+            {
+                this.success = false;
+            }
         }).catch((err) => {
             console.log("error starts here")
             console.log(err);
-            return;
+            this.success = false;
         });
-        this.getNextCard();
-        console.log(this.currentFlashcard);
+        console.log(this.success);
         this.loading = false;
     },
     beforeDestroy() {

@@ -13,8 +13,9 @@ import Register from "../views/Register.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
 
 // other user pages
-import Dashboard from "../views/Dashboard.vue"
-import Calendar from "../views/Calendar.vue"
+import Dashboard from "../views/Dashboard.vue";
+import Calendar from "../views/Calendar.vue";
+import ViewStatistics from "../views/ViewStatistics.vue";
 
 // classes
 import ViewClasses from "../views/ViewClasses.vue"; // read classes
@@ -88,6 +89,15 @@ const routes = [
     component: Calendar,
     meta: {
       title: 'Calendar',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/dashboard/statistics",
+    name: "ViewStatistics",
+    component: ViewStatistics,
+    meta: {
+      title: 'Statistics',
       requiresAuth: false,
     }
   },

@@ -7,19 +7,71 @@
             <div :class="{invisible: !error}" class="err-message">
                 <p><span>Error: </span>{{ this.errorMessage }}</p>
             </div>
-            <div class="choices">
-                <div class="choice">
-                    <button class="select-button" @click.prevent="cardSelected1">Select</button>
+            <div class="editor" id="focused">
+                <div v-if="success" class="card">
+                    <div class="card-inner">
+                        <div class="card-face card-face-front">
+                            <p v-html="this.keyCard.question"></p>
+                        </div>
+                        <div class="card-face card-face-back">
+                            <p v-html="this.keyCard.answer"></p>
+                        </div>
+                    </div>
                 </div>
-                <div class="choice">
-                    <button class="select-button" @click.prevent="cardSelected2">Select</button>
+                <h2 v-else>None and/or not enough cards to make practice set</h2>
+            </div>
+            <div class="choices" v-if="success && active">
+                <div class="choice" @click.prevent="cardClicked1">
+                    <div class="card">
+                        <div class="card-inner">
+                            <div class="card-face card-face-front">
+                                <p v-html="this.practiceFlashcards[0].answer"></p>
+                            </div>
+                            <div class="card-face card-face-back">
+                                <p v-html="this.practiceFlashcards[0].question"></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="choice">
-                    <button class="select-button" @click.prevent="cardSelected3">Select</button>
+                <div class="choice" @click.prevent="cardClicked2">
+                    <div class="card">
+                        <div class="card-inner">
+                            <div class="card-face card-face-front">
+                                <p v-html="this.practiceFlashcards[1].answer"></p>
+                            </div>
+                            <div class="card-face card-face-back">
+                                <p v-html="this.practiceFlashcards[1].question"></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="choice">
-                    <button class="select-button" @click.prevent="cardSelected4">Select</button>
+                <div class="choice" @click.prevent="cardClicked3">
+                    <div class="card">
+                        <div class="card-inner">
+                            <div class="card-face card-face-front">
+                                <p v-html="this.practiceFlashcards[2].answer"></p>
+                            </div>
+                            <div class="card-face card-face-back">
+                                <p v-html="this.practiceFlashcards[2].question"></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <div class="choice" @click.prevent="cardClicked4">
+                    <div class="card">
+                        <div class="card-inner">
+                            <div class="card-face card-face-front">
+                                <p v-html="this.practiceFlashcards[3].answer"></p>
+                            </div>
+                            <div class="card-face card-face-back">
+                                <p v-html="this.practiceFlashcards[3].question"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div :class="{invisible: active}" class="err-message" v-else-if="!active">
+                <button @click.prevent="getRandomCards">Get Next Card</button>
             </div>
         </div>
     </div>
@@ -47,43 +99,18 @@ export default {
     data() {
         return {
             file: null,
+            success: null,
             error: null,
             errorMessage: null,
             loading: null,
             showQuestion: true,
             showAnswer: false,
             newGame: true,
-            question: "",
-            answer: "",
-            cardId: null,
-            question1: "",
-            answer1: "",
-            cardId1: null,
-            question2: "",
-            answer2: "",
-            cardId2: null,
-            question3: "",
-            answer3: "",
-            cardId3: null,
-            question4: "",
-            answer4: "",
-            cardId4: null,
-            tempQ: "",
-            tempA: "",
-            tempCard: null,
             practiceFlashcards: [],
+            keyCard: null,
+            active: true,
             modalMessage: "Correct!",
             modalActive: null,
-            editorSettingsQuestion: {
-                modules: {
-                    toolbar: false
-                },
-            },
-            editorSettingsAnswer: {
-                modules: {
-                    toolbar: false
-                },
-            },
         };
     },
     methods: {
@@ -91,72 +118,129 @@ export default {
             this.showQuestion = !this.showQuestion;
             this.showAnswer = !this.showAnswer;
         },
-        getKeyCard() {
+        async getKeyCard() {
             let index = Math.floor(Math.random() * 4);
-            this.question = this.$store.state.flashcards[index].question;
-            this.answer = this.$store.state.flashcards[index].answer;
-            this.cardId = this.$store.state.flashcards[index].flashcardId;
-            let data = {
-                question: this.question,
-                answer: this.answer,
-                cardId: this.cardId
-            }
-            this.flashcards.push(data)
+            this.keyCard = this.practiceFlashcards[index];
+            console.log(this.keyCard.question);
         },
-        getRandomCard() {
-            let index = Math.floor(Math.random() * this.$store.state.flashcards.length);
-            this.tempQ = this.$store.state.flashcards[index].question;
-            this.tempA = this.$store.state.flashcards[index].answer;
-            this.tempCard = this.$store.state.flashcards[index].flashcardId;
-            let data = {
-                question: this.tempQ,
-                answer: this.tempA,
-                cardId: this.tempCard
-            }
-            return data
+        async getRandomCards() {
+            this.keyCard = null;
+            this.active = true;
+            this.loading = true;
+            this.success = null;
+            this.practiceFlashcards = [];
+            await axios({
+                method: 'GET',
+                url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}/flashcards/practice`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => {
+                console.log("practice set \n" + response.data);
+                if (response.data)
+                {
+                    response.data.forEach((practiceFlashcard) => {
+                        const newFlashcard = {
+                            flashcardId: practiceFlashcard.flashcardId,
+                            deckId: practiceFlashcard.deckId,
+                            classId: practiceFlashcard.classId,
+                            userId: practiceFlashcard.userId,
+                            question: practiceFlashcard.question,
+                            answer: practiceFlashcard.answer,
+                            flashcard_created_on: practiceFlashcard.flashcard_created_on,
+                            correct: practiceFlashcard.correct,
+                            incorrect: practiceFlashcard.incorrect,
+                            last_studied_on: practiceFlashcard.last_studied_on,
+                            occurrence_rate: practiceFlashcard.occurrence_rate,
+                            occurrence_rate_input: practiceFlashcard.occurrence_rate_input
+                        }
+                        this.practiceFlashcards.push(newFlashcard);
+                    });
+                    console.log(this.practiceFlashcards);
+                    this.success = true;
+                    this.getKeyCard();
+                    this.turnCards();
+                }
+                else
+                {
+                    console.log("None and/or not enough cards to make practice set");
+                    this.success = false;
+                }
+                return;
+            }).catch((err) => {
+                console.log("practice set error");
+                console.log(err);
+                return;
+            });
+            //this.turnCards();
+            this.loading = false;
         },
-        cardSelected1() {
-            if (this.answer === this.answer1)
+        turnCards() {
+            const cards = document.querySelectorAll('.card-inner');
+            for (let i = 0; i < cards.length; i++)
             {
-                console.log("Correct")
-                this.modalActive = !this.modalActive;
-            }
-            else
-            {
-                console.log("Not Correct")
-            }
-        },
-        cardSelected2() {
-            if (this.answer === this.answer2)
-            {
-                console.log("Correct")
-                this.modalActive = !this.modalActive;
-            }
-            else
-            {
-                console.log("Not Correct")
+                if (cards[i].classList.length > 1)
+                {
+                    cards[i].classList.toggle('is-flipped');
+                }
             }
         },
-        cardSelected3() {
-            if (this.answer === this.answer3)
+        cardClicked1() {
+            console.log(this.keyCard.flashcardId === this.practiceFlashcards[0].flashcardId);
+            const card = document.querySelectorAll('.card-inner')[1];
+            if (card.classList.length < 2)
             {
-                console.log("Correct")
-                this.modalActive = !this.modalActive;
+                card.classList.toggle('is-flipped');
             }
-            else
+            if (this.keyCard.flashcardId === this.practiceFlashcards[0].flashcardId)
             {
-                console.log("Not Correct")
+                const card = document.querySelectorAll('.card-inner')[0];
+                card.classList.toggle('is-flipped');
+                this.active = false;
             }
         },
-        cardSelected4() {
-            if (this.answer === this.answer4)
+        cardClicked2() {
+            console.log(this.keyCard.flashcardId === this.practiceFlashcards[1].flashcardId);
+            const card = document.querySelectorAll('.card-inner')[2];
+            if (card.classList.length < 2)
             {
-                console.log("Correct")
-                this.modalActive = !this.modalActive;
+                card.classList.toggle('is-flipped');
             }
-            else
+            if (this.keyCard.flashcardId === this.practiceFlashcards[1].flashcardId)
             {
-                console.log("Not Correct")
+                const card = document.querySelectorAll('.card-inner')[0];
+                card.classList.toggle('is-flipped');
+                this.active = false;
+            }
+        },
+        cardClicked3() {
+            console.log(this.keyCard.flashcardId === this.practiceFlashcards[2].flashcardId);
+            const card = document.querySelectorAll('.card-inner')[3];
+            if (card.classList.length < 2)
+            {
+                card.classList.toggle('is-flipped');
+            }
+            if (this.keyCard.flashcardId === this.practiceFlashcards[2].flashcardId)
+            {
+                const card = document.querySelectorAll('.card-inner')[0];
+                card.classList.toggle('is-flipped');
+                this.active = false;
+            }
+        },
+        cardClicked4() {
+            console.log(this.keyCard.flashcardId === this.practiceFlashcards[3].flashcardId);
+            const card = document.querySelectorAll('.card-inner')[4];
+            if (card.classList.length < 2)
+            {
+                card.classList.toggle('is-flipped');
+            }
+            if (this.keyCard.flashcardId === this.practiceFlashcards[3].flashcardId)
+            {
+                const card = document.querySelectorAll('.card-inner')[0];
+                card.classList.toggle('is-flipped');
+                this.active = false;
             }
         },
         closeModal() {
@@ -179,8 +263,9 @@ export default {
             },
         })
         .then((response) => {
-            console.log("practice set \n" + response.data);
-            if (response.data)
+            console.log("practice set");
+            console.log(response.data.length);
+            if (response.data.length > 0)
             {
                 response.data.forEach((practiceFlashcard) => {
                     const newFlashcard = {
@@ -200,17 +285,22 @@ export default {
                     this.practiceFlashcards.push(newFlashcard);
                 });
                 console.log(this.practiceFlashcards);
+                this.success = true;
+                this.getKeyCard();
+                //this.cardClicked();
             }
             else
             {
-                console.log("None and/or not enough cards to make practice set")
+                console.log("None and/or not enough cards to make practice set");
+                this.success = false;
             }
-            return;
         }).catch((err) => {
             console.log("practice set error")
             console.log(err);
-            return;
+            this.success = false;
         });
+        window.location.hash = "#focused";
+        //let focused = document.getElementById("focused");
     },
     beforeDestroy() {
         this.showQuestion = true;
@@ -221,7 +311,7 @@ export default {
 </script>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 .create-post
 {
     position: relative;
@@ -278,9 +368,11 @@ export default {
         border-radius: 8px;
         color: #fff;
         margin-bottom: 10px;
-        background-color: #303030;
+        background-color: #FFF;
         opacity: 1;
         transition: .5s ease all;
+        display: flex;
+        justify-content: center;
 
         p
         {
@@ -349,6 +441,8 @@ export default {
         height: 60vh;
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
         ::-webkit-scrollbar
         {
             display: none;
@@ -390,62 +484,12 @@ export default {
         }
     }
 }
-button#good
-{
-    background-color: green;
-    transition: .5s ease-in-out all;
-    align-self: center;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 20px;
-    padding: 12px 24px;
-    color: #fff;
-    //background-color: #303030;
-    text-decoration: none;
-}
-button#good:hover
-{
-    background-color: rgba(1, 50, 32, 0.7);
-}
-button#ok
-{
-    background-color: yellow;
-    transition: .5s ease-in-out all;
-    align-self: center;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 20px;
-    padding: 12px 24px;
-    color: #fff;
-    //background-color: #303030;
-    text-decoration: none;
-}
-button#ok:hover
-{
-    background-color: rgba(155, 135, 12, 0.7);
-}
-button#bad
-{
-    background-color: red;
-    transition: .5s ease-in-out all;
-    align-self: center;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 20px;
-    padding: 12px 24px;
-    color: #fff;
-    //background-color: #303030;
-    text-decoration: none;
-}
-button#bad:hover
-{
-    background-color: rgba(139, 0, 0, 0.7);
-}
 .choices
 {
     display: flex;
-    flex-direction: row;
-    margin-top: 25px;
+    justify-content: space-between;
+    margin-top: 5px;
+    height: 40vh;
 }
 .choice
 {
@@ -469,8 +513,67 @@ button#bad:hover
         margin-top: 10px;
     }
 }
-.main-editor
+.card
 {
-    height: 30vh;
+    //margin: 15px auto 0;
+    width: 400px;
+    height: 600px;
+    max-width: 300px;
+    max-height: 200px;
+}
+.card-inner 
+{
+    width: 100%;
+    height: 100%;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    position: relative;
+}
+.card-inner.is-flipped
+{
+    transform: rotateY(180deg);
+}
+.card-face
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0px 3px 18px 3px rgba(0, 0, 0, 0.2);
+    //text-transform: uppercase;
+    text-align: center;
+}
+.card-face-front
+{
+    background-image: linear-gradient(to bottom right, var(--lime), var(--light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card-face-front p
+{
+    color: #000;
+    font-size: 32px;
+}
+.card-face-back
+{
+    background-image: linear-gradient(to bottom right, var(--lime), var(--light));
+    transform: rotateY(180deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card-face-back p
+{
+    color: #000;
+    font-size: 32px;
+}
+a
+{
+    text-decoration: none;
 }
 </style>

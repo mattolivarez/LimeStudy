@@ -15,7 +15,7 @@
                     <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewClasses' }">Classes</router-link>
                     <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewNotes' }">Notes</router-link>
                     <router-link v-if="loggedIn" class="link" :to="{ name: 'Calendar' }">Calendar</router-link>
-                    <router-link v-if="loggedIn" class="link" to="#">Statistics</router-link>
+                    <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewStatistics' }">Statistics</router-link>
                     <!-- <router-link v-if="loggedIn" class="link" :to="{ name: 'CreatePost' }">Create New Class</router-link> -->
                     <!-- <router-link v-if="this.$store.state.flashcardsLoaded" class="link" to="#">Study</router-link> -->
                     <router-link v-if="!loggedIn" class="link" :to="{ name: 'Login' }">Login/Register</router-link>
@@ -62,7 +62,7 @@
                 <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewClasses' }">Classes</router-link>
                 <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewNotes' }">Notes</router-link>
                 <router-link v-if="loggedIn" class="link" :to="{ name: 'Calendar' }">Calendar</router-link>
-                <router-link v-if="loggedIn" class="link" to="#">Statistics</router-link>
+                <router-link v-if="loggedIn" class="link" :to="{ name: 'ViewStatistics' }">Statistics</router-link>
                 <!-- <router-link v-if="loggedIn" class="link" :to="{ name: 'CreatePost' }">Create New Class</router-link> -->
                 <!-- <router-link v-if="this.$store.state.flashcardsLoaded" class="link" to="#">Study</router-link> -->
                 <router-link v-if="!loggedIn" class="link" :to="{ name: 'Login' }">Login/Register</router-link>

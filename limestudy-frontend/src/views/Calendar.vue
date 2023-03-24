@@ -30,6 +30,7 @@ export default {
                 events: [],
                 showNonCurrentDates: false,
                 eventClick: this.handleEventClick,
+                eventBackgroundColor: '#32CD32',
             }
         }
     },
@@ -95,5 +96,15 @@ export default {
     height: 625px;
     margin: 30px auto;
     overflow: hidden;
+}
+.fc .fc-button-primary:disabled
+{
+    background-color: #32CD32;
+    border-color: #32CD32;
+}
+.fc .fc-button-primary
+{
+    background-color: #32CD32;
+    border: #32CD32;
 }
 </style>

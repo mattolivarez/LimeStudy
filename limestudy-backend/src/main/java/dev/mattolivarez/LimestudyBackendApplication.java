@@ -43,6 +43,7 @@ public class LimestudyBackendApplication {
 		registrationBean.addUrlPatterns("/api/classes/*");
 		registrationBean.addUrlPatterns("/api/notes/*");
 		registrationBean.addUrlPatterns("/api/events/*");
+		registrationBean.addUrlPatterns("/api/statistics/*");
 		return registrationBean;
 	}
 
