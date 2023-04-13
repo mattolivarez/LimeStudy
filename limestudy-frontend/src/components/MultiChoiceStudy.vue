@@ -2,8 +2,9 @@
     <div class="card">
         <div class="info">
             <Book class="addIcon" />
-            <router-link class="link" :to="{name: 'MultiChoiceStudy', params: { classId: this.$route.params.classId, deckId: this.$route.params.deckId }}">
-                Multiple Choice Study <Arrow class="arrow" />
+            <router-link class="link" :to="{name: 'MultiChoiceStudy', 
+            params: { classId: this.$route.params.classId, deckId: this.$route.params.deckId }}">
+                Practice Mode <Arrow class="arrow" />
             </router-link>
         </div>
     </div>

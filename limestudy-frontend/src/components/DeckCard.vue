@@ -39,25 +39,26 @@ export default {
             //console.log("classId from ClassCard: " + this.classes.classId)
             //this.$store.dispatch("deleteClass", this.classes.classId);
             //console.log("Payload from store: " + classId)
-            await axios({
-                method: 'DELETE',
-                url: `/api/classes/${this.decks.classId}/decks/${this.decks.deckId}`,
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then((response) => {
-                console.log(response)
-                console.log("Deck deleted");
-            })
-            .catch((err) => {
-                console.log(err);
-                console.log("Deck not deleted");
-            })
-            setTimeout(() => {
-                window.location.reload()
-            }, 2500)
+            if (confirm("Do you really want to delete?"))
+            {
+                await axios({
+                    method: 'DELETE',
+                    url: `/api/classes/${this.decks.classId}/decks/${this.decks.deckId}`,
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then((response) => {
+                    console.log(response)
+                    console.log("Deck deleted");
+                })
+                .catch((err) => {
+                    console.log(err);
+                    console.log("Deck not deleted");
+                })
+                this.$router.go();
+            }
         },
         editDeck() {
             this.$router.push({ name: 'UpdateDeck', params: { classId: this.decks.classId, deckId: this.decks.deckId } });

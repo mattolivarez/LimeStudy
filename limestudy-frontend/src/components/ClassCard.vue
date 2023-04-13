@@ -36,27 +36,27 @@ export default {
             //console.log("classId from ClassCard: " + this.classes.classId)
             //this.$store.dispatch("deleteClass", this.classes.classId);
             //console.log("Payload from store: " + classId)
-            await axios({
-                method: 'DELETE',
-                url: `/api/classes/${this.classes.classId}`,
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then((response) => {
-                console.log(response)
-                console.log("Class deleted");
+            if (confirm("Do you really want to delete?"))
+            {
+                await axios({
+                    method: 'DELETE',
+                    url: `/api/classes/${this.classes.classId}`,
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then((response) => {
+                    console.log(response)
+                    console.log("Class deleted");
 
-            })
-            .catch((err) => {
-                console.log(err);
-                console.log("Class not deleted");
-            })
-            setTimeout(() => {
-                window.location.reload()
-            }, 2500)
-            
+                })
+                .catch((err) => {
+                    console.log(err);
+                    console.log("Class not deleted");
+                })
+                this.$router.go();
+            }
         },
         editClass() {
             this.$router.push({ name: 'UpdateClass', params: { classId: this.classes.classId } });

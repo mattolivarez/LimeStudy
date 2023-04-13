@@ -2,7 +2,7 @@
     <div class="profile">
         <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
         <div class="container">
-            <h2>Create New Deck</h2>
+            <h2>Create New Class</h2>
             <div class="profile-info">
                 <div class="initials">{{ $store.state.profileInitials }}</div>
                 <!--<div class="admin-badge">
@@ -14,14 +14,10 @@
                     <input type="text" id="userId" v-model="userId" disabled>
                 </div>
                 <div class="input">
-                    <label for="classId">Class Id: </label>
-                    <input type="text" id="classId" v-model="classId" disabled>
+                    <label for="className">Class Name: {{ eventDate }}</label>
+                    <input type="text" id="className" v-model="className">
                 </div>
-                <div class="input">
-                    <label for="deckName">Deck Name: </label>
-                    <input type="text" id="deckName" v-model="deckName">
-                </div>
-                <button @click="createNewDeck">Submit</button>
+                <button @click="createNewClass">Submit</button>
             </div>
         </div>
     </div>
@@ -33,7 +29,8 @@ import axios from "axios"
 //import adminIcon from "../assets/Icons/user-crown-light.svg";
 
 export default {
-    name: "Profile",
+    name: "CreateNewEvent",
+    props: ['eventDate'],
     components: {
         Modal,
         //adminIcon,
@@ -42,39 +39,42 @@ export default {
         return {
             modalMessage: [],
             modalActive: null,
-            deckName: "",
+            className: "",
         };
     },
     methods: {
-        async createNewDeck() {
+        async createNewClass() {
             await axios({
                 method: 'POST',
-                url: `/api/classes/${this.$route.params.classId}/decks`,
+                url: "/api/classes",
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user'),
                     'Content-Type': 'application/json'
                 },
                 data: {
-                    deck_name: this.deckName,
-                    deck_created_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"})
+                    class_name: this.className,
+                    class_created_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"})
                 }
             })
             .then((response) => {
                 console.log(response)
-                console.log("Deck created");
+                console.log("Class created");
+                return 1;
             })
             .catch((err) => {
                 console.log(err);
-                console.log("Deck not created");
+                console.log("Class not created");
+                return 0;
             })
-            let modalMessage1 = "Deck created!";
+            let modalMessage1 = "Event created";
             this.modalMessage.push(modalMessage1);
             this.modalActive = !this.modalActive;
         },
         closeModal() {
             this.modalActive = !this.modalActive;
             this.modalMessage = [];
-            this.$router.push({name: "ViewDecks", params: { classId: this.$route.params.classId }});
+            //this.$router.push({name: "ViewClasses"});
+            this.$router.back();
         },
     },
     computed: {
@@ -83,12 +83,10 @@ export default {
                 return this.$store.state.profileUserId
             }
         },
-        classId: {
-            get() {
-                return this.$route.params.classId;
-            }
-        }
     },
+    created() {
+        console.log(this.eventDate);
+    }
 }
 </script>
 

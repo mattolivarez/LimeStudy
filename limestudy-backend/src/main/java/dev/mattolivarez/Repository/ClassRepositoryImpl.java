@@ -24,11 +24,11 @@ public class ClassRepositoryImpl implements ClassRepository
     private static final String SQL_CREATE = "INSERT INTO \"CLASS\"(CLASS_ID, USER_ID, CLASS_NAME, CLASS_CREATED_ON) " +
                                              "VALUES(NEXTVAL('CLASS_SEQ'), ?, ?, ?) ";
 
-    private static final String SQL_FIND_BY_ID = "SELECT CLASS_ID, USER_ID, CLASS_NAME, CLASS_CREATED_ON " +
+    private static final String SQL_FIND_BY_ID = "SELECT CLASS_ID, USER_ID, CLASS_NAME, TO_CHAR(CLASS_CREATED_ON, 'MM/DD/YYYY') AS CLASS_CREATED_ON " +
                                                  "FROM \"CLASS\" " +
                                                  "WHERE USER_ID = ? AND CLASS_ID = ? ";
 
-    private static final String SQL_FIND_ALL = "SELECT CLASS_ID, USER_ID, CLASS_NAME, CLASS_CREATED_ON " +
+    private static final String SQL_FIND_ALL = "SELECT CLASS_ID, USER_ID, CLASS_NAME, TO_CHAR(CLASS_CREATED_ON, 'MM/DD/YYYY') AS CLASS_CREATED_ON " +
                                                "FROM \"CLASS\" " +
                                                "WHERE USER_ID = ? ";
 

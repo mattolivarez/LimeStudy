@@ -45,7 +45,7 @@ export default {
     },
     data() {
         return {
-            modalMessage: "Class updated!",
+            modalMessage: [],
             modalActive: null,
             className: "",
             classCreatedOn: null,
@@ -79,10 +79,13 @@ export default {
                 console.log(err);
                 console.log("Class not updated");
             })
+            let modalMessage1 = "Class updated!";
+            this.modalMessage.push(modalMessage1);
             this.modalActive = !this.modalActive;
         },
         closeModal() {
             this.modalActive = !this.modalActive;
+            this.modalMessage = [];
             this.$router.push({name: "ViewClasses"});
         },
     },

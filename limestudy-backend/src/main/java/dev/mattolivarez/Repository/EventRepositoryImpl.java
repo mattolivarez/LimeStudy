@@ -23,11 +23,11 @@ public class EventRepositoryImpl implements EventRepository
     private static final String SQL_CREATE = "INSERT INTO \"EVENT\"(EVENT_ID, USER_ID, EVENT_DATE, EVENT_DESCRIPTION, EVENT_CREATED_ON) " +
             "VALUES(NEXTVAL('EVENT_SEQ'), ?, ?, ?, ?) ";
 
-    private static final String SQL_FIND_BY_ID = "SELECT EVENT_ID, USER_ID, EVENT_DATE, EVENT_DESCRIPTION, EVENT_CREATED_ON " +
+    private static final String SQL_FIND_BY_ID = "SELECT EVENT_ID, USER_ID, TO_CHAR(EVENT_DATE, 'MM/DD/YYYY') AS EVENT_DATE, EVENT_DESCRIPTION, TO_CHAR(EVENT_CREATED_ON, 'MM/DD/YYYY') AS EVENT_CREATED_ON " +
             "FROM \"EVENT\" " +
             "WHERE USER_ID = ? AND EVENT_ID = ? ";
 
-    private static final String SQL_FIND_ALL = "SELECT EVENT_ID, USER_ID, EVENT_DATE, EVENT_DESCRIPTION, EVENT_CREATED_ON " +
+    private static final String SQL_FIND_ALL = "SELECT EVENT_ID, USER_ID, TO_CHAR(EVENT_DATE, 'MM/DD/YYYY') AS EVENT_DATE, EVENT_DESCRIPTION, TO_CHAR(EVENT_CREATED_ON, 'MM/DD/YYYY') AS EVENT_CREATED_ON " +
             "FROM \"EVENT\" " +
             "WHERE USER_ID = ? ";
 
@@ -63,10 +63,10 @@ public class EventRepositoryImpl implements EventRepository
         try
         {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
-            Date eventDateCreated = simpleDateFormat.parse(event_created_on);
+            Date eventDateCreated = simpleDateFormat.parse(event_date);
             java.sql.Date eventDate = new java.sql.Date(eventDateCreated.getTime());
-            Date eventCreatedDate = simpleDateFormat.parse(event_created_on);
-            java.sql.Date eventCreatedOn = new java.sql.Date(eventCreatedDate.getTime());
+            Date eventCreatedOnDate = simpleDateFormat.parse(event_created_on);
+            java.sql.Date eventCreatedOn = new java.sql.Date(eventCreatedOnDate.getTime());
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);

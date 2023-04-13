@@ -58,4 +58,9 @@ public class FlashcardServiceImpl implements FlashcardService
     public List<FlashcardModel> fetchPracticeStudySet(Integer userId, Integer classId, Integer deckId) {
         return flashcardRepository.findPracticeStudySet(userId, classId, deckId);
     }
+
+    @Override
+    public void resetFlashcards (Integer userId) throws BadRequestException {
+        flashcardRepository.reset(userId);
+    }
 }

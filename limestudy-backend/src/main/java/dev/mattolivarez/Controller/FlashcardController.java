@@ -114,12 +114,11 @@ public class FlashcardController
         return new ResponseEntity<>(flashcardModels, HttpStatus.OK);
     }
 
-    @GetMapping("/stats")
-    public ResponseEntity<Map<String, Boolean>> getFlashcardStats(HttpServletRequest request,
-                                                                  @PathVariable("classId") Integer classId,
-                                                                  @PathVariable("deckId") Integer deckId)
+    @GetMapping("/reset-flashcards")
+    public ResponseEntity<Map<String, Boolean>> getFlashcardStats(HttpServletRequest request)
     {
-        // get correct, incorrect, total, deck name,
+        int userId = (Integer) request.getAttribute("userId");
+        flashcardService.resetFlashcards(userId);
         Map<String, Boolean> map = new HashMap<>();
         map.put("success", true);
         return new ResponseEntity<>(map, HttpStatus.OK);

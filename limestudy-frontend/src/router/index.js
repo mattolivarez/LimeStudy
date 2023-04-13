@@ -38,9 +38,14 @@ import TraditionalStudy from "../views/TraditionalStudy.vue" // traditional stud
 import MultiChoiceStudy from "../views/MultiChoiceStudy.vue" // multiple choice study
 
 // notes
-import CreateNewNote from "../views/CreateNewNote.vue" // create note
-import ReadNote from "../views/ReadNote.vue"
-import ViewNotes from "../views/ViewNotes.vue"
+import CreateNewNote from "../views/CreateNewNote.vue"; // create note
+import ReadNote from "../views/ReadNote.vue";
+import ViewNotes from "../views/ViewNotes.vue";
+import UpdateNote from "../views/UpdateNote.vue";
+
+// events
+import ViewEvent from "../views/ViewEvent.vue";
+import CreateNewEvent from "../views/CreateNewEvent.vue";
  
 
 import Profile from "../views/Profile.vue";
@@ -196,7 +201,7 @@ const routes = [
     name: "MultiChoiceStudy",
     component: MultiChoiceStudy,
     meta: {
-      title: 'Multiple Choice Study',
+      title: 'Practice Mode',
       requiresAuth: false,
     }
   },
@@ -224,6 +229,34 @@ const routes = [
     component: ViewNotes,
     meta: {
       title: 'View All Notes',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/dashboard/notes/update/:noteId",
+    name: "UpdateNote",
+    component: UpdateNote,
+    meta: {
+      title: 'Update Note',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/dashboard/events/:eventId",
+    name: "ViewEvent",
+    component: ViewEvent,
+    meta: {
+      title: 'View Event',
+      requiresAuth: false,
+    }
+  },
+  {
+    path: "/dashboard/events/create-new-event",
+    name: "CreateNewEvent",
+    component: CreateNewEvent,
+    //props: {default: true},
+    meta: {
+      title: 'Create New Event',
       requiresAuth: false,
     }
   },

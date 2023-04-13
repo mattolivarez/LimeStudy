@@ -17,10 +17,10 @@
                 </div>
             </div>
             <div class="editor" :class="{'editor-inactive': !showQuestion}">
-                <vue-editor :editorOptions="editorSettingsQuestion" v-model="question" useCustomImageHandler @image-added="imageHandler" /> <!-- @image-added="imageHandler" -->
+                <vue-editor :editorOptions="editorSettingsQuestion" :editorToolbar="customToolbar" v-model="question" useCustomImageHandler @image-added="imageHandler" /> <!-- @image-added="imageHandler" -->
             </div>
             <div class="editor" :class="{'editor-inactive': !showAnswer}">
-                <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer" useCustomImageHandler @image-added="imageHandler" />
+                <vue-editor :editorOptions="editorSettingsAnswer" :editorToolbar="customToolbar" v-model="answer" useCustomImageHandler @image-added="imageHandler" />
             </div>
             <div class="blog-actions">
                 <button @click="createNewFlashcard">Create</button>
@@ -57,18 +57,24 @@ export default {
             loading: null,
             showQuestion: true,
             showAnswer: false,
-            question: "question",
-            answer: "answer",
+            question: "",
+            answer: "",
             editorSettingsQuestion: {
                 modules: {
                     imageResize: {},
                 },
+                
             },
             editorSettingsAnswer: {
                 modules: {
                     imageResize: {},
                 },
             },
+            customToolbar: [
+                ["bold", "italic", "underline"],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["code-block"]
+            ]
         };
     },
     methods: {
@@ -78,7 +84,7 @@ export default {
         },
         imageHandler(file, Editor, cursorLocation, resetUploader) {
             const storageRef = firebase.storage().ref();
-            const docRef = storageRef.child(`documents/blogPostPhoto/${file.name}`);
+            const docRef = storageRef.child(`documents/flashcards/images/${file.name}`);
             docRef.put(file).on("state_changed", (snapshot) => {
                 console.log(snapshot)
             }, (err) => {
@@ -106,7 +112,7 @@ export default {
                         flashcard_created_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"}),
                         correct: 0,
                         incorrect: 0,
-                        last_studied_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"}),
+                        last_studied_on: new Date(Date.now() - 864e5).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"}),
                         occurrence_rate: 0.5,
                         occurrence_rate_input: 0
                     }

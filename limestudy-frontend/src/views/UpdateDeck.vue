@@ -48,7 +48,7 @@ export default {
     },
     data() {
         return {
-            modalMessage: "Deck updated!",
+            modalMessage: [],
             modalActive: null,
             deckName: "",
             deckCreatedOn: null,
@@ -84,34 +84,37 @@ export default {
                 console.log(err);
                 console.log("Deck not updated");
             })
+            let modalMessage1 = "Deck Updated!";
+            this.modalMessage.push(modalMessage1);
             this.modalActive = !this.modalActive;
         },
         closeModal() {
             this.modalActive = !this.modalActive;
+            this.modalMessage = [];
             this.$router.push({name: "ViewDecks", params: {classId: this.classId}});
         },
     },
     async created() {
         await axios({
-                method: 'GET',
-                url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}`,
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then((response) => {
-                console.log(response)
-                this.deckName = response.data.deck_name;
-                this.deckCreatedOn = response.data.deck_created_on;
-                this.deckCreatedOnTemp = new Date(response.data.deck_created_on).toLocaleString('en-us', {dateStyle: "long"})
-                this.classId = response.data.classId;
-                this.userId = response.data.userId;
-                this.deckId = response.data.deckId;
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+            method: 'GET',
+            url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}`,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                'Content-Type': 'application/json'
+            },
+        })
+        .then((response) => {
+            console.log(response)
+            this.deckName = response.data.deck_name;
+            this.deckCreatedOn = response.data.deck_created_on;
+            this.deckCreatedOnTemp = new Date(response.data.deck_created_on).toLocaleString('en-us', {dateStyle: "long"})
+            this.classId = response.data.classId;
+            this.userId = response.data.userId;
+            this.deckId = response.data.deckId;
+        })
+        .catch((err) => {
+            console.log(err)
+        })
     },
 }
 </script>

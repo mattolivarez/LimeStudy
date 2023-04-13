@@ -13,7 +13,7 @@ type UserModel struct {
 }
 
 func CreateUser(user *UserModel) error {
-	statement := `insert into "USER"(user_id, first_name, last_name, email, password, account_created_on) values(NEXTVAL('USER_SEQ'), $1, $2, $3, $4, $5, $6);`
+	statement := `insert into "USER"(user_id, first_name, last_name, email, password, account_created_on, flashcard_delay_setting) values(NEXTVAL('USER_SEQ'), $1, $2, $3, $4, $5, $6);`
 	_, err := db.Exec(statement, user.FirstName, user.LastName, user.Email, user.Password, user.AccountCreatedOn, user.FlashcardDelaySetting)
 	return err
 }

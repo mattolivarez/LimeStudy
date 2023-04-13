@@ -234,12 +234,14 @@ export default new Vuex.Store({
                 console.log(response);
                 console.log("logged out");
                 commit("logout");
+                return;
             })
             .catch((err) => {
-                console.log(err)
+                console.log(err);
+                return;
             })
         },
-        async loginUser({commit}, user) {
+        async loginUser({commit, dispatch}, user) {
             await axios({
                 method: 'POST',
                 url: 'http://localhost:8085/auth/login',
@@ -255,14 +257,17 @@ export default new Vuex.Store({
                 }
             })
             .then((response) => {
+                console.log(response);
+                console.log('login success');
                 commit('loginSuccess');
-                console.log(response)
+                dispatch("getUser");
                 return;
             }).catch((err) => {
-                this.error = true;
-                this.errorMessage = err.response.data.message;
+                console.log(err);
+                //this.error = true;
+                //this.errorMessage = err.response.data.message;
                 //console.log(err.response.data.message);
-                //console.log("login fail")
+                console.log("login fail")
                 commit('loginFailure');
                 return;
             })
@@ -292,17 +297,16 @@ export default new Vuex.Store({
                 }*/
                 //this.$store.commit('setUserDetails', details);
                 //this.$router.push({ name: 'Home' });
-                return;
             })
             .catch((err) => {
                 console.error(err)
                 this.error = true;
                 //this.errorMessage = JSON.stringify(err.response.data.message);
                 console.log(err.response.data.message);
-                return;
             });
         },
         async getUserToken({state}) {
+            console.log(state.blogHTML);
             await axios({
                 method: 'POST',
                 url: '/api/users/get-user-token',
@@ -323,10 +327,43 @@ export default new Vuex.Store({
                 localStorage.setItem("user", token);
                 const user = JSON.stringify(localStorage.getItem('user'));
                 console.log(user)
+                return;
             })
             .catch((err) => {
                 console.log(err);
                 console.log("Token not set");
+                return;
+            })
+        },
+        async getUser({commit, dispatch}) {
+            await axios({
+                method: 'GET',
+                url: 'http://localhost:8085/user',
+                withCredentials: true,
+                headers: {
+                    //'Access-Control-Allow-Origin': 'http://localhost:8000/',
+                    'Content-Type': 'application/json'
+                    //'Authorization': 'Bearer ' + localStorage.getItem('user')
+                },
+            })
+            .then((response) => {
+                console.log(response)
+                const data = {
+                    userId: response.data.user_id,
+                    firstName: response.data.first_name,
+                    lastName: response.data.last_name,
+                    email: response.data.email,
+                    accountCreatedOn: response.data.account_created_on,
+                    flashcard_delay_setting: response.data.flashcard_delay_setting
+                }
+                commit("setUserDetails", data);
+                commit('setProfileInitials');
+                dispatch("getUserToken");
+                return;
+            })
+            .catch((err) => {
+                console.log(err)
+                return;
             })
         },
         async getUserClasses({state}) {
@@ -583,7 +620,8 @@ export default new Vuex.Store({
             });
         },
         async updateUserFlashcard({state}, payload) {
-            console.log(state.blogTitle)
+            console.log(state.blogTitle);
+            console.log(payload.flashcard.occurrence_rate_input);
             await axios({
                 method: 'PUT',
                 url: `/api/classes/${payload.flashcard.classId}/decks/${payload.flashcard.deckId}/flashcards/${payload.flashcard.flashcardId}`,
@@ -603,7 +641,7 @@ export default new Vuex.Store({
                     incorrect: payload.flashcard.incorrect,
                     last_studied_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"}),
                     occurrence_rate: payload.flashcard.occurrence_rate,
-                    occurence_rate_input: payload.flashcard.occurence_rate_input
+                    occurrence_rate_input: payload.flashcard.occurrence_rate_input,
                 }
             })
             .then(() => {

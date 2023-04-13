@@ -118,10 +118,10 @@ export default {
         .catch((err) => {
             console.log(err)
         })
-        if (this.$store.state.loggedIn)
-        {
-            this.$router.push({name: "ViewClasses"})
-        }
+        // if (this.$store.state.loggedIn)
+        // {
+        //     this.$router.push({name: "ViewClasses"})
+        // }
     },
     data() {
         return {
@@ -162,8 +162,8 @@ export default {
         signOut() 
         {
             localStorage.removeItem('user');
-            this.$store.dispatch("logoutUserSession")
-            this.$router.push({name: "Landing"})
+            this.$store.dispatch("logoutUserSession");
+            this.$router.push({name: "Landing"});
         },
     },
     computed: {

@@ -1,5 +1,6 @@
 <template>
     <div class="form-wrap">
+        <Loading v-show="loading" />
         <form class="register">
             <p class="login-register">
                 Already have an account?
@@ -9,11 +10,11 @@
             <div class="inputs">
                 <div class="input">
                     <input type="text" placeholder="First Name" v-model="firstName" required>
-                    <user class="icon" />
+                    <User class="icon" />
                 </div>
                 <div class="input">
                     <input type="text" placeholder="Last Name" v-model="lastName" required>
-                    <user class="icon" />
+                    <User class="icon" />
                 </div>
                 <div class="input">
                     <input type="text" placeholder="Email" v-model="email" required>
@@ -35,15 +36,19 @@
 </template>
 
 <script>
-import Email from "../assets/Icons/envelope-regular.svg"
-import Password from "../assets/Icons/lock-alt-solid.svg"
-import axios from "axios"
+import Email from "../assets/Icons/envelope-regular.svg";
+import Password from "../assets/Icons/lock-alt-solid.svg";
+import User from "../assets/Icons/user-alt-light.svg";
+import axios from "axios";
+import Loading from "../components/Loading";
 
 export default {
     name: "Register",
     components: { 
         Email, 
         Password, 
+        User,
+        Loading,
     },
     data() {
         return {
@@ -53,55 +58,14 @@ export default {
             password: "",
             error: null,
             errorMessage: "",
+            loading: false,
         };
     },
     methods: {
-        /*async register() {
-            if (this.email !== "" && this.password !== "" && this.firstName !== "" && this.lastName !== "" && this.username !== "")
-            {
-                this.error = false;
-                this.errorMessage = "";
-                const firebaseAuth = await firebase.auth();
-                const createUser = await firebaseAuth.createUserWithEmailAndPassword(this.email, this.password);
-                const result = await createUser;
-                const dataBase = db.collection("users").doc(result.user.uid);
-                await dataBase.set({
-                    firstName: this.firstName,
-                    lastName: this.lastName,
-                    username: this.username,
-                    email: this.email
-                });
-                this.$router.push({ name: 'Home' });
-                return;
-            }
-            this.error = true;
-            this.errorMessage = "Please fill out all the fields!";
-            return;
-        },*/
         async register(){
-            /*fetch('http://localhost:8080/api/users/login', {
-                method: 'POST',
-                body: JSON.stringify(this.bodyData),
-                headers: {
-                    //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(res => res.json())
-            .then(res => console.log(res))
-            .catch(error => console.error(error[0].message));*/
-            /*axios.post('/api/users/login', {
-                email: "david@testemail.com",
-                password: "test",
-                headers: {
-                    //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then(res => console.log(res))
-            .catch(error => console.log(error.response.data.message));*/
-            if (this.email !== "" && this.password !== "" && this.firstName !== "" && this.lastName !== "" && this.username !== "")
+            if (this.email !== "" && this.password !== "" && this.firstName !== "" && this.lastName !== "")
             {
+                this.loading = true;
                 await axios({
                     method: 'POST',
                     url: 'http://localhost:8085/auth/register',
@@ -110,16 +74,22 @@ export default {
                         'Content-Type': 'application/json'
                     },
                     data: {
-                        firstName: this.firstName,
-                        lastName: this.lastName,
+                        first_name: this.firstName,
+                        last_name: this.lastName,
                         email: this.email,
-                        password: this.password
+                        password: this.password,
+                        account_created_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"}),
+                        flashcard_delay_setting: 3
                     }
                 })
                 .then((response) => {
                     this.error = false;
                     this.errorMessage = "";
                     console.log(response);
+                    this.$store.dispatch("loginUser", {email: this.email, password: this.password});
+                    //this.$store.dispatch("getUserToken");
+                    this.$router.push({ name: 'Dashboard' });
+                    this.loading = false;
                 })
                 .catch((err) => {
                     console.error(err)
@@ -127,8 +97,7 @@ export default {
                     this.errorMessage = JSON.stringify(err.response.data.message);
                     console.log(err.response.data.message);
                 });
-                this.$store.dispatch("loginUser", {email: this.email, password: this.password});
-                this.$router.push({ name: 'ViewClasses' });
+                this.loading = false;
             }
             else
             {

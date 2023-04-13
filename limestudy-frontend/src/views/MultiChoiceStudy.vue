@@ -4,10 +4,14 @@
         <Loading v-show="loading" />
         <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
         <div class="container">
-            <div :class="{invisible: !error}" class="err-message">
+            <!-- <div :class="{invisible: !error}" class="err-message">
                 <p><span>Error: </span>{{ this.errorMessage }}</p>
+            </div> -->
+            <div class="title-message" id="focused">
+                <h3>Practice Mode for {{ this.deckName }} Deck</h3>
+                <button class="help-box" @click.prevent="openHelpBox">Help</button>
             </div>
-            <div class="editor" id="focused">
+            <div class="editor">
                 <div v-if="success" class="card">
                     <div class="card-inner">
                         <div class="card-face card-face-front">
@@ -106,10 +110,11 @@ export default {
             showQuestion: true,
             showAnswer: false,
             newGame: true,
+            deckName: null,
             practiceFlashcards: [],
             keyCard: null,
             active: true,
-            modalMessage: "Correct!",
+            modalMessage: [],
             modalActive: null,
         };
     },
@@ -243,10 +248,15 @@ export default {
                 this.active = false;
             }
         },
+        openHelpBox() {
+            let temp = "Click one of the four choice below that you think is the correct answer. " + 
+                                "You will be allowed to click until you have guessed correctly.";
+            this.modalMessage.push(temp);
+            this.modalActive = true;
+        },
         closeModal() {
             this.modalActive = !this.modalActive;
-            //this.$router.push({name: "ViewDecks", params: {classId: this.classId}});
-            this.resetCards();
+            this.modalMessage = [];
         },
     },
     computed: {
@@ -301,11 +311,27 @@ export default {
         });
         window.location.hash = "#focused";
         //let focused = document.getElementById("focused");
+        await axios({
+            method: 'GET',
+            url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}`,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                'Content-Type': 'application/json'
+            },
+        })
+        .then((response) => {
+            console.log("response starts here")
+            this.deckName = response.data.deck_name; 
+        }).catch((err) => {
+            console.log("error starts here")
+            console.log(err);
+        });
     },
     beforeDestroy() {
         this.showQuestion = true;
         this.showAnswer = false;
         this.newGame = true;
+        this.modalMessage = [];
     },
 };
 </script>
@@ -384,6 +410,29 @@ export default {
             font-weight: 600;
         }
     }
+
+    .title-message
+    {
+        width: 100%;
+        padding: 12px 12px 0 12px;
+        border-radius: 8px;
+        color: #000;
+        //margin-bottom: 10px;
+        background-color: #FFF;
+        opacity: 1;
+        transition: .5s ease all;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        h3
+        {
+            flex: .95;
+            font-size: 24px;
+            text-align: center;
+        }
+    }
+    
 
     .blog-info
     {

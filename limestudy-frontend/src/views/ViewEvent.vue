@@ -1,105 +1,127 @@
 <template>
     <div>
-        <!-- <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" /> -->
-        <div class="calendar-container" v-if="!isCreating">
-            <FullCalendar :options="calendarOptions" />
-        </div>
-        <div class="profile" v-if="isCreating">
+        <div class="profile" v-if="!pickingDate">
             <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
             <div class="container">
-                <h2>Create New Class</h2>
+                <h2 v-if="isViewing">Viewing Event</h2>
+                <h2 v-else-if="isUpdating">Updating Event</h2>
                 <div class="profile-info">
                     <!-- <div class="initials">{{ $store.state.profileInitials }}</div> -->
                     <!--<div class="admin-badge">
                         <adminIcon class="icon" />
                         <span>Admin</span>
                     </div>-->
+                    <!-- <h4>Please ensure event date format is mm/dd/yyyy before submitting</h4> -->
                     <div class="input">
-                        <label for="eventDescription">Event Description: </label>
-                        <input type="text" id="eventDescription" v-model="eventDescription">
+                        <label for="userId">User Id: </label>
+                        <input type="text" id="userId" v-model="userId" disabled>
                     </div>
                     <div class="input">
+                        <label for="eventId">Event Id: </label>
+                        <input type="text" id="eventId" v-model="eventId" disabled>
+                    </div>
+                    <div class="input">
+                        <label for="eventDescription">Event Description: </label>
+                        <input type="text" id="eventDescription" v-model="eventDescription" disabled>
+                    </div>
+                    <div class="input" @click.prevent="selectDate">
                         <label for="eventDate">Event Date: </label>
                         <input type="text" id="eventDate" v-model="eventDate" disabled>
                     </div>
                     <div class="buttons">
-                        <button @click.prevent="backToCalendar">Cancel</button>
-                        <button @click.prevent="createNewEvent">Submit</button>
+                        <button @click="deleteEvent" v-if="isViewing">Delete</button>
+                        <button @click="switchToUpdate" v-if="isViewing">Update</button>
+                        <button @click="switchToView" v-if="isUpdating">Cancel</button>
+                        <button @click="updateEvent" v-if="isUpdating">Submit</button>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="calendar-container" v-if="pickingDate">
+            <FullCalendar :options="calendarOptions" />
         </div>
     </div>
 </template>
 
 <script>
-import axios from 'axios'
-import Modal from '../components/Modal.vue'
+import Modal from "../components/Modal";
+import axios from "axios"
 import FullCalendar from '@fullcalendar/vue'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
+//import adminIcon from "../assets/Icons/user-crown-light.svg";
 
 export default {
+    name: "ViewEvent",
     components: {
-        FullCalendar, // make the <FullCalendar> tag available
         Modal,
+        FullCalendar
+        //adminIcon,
     },
     data() {
         return {
+            pickingDate: false,
+            modalMessage: "Event updated!",
+            modalActive: null,
+            className: "",
+            eventId: null,
+            userId: null,
             eventDescription: "",
             eventDate: null,
-            isCreating: false,
-            modalActive: false,
-            modalMessage: "",
+            eventCreatedOn: null,
+            isViewing: true,
+            isUpdating: false,
             calendarOptions: {
                 plugins: [ dayGridPlugin, interactionPlugin ],
                 initialView: 'dayGridMonth',
                 dateClick: this.handleDateClick,
-                events: [],
                 showNonCurrentDates: false,
                 eventClick: this.handleEventClick,
                 eventBackgroundColor: '#32CD32',
             }
-        }
+        };
     },
     methods: {
-        handleDateClick(arg) {
-            if (confirm("Do you want to create an event on this date?"))
+        async deleteEvent() {
+            if (confirm("Are you sure you want to delete this event?"))
             {
-                this.isCreating = true;
-                console.log(arg.dateStr + " date clicked");
-                this.eventDate = arg.date.toLocaleString('en-us', {dateStyle: "short"});
-                console.log(this.eventDate);
-                //console.log(this.$store.state.events);
-                //this.$router.push({name: "CreateNewEvent", props: { eventDate: arg.dateStr}});
+                await axios({
+                    method: 'DELETE',
+                    url: `/api/events/${this.$route.params.eventId}`,
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then((response) => {
+                    console.log("response starts here")
+                    console.log(response);
+                }).catch((err) => {
+                    console.log("error starts here")
+                    console.log(err);
+                });
+                this.$router.push({name: "Calendar"});
             }
         },
-        handleEventClick(info) {
-            // this.modalMessage = info.event.title;
-            // this.modalActive = !this.modalActive;
-            // console.log(this.modalMessage + " " + this.modalActive)
-            console.log(info);
-            this.$router.push({name: "ViewEvent", params: { eventId: info.event.id } });
+        switchToUpdate() {
+            this.isViewing = !this.isViewing;
+            this.isUpdating = !this.isUpdating;
+            this.toggleDisabled();
         },
-        closeModal() {
-            this.modalActive = !this.modalActive;
-            this.modalMessage = "";
-        },
-        backToCalendar() {
-            this.isCreating = false;
-        },
-        async createNewEvent() {
+        async updateEvent() {
             await axios({
-                method: 'POST',
-                url: `/api/events`,
+                method: 'PUT',
+                url: `/api/events/${this.$route.params.eventId}`,
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('user'),
                     'Content-Type': 'application/json'
                 },
                 data: {
+                    userId: this.userId,
+                    eventId: this.eventId,
                     event_description: this.eventDescription,
                     event_date: this.eventDate, //new Date(this.eventDate).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"}),
-                    event_created_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"})
+                    event_created_on: this.eventCreatedOn
                 }
             })
             .then((response) => {
@@ -110,14 +132,47 @@ export default {
                 console.log("error starts here")
                 console.log(err);
             });
-            this.$router.go();
+            this.$router.push({name: "Calendar"});
+        },
+        switchToView() {
+            this.isViewing = !this.isViewing;
+            this.isUpdating = !this.isUpdating;
+            this.toggleDisabled();
+        },
+        toggleDisabled() {
+            document.getElementById('eventDescription').disabled = !document.getElementById('eventDescription').disabled;
+            //document.getElementById('eventDate').disabled = !document.getElementById('eventDate').disabled;
+        },
+        selectDate() {
+            if (this.isUpdating)
+            {
+                console.log("pressed");
+                this.pickingDate = !this.pickingDate;
+            }
+            
+        },
+        handleDateClick(arg) {
+            if (confirm("Update event date to this date?"))
+            {
+                this.isCreating = true;
+                console.log(arg.dateStr + " date clicked");
+                this.eventDate = arg.date.toLocaleString('en-us', {dateStyle: "short"});
+                console.log(this.eventDate);
+                this.pickingDate = !this.pickingDate;
+                //console.log(this.$store.state.events);
+                //this.$router.push({name: "CreateNewEvent", props: { eventDate: arg.dateStr}});
+            }
+        },
+        closeModal() {
+            this.modalActive = !this.modalActive;
+            //this.$router.push({name: "ViewClasses"});
+            this.$router.back();
         },
     },
     async created() {
-        this.calendarOptions.events = [];
         await axios({
             method: 'GET',
-            url: `/api/events`,
+            url: `/api/events/${this.$route.params.eventId}`,
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('user'),
                 'Content-Type': 'application/json'
@@ -126,51 +181,23 @@ export default {
         .then((response) => {
             console.log("response starts here")
             console.log(response.data);
-            response.data.forEach((userEvent) => {
-                const newEvent = {
-                    id: userEvent.eventId,
-                    //userId: userEvent.userId,
-                    start: new Date(userEvent.event_date).toLocaleDateString('en-CA'), //new Date(userEvent.event_created_on).toLocaleDateString('en-CA'),
-                    title: userEvent.event_description,
-                    end: new Date(userEvent.event_date).toLocaleDateString('en-CA'),
-                }
-                this.calendarOptions.events.push(newEvent);
-            });
-            console.log(this.calendarOptions.events);
+            this.eventId = response.data.eventId;
+            this.userId = response.data.userId;
+            this.eventDescription = response.data.event_description;
+            this.eventDate = response.data.event_date;
+            this.eventCreatedOn = response.data.event_created_on;
             return;
         }).catch((err) => {
             console.log("error starts here")
             console.log(err);
             return;
         });
-        //this.$store.dispatch("getAllUserEvents");
-        //this.calendarOptions.events = this.$store.state.events;
-    },
-    beforeDestroy() {
-        this.isCreating = false;
     }
 }
 </script>
 
+
 <style lang="scss" scoped>
-.calendar-container
-{
-    max-width: 1440px;
-    width: 900px;
-    height: 625px;
-    margin: 30px auto;
-    overflow: hidden;
-}
-.fc .fc-button-primary:disabled
-{
-    background-color: #32CD32;
-    border-color: #32CD32;
-}
-.fc .fc-button-primary
-{
-    background-color: #32CD32;
-    border: #32CD32;
-}
 .profile
 {
     .container
@@ -262,6 +289,7 @@ export default {
                     }
                 }
             }
+
             .buttons
             {
                 display: flex;
@@ -275,5 +303,23 @@ export default {
             }
         }
     }
+}
+.calendar-container
+{
+    max-width: 1440px;
+    width: 900px;
+    height: 625px;
+    margin: 30px auto;
+    overflow: hidden;
+}
+.fc .fc-button-primary:disabled
+{
+    background-color: #32CD32;
+    border-color: #32CD32;
+}
+.fc .fc-button-primary
+{
+    background-color: #32CD32;
+    border: #32CD32;
 }
 </style>

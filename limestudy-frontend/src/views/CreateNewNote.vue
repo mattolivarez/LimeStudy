@@ -8,7 +8,8 @@
             </div>
             <div class="blog-info">
                 <input type="text" placeholder="Enter note name..." v-model="noteName" /> <!--v-model="blogTitle"-->
-                <input type="text" placeholder="Enter class id..." v-model="classId" />
+                <!-- <input type="text" placeholder="Enter class id..." v-model="classId" /> -->
+                <Dropdown v-model="classId" />
             </div>
             <div class="editor">
                 <vue-editor :editorOptions="editorSettings" v-model="noteBody" useCustomImageHandler @image-added="imageHandler" /> <!-- @image-added="imageHandler" -->
@@ -28,7 +29,8 @@ import firebase from "firebase/app";
 import "firebase/storage";
 import BlogCoverPreview from "../components/BlogCoverPreview.vue";
 import Loading from "../components/Loading";
-import axios from "axios"
+import axios from "axios";
+import Dropdown from "../components/Dropdown";
 
 window.Quill = Quill;
 const ImageResize = require("quill-image-resize-module").default;
@@ -39,6 +41,7 @@ export default {
     components: {
         BlogCoverPreview,
         Loading,
+        Dropdown,
     },
     data() {
         return {
@@ -74,6 +77,9 @@ export default {
             if (this.noteBody.length !== 0 && this.noteName.length !== 0)
             {
                 this.loading = true;
+                const classId = document.querySelector('.selected');
+                const classIdSplit = classId.innerText.split(' ');
+                this.classId = parseInt(classIdSplit[0]);
                 await axios({
                     method: 'POST',
                     url: `/api/notes`,
@@ -82,7 +88,7 @@ export default {
                         'Content-Type': 'application/json'
                     },
                     data: {
-                        classId: this.classId,
+                        classId: parseInt(this.classId),
                         note_name: this.noteName,
                         note_body: this.noteBody,
                         note_created_on: new Date(Date.now()).toLocaleString('en-us', {year: "numeric", month: "2-digit", day: "2-digit"})
@@ -93,12 +99,12 @@ export default {
                     console.log("Note created");
                 })
                 .catch((err) => {
-                    console.log(err.config.data);
+                    console.log(err);
                     console.log("Note not created");
                 })
                 this.loading = false;
                 //this.$router.push({name: "View", params: {classId: this.$route.params.classId}});
-                this.$router.push({name: "Landing"})
+                this.$router.push({name: "Dashboard"});
                 return;
             }
             this.error = true;
@@ -109,7 +115,7 @@ export default {
             return;
         },
     },
-    computed: {
+    created() {
 
     },
     beforeDestroy() {

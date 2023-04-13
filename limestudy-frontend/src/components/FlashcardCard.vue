@@ -36,25 +36,27 @@ export default {
     },
     methods: {
         async deleteFlashcard() {
-            await axios({
-                method: 'DELETE',
-                url: `/api/classes/${this.flashcards.classId}/decks/${this.flashcards.deckId}/flashcards/${this.flashcards.flashcardId}`,
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then((response) => {
-                console.log(response)
-                console.log("Deck deleted");
-            })
-            .catch((err) => {
-                console.log(err);
-                console.log("Deck not deleted");
-            })
-            setTimeout(() => {
-                window.location.reload()
-            }, 2500)
+            if (confirm("Do you really want to delete?"))
+            {
+                await axios({
+                    method: 'DELETE',
+                    url: `/api/classes/${this.flashcards.classId}/decks/${this.flashcards.deckId}/flashcards/${this.flashcards.flashcardId}`,
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then((response) => {
+                    console.log(response)
+                    console.log("Deck deleted");
+                })
+                .catch((err) => {
+                    console.log(err);
+                    console.log("Deck not deleted");
+                })
+                this.$router.go();
+            }
+
         },
         editFlashcard() {
             this.$router.push({ name: 'UpdateFlashcard', params: { classId: this.flashcards.classId, deckId: this.flashcards.deckId, flashcardId: this.flashcards.flashcardId } });

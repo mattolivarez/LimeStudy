@@ -54,19 +54,20 @@ public class NoteController
                                              @RequestBody Map<String, Object> noteMap)
     {
         int userId = (Integer) request.getAttribute("userId");
-        Integer classId;
-        if (noteMap.get("classId") != null) {
-            classId = (Integer) noteMap.get("classId");
-        }
-        else
-        {
-            classId = null;
-        }
+        int classId = (Integer) noteMap.get("classId");
+//        if (noteMap.get("classId") != null) {
+//            classId = (Integer) noteMap.get("classId");
+//        }
+//        else
+//        {
+//            classId = 0;
+//        }
         String note_name = (String) noteMap.get("note_name");
         String note_body = (String) noteMap.get("note_body");
         String note_created_on = (String) noteMap.get("note_created_on");
         NoteModel noteModel;
-        if (classId != null)
+        System.out.println(classId);
+        if (classId != 0)
         {
             noteModel = noteService.addNote(userId, classId, note_name, note_body, note_created_on);
         }

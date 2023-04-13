@@ -7,10 +7,9 @@
                 <p><span>Error: </span>{{ this.errorMessage }}</p>
             </div>
             <div class="blog-info">
-                <input type="text" placeholder="Enter Flashcard Tags..." /> <!--v-model="blogTitle"-->
-                <div class="upload-file">
-                    <input type="text" placeholder="Enter note name..." v-model="noteName" /> <!--v-model="blogTitle"-->
-                </div>
+                <input type="text" placeholder="Enter note name..." v-model="noteName" /> <!--v-model="blogTitle"-->
+                <!-- <input type="text" placeholder="Enter class id..." v-model="classId" /> -->
+                <Dropdown v-model="classId" :selectedId="this.classId" />
             </div>
             <div class="editor">
                 <vue-editor :editorOptions="editorSettings" v-model="noteBody" useCustomImageHandler @image-added="imageHandler" /> <!-- @image-added="imageHandler" -->
@@ -31,6 +30,7 @@ import "firebase/storage";
 import BlogCoverPreview from "../components/BlogCoverPreview.vue";
 import Loading from "../components/Loading";
 import axios from "axios"
+import Dropdown from "../components/Dropdown.vue";
 
 window.Quill = Quill;
 const ImageResize = require("quill-image-resize-module").default;
@@ -41,6 +41,7 @@ export default {
     components: {
         BlogCoverPreview,
         Loading,
+        Dropdown,
     },
     data() {
         return {
@@ -48,7 +49,7 @@ export default {
             error: null,
             errorMessage: null,
             loading: null,
-            editorSettingsQuestion: {
+            editorSettings: {
                 modules: {
                     imageResize: {},
                 },
@@ -122,8 +123,27 @@ export default {
     computed: {
 
     },
-    created() {
-
+    async created() {
+        await axios({
+            method: 'GET',
+            url: `/api/notes/${this.$route.params.noteId}`,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                'Content-Type': 'application/json'
+            },
+        })
+        .then((response) => {
+            console.log(response)
+            this.userId = response.data.userId;
+            this.classId = response.data.classId;
+            this.noteId = response.data.noteId;
+            this.noteCreatedOn = response.data.note_created_on;
+            this.noteName = response.data.note_name;
+            this.noteBody = response.data.note_body;
+        })
+        .catch((err) => {
+            console.log(err)
+        });
     },
     beforeDestroy() {
         this.showQuestion = true;

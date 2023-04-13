@@ -2,9 +2,14 @@
     <div class="create-post">
         <BlogCoverPreview v-show="this.$store.state.blogPhotoPreview" />
         <Loading v-show="loading" />
+        <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
         <div class="container">
-            <div :class="{invisible: !error}" class="err-message">
+            <!-- <div :class="{invisible: !error}" class="err-message">
                 <p><span>Error: </span>{{ this.errorMessage }}</p>
+            </div> -->
+            <div class="title-message" id="focused">
+                <h3>Study Mode for {{ this.deckName }} Deck</h3>
+                <button class="help-box" @click.prevent="openHelpBox">Help</button>
             </div>
             <!-- <div class="editor" :class="{'editor-inactive': !showQuestion}">
                 <vue-editor :editorOptions="editorSettingsQuestion" v-model="question" disabled /> @image-added="imageHandler" -->
@@ -13,8 +18,10 @@
                 <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer" disabled />
             </div> -->
             <div class="editor">
+                <h3 v-if="!flipped">Question being viewed</h3>
+                <h3 v-if="flipped">Answer being viewed</h3>
                 <div v-if="success" class="card">
-                    <div class="card-inner">
+                    <div class="card-inner" @click.prevent="userFlip">
                         <div class="card-face card-face-front">
                             <p v-html="currentFlashcard.question"></p>
                         </div>
@@ -27,11 +34,12 @@
             </div>
             
             <div class="blog-actions">
-                <button v-if="!cardAnswered">View Relevant Note</button>
-                <button v-if="!cardAnswered" @click.prevent="showLess">Show less often</button> 
-                <button v-if="!cardAnswered" @click.prevent="showSame">Show at same rate</button>
-                <button v-if="!cardAnswered" @click.prevent="showMore">Show more often</button>
-                <button v-if="cardAnswered" @click.prevent="showNextCard">Get Next Card</button>
+                <!-- <button v-if="!cardAnswered">View Relevant Note</button> -->
+                <button v-if="!cardAnswered && success" @click.prevent="readyToAnswer">Click to see the answer</button>
+                <button v-if="cardAnswered && !rateSelected" @click.prevent="showLess">Show less often</button> 
+                <button v-if="cardAnswered && !rateSelected" @click.prevent="showSame">Show at same rate</button>
+                <button v-if="cardAnswered && !rateSelected" @click.prevent="showMore">Show more often</button>
+                <button v-if="cardAnswered && rateSelected" @click.prevent="showNextCard">Get Next Card</button>
                 <!--<router-link class="router-button" :to="{name: 'BlogPreview'}">Post Preview</router-link>-->
             </div>
         </div>
@@ -43,6 +51,7 @@ import Quill from "quill";
 import "firebase/storage";
 import BlogCoverPreview from "../components/BlogCoverPreview.vue";
 import Loading from "../components/Loading";
+import Modal from "../components/Modal";
 // import StudyCard from "../components/StudyCard";
 import axios from 'axios';
 
@@ -58,6 +67,7 @@ export default {
     components: {
         BlogCoverPreview,
         Loading,
+        Modal,
         // StudyCard
     },
     data() {
@@ -72,8 +82,13 @@ export default {
             error: null,
             errorMessage: "",
             cardAnswered: false,
+            rateSelected: false,
             flipped: false,
             existingSession: null,
+            deckName: "",
+            modalActive: false,
+            modalMessage: [],
+            final: false,
             // editorSettingsQuestion: {
             //     modules: {
             //         toolbar: false
@@ -87,14 +102,18 @@ export default {
         };
     },
     methods: {
-        changeCardSide() {
-            this.showQuestion = !this.showQuestion;
-            this.showAnswer = !this.showAnswer;
-        },
-        getRandomCard() {
-            let index = Math.floor(Math.random() * this.$store.state.flashcards.length);
-            this.question = this.$store.state.flashcards[index].question;
-            this.answer = this.$store.state.flashcards[index].answer;
+        // changeCardSide() {
+        //     this.showQuestion = !this.showQuestion;
+        //     this.showAnswer = !this.showAnswer;
+        // },
+        // getRandomCard() {
+        //     let index = Math.floor(Math.random() * this.$store.state.flashcards.length);
+        //     this.question = this.$store.state.flashcards[index].question;
+        //     this.answer = this.$store.state.flashcards[index].answer;
+        // },
+        readyToAnswer() {
+            this.cardAnswered = !this.cardAnswered;
+            this.flipCard();
         },
         getNextCard() {
             if (this.count < this.studyFlashcards.length)
@@ -105,22 +124,44 @@ export default {
             else
             {
                 this.currentFlashcard = null;
+                this.success = false;
             }
-            this.count += 1;
         },
         flipCard() {
             const card = document.querySelector('.card-inner');
             card.classList.toggle('is-flipped');
-            this.flipped = true;
+            this.flipped = !this.flipped;
         },
         showNextCard() {
             this.loading = true;
-            this.getNextCard();
+            console.log(this.currentFlashcard);
+            this.$store.dispatch("updateUserFlashcard", { flashcard: this.currentFlashcard });
             this.cardAnswered = false;
+            this.rateSelected = false;
+            this.final = false;
+            this.getNextCard();
             this.loading = false;
+        },
+        turnCards() {
+            const cards = document.querySelectorAll('.card-inner');
+            for (let i = 0; i < cards.length; i++)
+            {
+                if (cards[i].classList.length > 1)
+                {
+                    cards[i].classList.toggle('is-flipped');
+                }
+            }
+        },
+        userFlip() {
+            if (this.cardAnswered && !this.final) 
+            {
+                this.flipCard();
+            }
         },
         async showLess() {
             this.loading = true;
+            this.currentFlashcard.correct += 1;
+            this.currentFlashcard.occurrence_rate_input += 1;
             await this.checkForExistingSession();
             if (this.existingSession)
             {
@@ -134,11 +175,11 @@ export default {
                 let answer = { correct: 1, incorrect: 0 }
                 this.$store.dispatch("createUserSession", { flashcard: this.currentFlashcard, answer: answer });
             }
-            this.currentFlashcard.correct += 1;
-            this.currentFlashcard.occurrence_rate_input += 1;
-            await this.$store.dispatch("updateUserFlashcard", { flashcard: this.currentFlashcard });
             this.cardAnswered = true;
-            this.flipCard();
+            //this.flipCard();
+            this.turnCards();
+            this.final = true;
+            this.rateSelected = true;
             this.loading = false;
         },
         async showSame() {
@@ -155,13 +196,17 @@ export default {
                 let answer = { correct: 0, incorrect: 0 }
                 this.$store.dispatch("createUserSession", { flashcard: this.currentFlashcard, answer: answer });
             }
-            await this.$store.dispatch("updateUserFlashcard", { flashcard: this.currentFlashcard });
             this.cardAnswered = true;
-            this.flipCard();
+            //this.flipCard();
+            this.turnCards();
+            this.final = true;
+            this.rateSelected = true;
             this.loading = false;
         },
         async showMore() {
             this.loading = true;
+            this.currentFlashcard.incorrect += 1;
+            this.currentFlashcard.occurrence_rate_input -= 1;
             await this.checkForExistingSession();
             if (this.existingSession)
             {
@@ -175,11 +220,11 @@ export default {
                 let answer = { correct: 0, incorrect: 1 }
                 this.$store.dispatch("createUserSession", { flashcard: this.currentFlashcard, answer: answer });
             }
-            this.currentFlashcard.incorrect += 1;
-            this.currentFlashcard.occurrence_rate_input -= 1;
-            await this.$store.dispatch("updateUserFlashcard", { flashcard: this.currentFlashcard });
             this.cardAnswered = true;
-            this.flipCard();
+            //this.flipCard();
+            this.turnCards();
+            this.final = true;
+            this.rateSelected = true;
             this.loading = false;
         },
         async checkForExistingSession() {
@@ -204,13 +249,24 @@ export default {
                     session_correct: response.data.session_correct,
                     session_incorrect: response.data.session_incorrect
                 }
-                return;
             }).catch((err) => {
                 console.log("error starts here")
                 console.log(err);
                 this.existingSession = null;
-                return;
             });
+        },
+        openHelpBox() {
+            let modalMessage1 = "1. Once you think you know the answer, click to see it.";
+            let modalMessage2 = "2. Then click one of the options to change how often you see that flashcard.";
+            let modalMessage3 = "3. Then click to get another flashcard(the flashcard can continue to be flipped if necessary).";
+            this.modalMessage.push(modalMessage1);
+            this.modalMessage.push(modalMessage2);
+            this.modalMessage.push(modalMessage3);
+            this.modalActive = true;
+        },
+        closeModal() {
+            this.modalActive = !this.modalActive;
+            this.modalMessage = [];
         },
     },
     computed: {
@@ -264,6 +320,21 @@ export default {
             this.success = false;
         });
         console.log(this.success);
+        await axios({
+            method: 'GET',
+            url: `/api/classes/${this.$route.params.classId}/decks/${this.$route.params.deckId}`,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                'Content-Type': 'application/json'
+            },
+        })
+        .then((response) => {
+            console.log("response starts here")
+            this.deckName = response.data.deck_name; 
+        }).catch((err) => {
+            console.log("error starts here")
+            console.log(err);
+        });
         this.loading = false;
     },
     beforeDestroy() {
@@ -274,7 +345,11 @@ export default {
             this.flipCard();
             this.flipped = false;
         }
+        this.cardAnswered = false;
         this.existingSession = null;
+        this.rateSelected = false;
+        this.modalMessage = [];
+        this.count = 0;
     },
 };
 </script>
@@ -349,6 +424,28 @@ export default {
         span
         {
             font-weight: 600;
+        }
+    }
+
+    .title-message
+    {
+        width: 100%;
+        padding: 12px 12px 0 12px;
+        border-radius: 8px;
+        color: #000;
+        //margin-bottom: 10px;
+        background-color: #FFF;
+        opacity: 1;
+        transition: .5s ease all;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        h3
+        {
+            flex: .9;
+            font-size: 24px;
+            text-align: center;
         }
     }
 
@@ -454,9 +551,9 @@ export default {
 }
 .card
 {
-    margin: 100px auto 0;
-    width: 400px;
-    height: 600px;
+    margin: 0 auto;
+    width: 700px;
+    height: 350px;
 }
 .card-inner 
 {
@@ -486,7 +583,7 @@ export default {
 }
 .card-face-front
 {
-    background-image: linear-gradient(to bottom right, var(--primary), var(--secondary));
+    background-image: linear-gradient(to bottom right, var(--lime), var(--light));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -498,7 +595,7 @@ export default {
 }
 .card-face-back
 {
-    background-image: linear-gradient(to bottom right, var(--primary), var(--secondary));
+    background-image: linear-gradient(to bottom right, var(--lime), var(--light));
     transform: rotateY(180deg);
     display: flex;
     align-items: center;

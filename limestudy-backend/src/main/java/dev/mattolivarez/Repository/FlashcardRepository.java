@@ -28,4 +28,6 @@ public interface FlashcardRepository
 
     List<FlashcardModel> findPracticeStudySet(Integer userId, Integer classId, Integer deckId);
 
+    void reset(Integer userId) throws BadRequestException;
+
 }

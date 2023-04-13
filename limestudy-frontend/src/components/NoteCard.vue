@@ -41,25 +41,26 @@ export default {
             //console.log("classId from ClassCard: " + this.classes.classId)
             //this.$store.dispatch("deleteClass", this.classes.classId);
             //console.log("Payload from store: " + classId)
-            await axios({
-                method: 'DELETE',
-                url: `/api/notes/${this.notes.noteId}`,
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user'),
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then((response) => {
-                console.log(response)
-                console.log("Note deleted");
-            })
-            .catch((err) => {
-                console.log(err);
-                console.log("Note not deleted");
-            })
-            setTimeout(() => {
-                window.location.reload()
-            }, 2500)
+            if (confirm("Do you really want to delete?"))
+            {
+                await axios({
+                    method: 'DELETE',
+                    url: `/api/notes/${this.notes.noteId}`,
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('user'),
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then((response) => {
+                    console.log(response)
+                    console.log("Note deleted");
+                })
+                .catch((err) => {
+                    console.log(err);
+                    console.log("Note not deleted");
+                });
+                this.$router.go();
+            }
         },
         editNote() {
             this.$router.push({ name: 'UpdateNote', params: { noteId: this.notes.noteId } });

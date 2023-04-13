@@ -69,7 +69,7 @@ export default {
             incorrect: null,
             last_studied_on: null,
             occurrence_rate: null,
-            occurence_rate_input: null,
+            occurrence_rate_input: null,
             editorSettingsQuestion: {
                 modules: {
                     imageResize: {},
@@ -123,7 +123,7 @@ export default {
                         incorrect: this.incorrect,
                         last_studied_on: this.last_studied_on,
                         occurrence_rate: this.occurrence_rate,
-                        occurence_rate_input: this.occurence_rate_input
+                        occurrence_rate_input: this.occurrence_rate_input
                     }
                 })
                 .then((response) => {
@@ -174,7 +174,7 @@ export default {
                 this.incorrect = response.data.incorrect;
                 this.last_studied_on = response.data.last_studied_on;
                 this.occurrence_rate = response.data.occurrence_rate;
-                this.occurence_rate_input = response.data.occurence_rate_input;
+                this.occurrence_rate_input = response.data.occurrence_rate_input;
             })
             .catch((err) => {
                 console.log(err)

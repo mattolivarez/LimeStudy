@@ -35,7 +35,7 @@ export default {
     async created() {
         await axios({
             method: 'GET',
-            url: `/api/classes/${this.$route.params.classId}/notes/${this.$route.params.noteId}`,
+            url: `/api/notes/${this.$route.params.noteId}`,
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('user'),
                 'Content-Type': 'application/json'

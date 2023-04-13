@@ -29,4 +29,6 @@ public interface FlashcardService
 
     List<FlashcardModel> fetchPracticeStudySet(Integer userId, Integer classId, Integer deckId);
 
+    void resetFlashcards(Integer userId) throws BadRequestException;
+
 }

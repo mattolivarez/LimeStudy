@@ -28,9 +28,9 @@
 </template>
 
 <script>
-import Email from "../assets/Icons/envelope-regular.svg"
-import Password from "../assets/Icons/lock-alt-solid.svg"
-import axios from "axios"
+import Email from "../assets/Icons/envelope-regular.svg";
+import Password from "../assets/Icons/lock-alt-solid.svg";
+import axios from "axios";
 
 export default {
     name: "Login",
@@ -47,63 +47,6 @@ export default {
         };
     },
     methods: {
-        /*signIn() {
-            firebase
-            .auth()
-            .signInWithEmailAndPassword(this.email, this. password)
-            .then(() => {
-                this.$router.push({ name: 'Home' });
-                this.error = false;
-                this.errorMessage = "";
-                console.log(firebase.auth().currentUser.uid);
-            }).catch(err => {
-                this.error = true;
-                this.errorMessage = err.message;
-            });
-        }*/
-        /*async signIn() {
-            if (this.email !== "" && this.password !== "")
-            {
-                await axios({
-                    method: 'POST',
-                    url: '/api/users/login',
-                    headers: {
-                        //'Access-Control-Allow-Origin': 'http://localhost:8080/api/users/login',
-                        'Content-Type': 'application/json'
-                        //'Authorization': 'Bearer ' + localStorage.getItem('user')
-                    },
-                    data: {
-                        email: this.email,
-                        password: this.password
-                    }
-                })
-                .then((response) => {
-                    console.log(response)
-                    this.error = false;
-                    this.errorMessage = "";
-                    const token = response.data.token;
-                    localStorage.setItem("user", token);
-                    //const user = JSON.stringify(localStorage.getItem('user'));
-                    //console.log(user);
-                    this.$store.dispatch("getCurrentUser", {email: this.email, password: this.password});
-                    this.$store.commit('loginSuccess', token);
-                    this.$router.push({ name: 'ViewClasses' });
-                    return;
-                }).catch((err) => {
-                    this.error = true;
-                    this.errorMessage = err.response.data.message;
-                    //console.log(err.response.data.message);
-                    this.$store.commit('loginFailure');
-                    return;
-                });
-            }
-            else
-            {
-                this.error = true;
-                this.errorMessage = "Please fill out all the fields!";
-                return;
-            }
-        }*/
         async signIn() {
             if (this.email !== "" && this.password !== "")
             {
@@ -184,7 +127,7 @@ export default {
                 })
                 if (this.$store.state.loggedIn)
                 {
-                    this.$router.push({name: "ViewClasses"})
+                    this.$router.push({name: "Dashboard"});
                 }
             }
             else

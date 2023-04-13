@@ -1,7 +1,7 @@
 <template>
     <div class="modal">
         <div class="modal-content">
-            <p>{{ this.modalMessage }}</p>
+            <p v-for="(modalMessage, i) in modalMessage" :key="i">{{ modalMessage }}</p>
             <button @click="closeModal">Close</button>
         </div>
     </div>
@@ -47,10 +47,12 @@ export default {
         p
         {
             text-align: center;
+            margin-bottom: 7px;
         }
 
         button
         {
+            margin-top: 7px;
             align-self: center;
         }
     }

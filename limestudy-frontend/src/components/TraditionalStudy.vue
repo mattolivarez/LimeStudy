@@ -3,7 +3,7 @@
         <div class="info">
             <Book class="addIcon" />
             <router-link class="link" :to="{name: 'TraditionalStudy', params: { classId: this.$route.params.classId, deckId: this.$route.params.deckId }}">
-                Traditional Study <Arrow class="arrow" />
+                Study Mode <Arrow class="arrow" />
             </router-link>
         </div>
     </div>

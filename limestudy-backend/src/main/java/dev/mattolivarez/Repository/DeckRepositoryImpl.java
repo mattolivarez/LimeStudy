@@ -24,11 +24,11 @@ public class DeckRepositoryImpl implements DeckRepository
     private static final String SQL_CREATE = "INSERT INTO \"DECK\"(DECK_ID, CLASS_ID, USER_ID, DECK_NAME, DECK_CREATED_ON) " +
                                              "VALUES(NEXTVAL('DECK_SEQ'), ?, ?, ?, ?)";
 
-    private static final String SQL_FIND_BY_ID = "SELECT DECK_ID, CLASS_ID, USER_ID, DECK_NAME, DECK_CREATED_ON " +
+    private static final String SQL_FIND_BY_ID = "SELECT DECK_ID, CLASS_ID, USER_ID, DECK_NAME, TO_CHAR(DECK_CREATED_ON, 'MM/DD/YYYY') AS DECK_CREATED_ON " +
                                                  "FROM \"DECK\" " +
                                                  "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ?";
 
-    private static final String SQL_FIND_ALL = "SELECT DECK_ID, CLASS_ID, USER_ID, DECK_NAME, DECK_CREATED_ON " +
+    private static final String SQL_FIND_ALL = "SELECT DECK_ID, CLASS_ID, USER_ID, DECK_NAME, TO_CHAR(DECK_CREATED_ON, 'MM/DD/YYYY') AS DECK_CREATED_ON " +
                                                "FROM \"DECK\" " +
                                                "WHERE USER_ID = ? AND CLASS_ID = ?";
 

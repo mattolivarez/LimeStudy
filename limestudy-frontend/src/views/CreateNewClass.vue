@@ -29,14 +29,14 @@ import axios from "axios"
 //import adminIcon from "../assets/Icons/user-crown-light.svg";
 
 export default {
-    name: "Profile",
+    name: "CreateNewClass",
     components: {
         Modal,
         //adminIcon,
     },
     data() {
         return {
-            modalMessage: "Class created!",
+            modalMessage: [],
             modalActive: null,
             className: "",
         };
@@ -65,11 +65,15 @@ export default {
                 console.log("Class not created");
                 return 0;
             })
+            let modalMessage1 = "Class created!";
+            this.modalMessage.push(modalMessage1);
             this.modalActive = !this.modalActive;
         },
         closeModal() {
+            this.modalMessage = [];
             this.modalActive = !this.modalActive;
-            this.$router.push({name: "ViewClasses"});
+            //this.$router.push({name: "ViewClasses"});
+            this.$router.back();
         },
     },
     computed: {

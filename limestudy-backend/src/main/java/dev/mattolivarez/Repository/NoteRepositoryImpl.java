@@ -27,15 +27,15 @@ public class NoteRepositoryImpl implements NoteRepository
     private static final String SQL_CREATE_WITH_NO_CLASS = "INSERT INTO \"NOTE\"(NOTE_ID, USER_ID, NOTE_NAME, NOTE_BODY, NOTE_CREATED_ON) " +
             "VALUES(NEXTVAL('NOTE_SEQ'), ?, ?, ?, ?)";
 
-    private static final String SQL_FIND_BY_ID = "SELECT NOTE_ID, CLASS_ID, USER_ID, NOTE_NAME, NOTE_BODY, NOTE_CREATED_ON " +
+    private static final String SQL_FIND_BY_ID = "SELECT NOTE_ID, CLASS_ID, USER_ID, NOTE_NAME, NOTE_BODY, TO_CHAR(NOTE_CREATED_ON, 'MM/DD/YYYY') AS NOTE_CREATED_ON " +
             "FROM \"NOTE\" " +
             "WHERE USER_ID = ? AND NOTE_ID = ?";
 
-    private static final String SQL_FIND_ALL = "SELECT NOTE_ID, CLASS_ID, USER_ID, NOTE_NAME, NOTE_BODY, NOTE_CREATED_ON " +
+    private static final String SQL_FIND_ALL = "SELECT NOTE_ID, CLASS_ID, USER_ID, NOTE_NAME, NOTE_BODY, TO_CHAR(NOTE_CREATED_ON, 'MM/DD/YYYY') AS NOTE_CREATED_ON " +
             "FROM \"NOTE\" " +
             "WHERE USER_ID = ?";
 
-    private static final String SQL_FIND_ALL_BELONGING_TO_CLASS = "SELECT NOTE_ID, CLASS_ID, USER_ID, NOTE_NAME, NOTE_BODY, NOTE_CREATED_ON " +
+    private static final String SQL_FIND_ALL_BELONGING_TO_CLASS = "SELECT NOTE_ID, CLASS_ID, USER_ID, NOTE_NAME, NOTE_BODY, TO_CHAR(NOTE_CREATED_ON, 'MM/DD/YYYY') AS NOTE_CREATED_ON " +
             "FROM \"NOTE\" " +
             "WHERE USER_ID = ? AND CLASS_ID = ?";
 

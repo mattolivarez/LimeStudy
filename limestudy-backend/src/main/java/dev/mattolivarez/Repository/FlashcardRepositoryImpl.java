@@ -5,6 +5,7 @@ import dev.mattolivarez.Exception.ResourceNotFoundException;
 import dev.mattolivarez.Model.FlashcardModel;
 import dev.mattolivarez.NecessaryFunctions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -24,11 +25,11 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
     private static final String SQL_CREATE = "INSERT INTO \"FLASHCARD\"(FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON, CORRECT, INCORRECT, LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT) " +
                                              "VALUES(NEXTVAL('FLASHCARD_SEQ'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    private static final String SQL_FIND_BY_ID = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON, CORRECT, INCORRECT, LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
+    private static final String SQL_FIND_BY_ID = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, TO_CHAR(FLASHCARD_CREATED_ON, 'MM/DD/YYYY') AS FLASHCARD_CREATED_ON, CORRECT, INCORRECT, TO_CHAR(LAST_STUDIED_ON, 'MM/DD/YYYY') AS LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
                                                  "FROM \"FLASHCARD\" " +
                                                  "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? AND FLASHCARD_ID = ?";
 
-    private static final String SQL_FIND_ALL = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON, CORRECT, INCORRECT, LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
+    private static final String SQL_FIND_ALL = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, TO_CHAR(FLASHCARD_CREATED_ON, 'MM/DD/YYYY') AS FLASHCARD_CREATED_ON, CORRECT, INCORRECT, TO_CHAR(LAST_STUDIED_ON, 'MM/DD/YYYY') AS LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
                                                "FROM \"FLASHCARD\" " +
                                                "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ?";
 
@@ -39,15 +40,19 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
     private static final String SQL_DELETE = "DELETE FROM \"FLASHCARD\" " +
                                              "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? AND FLASHCARD_ID = ?";
 
-    private static final String SQL_FIND_TRADITIONAL_STUDY_SET = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON, CORRECT, INCORRECT, LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
+    private static final String SQL_FIND_TRADITIONAL_STUDY_SET = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, TO_CHAR(FLASHCARD_CREATED_ON, 'MM/DD/YYYY') AS FLASHCARD_CREATED_ON, CORRECT, INCORRECT, TO_CHAR(LAST_STUDIED_ON, 'MM/DD/YYYY') AS LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
             "FROM \"FLASHCARD\" " +
-            "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? AND LAST_STUDIED_ON >= CURRENT_DATE - INTERVAL '1' DAY * (SELECT FLASHCARD_DELAY_SETTING FROM \"USER\" WHERE USER_ID = ?) AND OCCURRENCE_RATE >= 0.5 " +
+            "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? AND (LAST_STUDIED_ON <= CURRENT_DATE - INTERVAL '1' DAY * (SELECT FLASHCARD_DELAY_SETTING+1 FROM \"USER\" WHERE USER_ID = ?) OR (OCCURRENCE_RATE <= 0.5 AND LAST_STUDIED_ON != CURRENT_DATE)) " +
             "ORDER BY OCCURRENCE_RATE DESC";
 
-    private static final String SQL_FIND_PRACTICE_STUDY_SET = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, FLASHCARD_CREATED_ON, CORRECT, INCORRECT, LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
+    private static final String SQL_FIND_PRACTICE_STUDY_SET = "SELECT FLASHCARD_ID, DECK_ID, CLASS_ID, USER_ID, QUESTION, ANSWER, TO_CHAR(FLASHCARD_CREATED_ON, 'MM/DD/YYYY') AS FLASHCARD_CREATED_ON, CORRECT, INCORRECT, TO_CHAR(LAST_STUDIED_ON, 'MM/DD/YYYY') AS LAST_STUDIED_ON, OCCURRENCE_RATE, OCCURRENCE_RATE_INPUT " +
             "FROM \"FLASHCARD\" " +
             "WHERE USER_ID = ? AND CLASS_ID = ? AND DECK_ID = ? " +
             "ORDER BY RANDOM() LIMIT 4";
+
+    private static final String SQL_RESET = "UPDATE \"FLASHCARD\" " +
+            "SET OCCURRENCE_RATE = 0.5, OCCURRENCE_RATE_INPUT = 0, LAST_STUDIED_ON = TO_CHAR(CURRENT_DATE, 'MM/DD/YYYY') " +
+            "WHERE USER_ID  = ?, CURRENT_DATE > LAST_STUDIED_ON + INTERVAL '14' DAY";
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -116,6 +121,7 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
     {
         try
         {
+
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
             Date flashcardCreatedDate = simpleDateFormat.parse(flashcardModel.getFlashcard_created_on());
             java.sql.Date flashcardCreatedOn = new java.sql.Date(flashcardCreatedDate.getTime());
@@ -123,7 +129,8 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
             Date lastStudiedDate = simpleDateFormat.parse(flashcardModel.getLast_studied_on());
             java.sql.Date lastStudiedOn = new java.sql.Date(lastStudiedDate.getTime());
 
-            Double newOccurrenceRate = NecessaryFunctions.logisticFunction(flashcardModel.getOccurrence_rate_input());
+            flashcardModel.setOccurrence_rate(NecessaryFunctions.logisticFunction(flashcardModel.getOccurrence_rate_input()));
+
             jdbcTemplate.update(SQL_UPDATE,
                     new Object[]{
                             flashcardModel.getQuestion(),
@@ -132,7 +139,7 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
                             flashcardModel.getCorrect(),
                             flashcardModel.getIncorrect(),
                             lastStudiedOn,
-                            newOccurrenceRate,
+                            flashcardModel.getOccurrence_rate(),
                             flashcardModel.getOccurrence_rate_input(),
                             userId, classId, deckId, flashcardId});
         }
@@ -161,6 +168,19 @@ public class FlashcardRepositoryImpl implements FlashcardRepository
     @Override
     public List<FlashcardModel> findPracticeStudySet(Integer userId, Integer classId, Integer deckId) {
         return jdbcTemplate.query(SQL_FIND_PRACTICE_STUDY_SET, new Object[]{userId, classId, deckId}, flashcardRowMapper);
+    }
+
+    @Override
+    public void reset(Integer userId) {
+        try
+        {
+            jdbcTemplate.update(SQL_RESET,
+                    new Object[]{userId});
+        }
+        catch (Exception e)
+        {
+            throw new BadRequestException("Invalid request. Could not update flashcard.");
+        }
     }
 
     private RowMapper<FlashcardModel> flashcardRowMapper = ((rs, rowNum) -> {
