@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for Traditional Study, which links to traditional study functionality
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="card">
         <div class="info">
             <Book class="addIcon" />

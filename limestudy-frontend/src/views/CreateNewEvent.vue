@@ -1,8 +1,16 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View to Create New Event, which contains the New Event Form
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="profile">
         <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
         <div class="container">
-            <h2>Create New Class</h2>
+            <h2>Create New Event</h2>
             <div class="profile-info">
                 <div class="initials">{{ $store.state.profileInitials }}</div>
                 <!--<div class="admin-badge">

@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Session Management Authentication/Authorization Middleware
+Contains model for User Entity
+*/
+
 package model
 
 
@@ -48,3 +56,20 @@ func CheckEmail(email string, user *UserModel) bool {
 	}
 	return true
 }
+
+func isNotExistingUser(email string, user *UserModel) bool {
+	statement := `select user_id, first_name, last_name, email, password, account_created_on, flashcard_delay_setting from "USER" where email=$1 limit 1;`
+	rows, err := db.Query(statement, email)
+	if err != nil {
+		return false
+	}
+	if rows != nil {
+		return false
+	}
+	return true
+}
+
+// func valid(email string) bool {
+//     _, err := mail.ParseAddress(email)
+//     return err == nil
+// }

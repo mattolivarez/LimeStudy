@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Frontend
+Contains function to configure and initialize app
+*/
+
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";

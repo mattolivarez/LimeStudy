@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for Modal, which displays small pop-up with information that is passed in
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="modal">
         <div class="modal-content">
             <p v-for="(modalMessage, i) in modalMessage" :key="i">{{ modalMessage }}</p>

@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Contains sigmoid (logistic) function
+*/
+
 package dev.mattolivarez;
 
 public class NecessaryFunctions

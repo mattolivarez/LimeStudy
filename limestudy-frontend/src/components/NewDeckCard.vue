@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for New Deck card, which is small card that links to form to create new deck
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="card">
         <div class="info">
             <Add class="addIcon" />

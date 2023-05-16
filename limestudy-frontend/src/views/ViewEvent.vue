@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View to view specific event
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div>
         <div class="profile" v-if="!pickingDate">
             <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />

@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Contains filter for authorizatin token
+*/
+
 package dev.mattolivarez.Filter;
 
 import dev.mattolivarez.Constants;

@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+User Repository Interface file
+*/
+
 package dev.mattolivarez.Repository;
 
 import dev.mattolivarez.Exception.LSAuthException;

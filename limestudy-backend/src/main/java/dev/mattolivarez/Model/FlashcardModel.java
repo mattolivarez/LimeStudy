@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Contains Model for Flashcard Entity
+*/
+
 package dev.mattolivarez.Model;
 
 public class FlashcardModel

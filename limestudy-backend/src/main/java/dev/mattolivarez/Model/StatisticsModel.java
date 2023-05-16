@@ -1,6 +1,13 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Contains Model for Statistics (not an entity, but used as a temporary/imaginary entity)
+*/
+
 package dev.mattolivarez.Model;
 
-import java.math.BigInteger;
 
 public class StatisticsModel
 {

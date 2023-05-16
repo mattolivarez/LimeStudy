@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View for Practice Mode functionality
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="create-post">
         <BlogCoverPreview v-show="this.$store.state.blogPhotoPreview" />
         <Loading v-show="loading" />
@@ -8,6 +16,7 @@
                 <p><span>Error: </span>{{ this.errorMessage }}</p>
             </div> -->
             <div class="title-message" id="focused">
+                <button class="back-button" @click.prevent="backButton">Back</button>
                 <h3>Practice Mode for {{ this.deckName }} Deck</h3>
                 <button class="help-box" @click.prevent="openHelpBox">Help</button>
             </div>
@@ -253,6 +262,10 @@ export default {
                                 "You will be allowed to click until you have guessed correctly.";
             this.modalMessage.push(temp);
             this.modalActive = true;
+        },
+        backButton() {
+            //this.$router.back()
+            this.$router.push({name: 'ViewFlashcards', params: {classId: this.$route.params.classId, deckId: this.$route.params.deckId}})
         },
         closeModal() {
             this.modalActive = !this.modalActive;

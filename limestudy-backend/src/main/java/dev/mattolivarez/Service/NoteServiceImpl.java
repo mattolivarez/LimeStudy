@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Note Service Implementation file
+*/
+
 package dev.mattolivarez.Service;
 
 import dev.mattolivarez.Exception.BadRequestException;

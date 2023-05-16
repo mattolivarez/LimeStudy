@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Session Repository Implementation file
+*/
+
 package dev.mattolivarez.Repository;
 
 import dev.mattolivarez.Exception.BadRequestException;

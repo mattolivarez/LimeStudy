@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for note card, which is small card to view note information
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="card">
         <div v-show="getEditNote" class="icons">
             <div @click="editNote" class="icon">

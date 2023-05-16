@@ -1,3 +1,10 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Contains function to initialize app
+*/
 package dev.mattolivarez;
 
 import dev.mattolivarez.Filter.AuthFilter;

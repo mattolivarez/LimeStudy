@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View for login page
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="form-wrap">
         <form class="login">
             <p class="login-register">

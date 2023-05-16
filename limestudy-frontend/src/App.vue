@@ -1,4 +1,11 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Contains app component that serves as entry point
+    -->
     <div class="app-wrapper">
         <div class="app"> <!--v-if="this.$store.state.postLoaded"-->
             <Navigation v-if="!navigation" />
@@ -63,6 +70,7 @@ export default {
     --dark: #212121;
     --light: #F3F3F3;
     --lime: #32CD32;
+    --darkLime: #54e15f;
 }
 
 * 

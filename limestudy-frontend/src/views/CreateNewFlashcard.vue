@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View to Create New Flashcard, which contains the New Flashcard Form
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="create-post">
         <BlogCoverPreview v-show="this.$store.state.blogPhotoPreview" />
         <Loading v-show="loading" />

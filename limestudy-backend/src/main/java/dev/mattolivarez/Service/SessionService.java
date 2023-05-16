@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Session Service Interface file
+*/
+
 package dev.mattolivarez.Service;
 
 import dev.mattolivarez.Exception.BadRequestException;

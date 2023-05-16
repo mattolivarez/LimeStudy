@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View for registration page
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="form-wrap">
         <Loading v-show="loading" />
         <form class="register">

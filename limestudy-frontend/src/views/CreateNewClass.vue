@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View to Create New Class, which contains the New Class Form
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="profile">
         <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
         <div class="container">

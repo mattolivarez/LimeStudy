@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View for study mode
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="create-post">
         <BlogCoverPreview v-show="this.$store.state.blogPhotoPreview" />
         <Loading v-show="loading" />
@@ -8,7 +16,8 @@
                 <p><span>Error: </span>{{ this.errorMessage }}</p>
             </div> -->
             <div class="title-message" id="focused">
-                <h3>Study Mode for {{ this.deckName }} Deck</h3>
+                <button v-if="backEnabled" class="back-button" @click.prevent="backButton">Back</button>
+                <h3>Study Mode for {{ this.deckName }} Deck ({{ count }} / {{ this.studyFlashcards.length }})</h3>
                 <button class="help-box" @click.prevent="openHelpBox">Help</button>
             </div>
             <!-- <div class="editor" :class="{'editor-inactive': !showQuestion}">
@@ -18,8 +27,8 @@
                 <vue-editor :editorOptions="editorSettingsAnswer" v-model="answer" disabled />
             </div> -->
             <div class="editor">
-                <h3 v-if="!flipped">Question being viewed</h3>
-                <h3 v-if="flipped">Answer being viewed</h3>
+                <h3 v-if="!flipped && success">Question being viewed</h3>
+                <h3 v-if="flipped && success">Answer being viewed</h3>
                 <div v-if="success" class="card">
                     <div class="card-inner" @click.prevent="userFlip">
                         <div class="card-face card-face-front">
@@ -89,6 +98,7 @@ export default {
             modalActive: false,
             modalMessage: [],
             final: false,
+            backEnabled: true,
             // editorSettingsQuestion: {
             //     modules: {
             //         toolbar: false
@@ -139,8 +149,12 @@ export default {
             this.cardAnswered = false;
             this.rateSelected = false;
             this.final = false;
+            this.flipped = false;
             this.getNextCard();
-            this.loading = false;
+            this.backEnabled = true;
+            setTimeout(() => {
+                this.loading = false;
+            }, 1000);
         },
         turnCards() {
             const cards = document.querySelectorAll('.card-inner');
@@ -179,7 +193,9 @@ export default {
             //this.flipCard();
             this.turnCards();
             this.final = true;
+            this.backEnabled = false;
             this.rateSelected = true;
+            this.flipped = !this.flipped;
             this.loading = false;
         },
         async showSame() {
@@ -200,7 +216,9 @@ export default {
             //this.flipCard();
             this.turnCards();
             this.final = true;
+            this.backEnabled = false;
             this.rateSelected = true;
+            this.flipped = !this.flipped;
             this.loading = false;
         },
         async showMore() {
@@ -224,7 +242,9 @@ export default {
             //this.flipCard();
             this.turnCards();
             this.final = true;
+            this.backEnabled = false;
             this.rateSelected = true;
+            this.flipped = !this.flipped;
             this.loading = false;
         },
         async checkForExistingSession() {
@@ -263,6 +283,9 @@ export default {
             this.modalMessage.push(modalMessage2);
             this.modalMessage.push(modalMessage3);
             this.modalActive = true;
+        },
+        backButton() {
+            this.$router.push({name: 'ViewFlashcards', params: {classId: this.$route.params.classId, deckId: this.$route.params.deckId}})
         },
         closeModal() {
             this.modalActive = !this.modalActive;
@@ -552,6 +575,7 @@ export default {
 .card
 {
     margin: 0 auto;
+    margin-top: 10px;
     width: 700px;
     height: 350px;
 }
@@ -595,7 +619,7 @@ export default {
 }
 .card-face-back
 {
-    background-image: linear-gradient(to bottom right, var(--lime), var(--light));
+    background-image: linear-gradient(to bottom right, var(--light), var(--darkLime));
     transform: rotateY(180deg);
     display: flex;
     align-items: center;

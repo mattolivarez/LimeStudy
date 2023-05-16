@@ -1,7 +1,13 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Contains Model for User Entity
+*/
+
 package dev.mattolivarez.Model;
 
-
-import java.util.Date;
 
 public class UserModel
 {

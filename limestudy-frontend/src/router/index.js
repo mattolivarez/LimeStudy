@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Frontend
+Contains all routes for frontend
+*/
+
 import Vue from "vue";
 import VueRouter from "vue-router";
 import firebase from "firebase/app";

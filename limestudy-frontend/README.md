@@ -1,4 +1,4 @@
-# limestudy-frontend
+# limestudy
 
 ## Project setup
 ```

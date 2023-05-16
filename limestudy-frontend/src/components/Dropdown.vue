@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for dropdown functionality, which will contain list of items in dropdown format
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="dropdown" @click.prevent="showDropdown">
         <div class="select">
             <span class="selected">0 - None</span>

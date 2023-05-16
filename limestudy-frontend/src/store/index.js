@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Frontend 
+Contains state of frontend application
+*/
+
 import Vue from 'vue'
 import Vuex from 'vuex'
 //import firebase from "firebase/app"

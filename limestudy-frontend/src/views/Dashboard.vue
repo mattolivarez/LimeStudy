@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View to Dashboard, home page for logged in users
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="card-wrap">
         <div class="dashboard container">
             <h2 class="name">Welcome back, {{ firstName }}!</h2>

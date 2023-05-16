@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for Loading, which simulated loading screen functionality
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="loading">
         <span></span>
     </div>

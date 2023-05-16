@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View to update Deck, which contains form for specific deck
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="profile">
         <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
         <div class="container">

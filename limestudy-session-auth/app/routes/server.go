@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Session Management Authentication/Authorization Middleware
+Contains server setup including routes
+*/
+
 package routes
 
 import (

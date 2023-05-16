@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Controller file for Class Model
+*/
+
 package dev.mattolivarez.Controller;
 
 import dev.mattolivarez.Model.ClassModel;
@@ -14,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/classes")
+@RequestMapping("/api/classes") // api will be called using /api/classes address
 public class ClassController
 {
 

@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View to update note, which contains form for specific note
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="create-post">
         <BlogCoverPreview v-show="this.$store.state.blogPhotoPreview" />
         <Loading v-show="loading" />

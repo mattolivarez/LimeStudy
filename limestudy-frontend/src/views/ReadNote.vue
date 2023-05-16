@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View for reading specified note
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="post-view">
         <div class="container quillWrapper">
             <h2>{{ noteName }}</h2>

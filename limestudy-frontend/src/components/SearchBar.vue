@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for Search Bar used in page views
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="search">
         <MagGlass class="glass"/>
         <input type="text" placeholder="Search" @keyup="filterPage">

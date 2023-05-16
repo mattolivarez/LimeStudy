@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for Flashcard card, which is small card to view Flashcard information
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="card flashcards">
         <div v-show="getEditFlashcard" class="icons">
             <div @click="editFlashcard" class="icon">
@@ -155,7 +163,7 @@ export default {
     .card-info
     {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         height: 100%;
         z-index: 3;
         padding: 32px 16px;

@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for Footer, which will be viewed on every page
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <footer>
         <div class="container">
             <div class="left">

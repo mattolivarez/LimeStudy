@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for Deck card, which is small card to view Deck information
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="card">
         <div v-show="getEditDeck" class="icons">
             <div @click="editDeck" class="icon">

@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for Navigation, which is navigation bar across the top of the screen
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <header>
         <nav class="container">
             <div class="branding">

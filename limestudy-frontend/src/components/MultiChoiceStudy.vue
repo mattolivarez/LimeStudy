@@ -1,7 +1,15 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for Multiple Choice Study card, which is small card containing link to Multiple Choice Functionality
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="card">
         <div class="info">
-            <Book class="addIcon" />
+            <Plane class="addIcon" />
             <router-link class="link" :to="{name: 'MultiChoiceStudy', 
             params: { classId: this.$route.params.classId, deckId: this.$route.params.deckId }}">
                 Practice Mode <Arrow class="arrow" />
@@ -12,13 +20,13 @@
 
 <script>
 import Arrow from "../assets/Icons/arrow-right-light.svg"
-import Book from "../assets/Icons/book-open-solid.svg"
+import Plane from "../assets/Icons/paper-plane-regular.svg"
 
 export default {
     name: "MultiChoiceStudy",
     components: {
         Arrow,
-        Book,
+        Plane,
     },
     methods: {
         addFlashcard() {

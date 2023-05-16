@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View to view all Decks, which contains the deck card component
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="card-wrap" v-if="showDecks">
         <div class="cards container">
             <div class="toggle-edit">

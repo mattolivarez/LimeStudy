@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Statistics Service Implementation file
+*/
+
 package dev.mattolivarez.Service;
 
 import dev.mattolivarez.Model.StatisticsModel;

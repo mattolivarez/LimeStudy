@@ -1,3 +1,11 @@
+/*
+Matthew Olivarez
+Spring 2023
+Senior Project
+Limestudy Backend
+Contains extended RuntimeException using ResponseStatus annontation
+*/
+
 package dev.mattolivarez.Exception;
 
 

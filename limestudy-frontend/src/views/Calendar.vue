@@ -1,11 +1,20 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View for Calendar, which contains the Calendar Page
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div>
         <!-- <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" /> -->
+        <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
         <div class="calendar-container" v-if="!isCreating">
             <FullCalendar :options="calendarOptions" />
         </div>
         <div class="profile" v-if="isCreating">
-            <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" />
+            <!-- <Modal v-if="modalActive" :modalMessage="modalMessage" v-on:close-modal="closeModal" /> -->
             <div class="container">
                 <h2>Create New Class</h2>
                 <div class="profile-info">
@@ -50,7 +59,7 @@ export default {
             eventDate: null,
             isCreating: false,
             modalActive: false,
-            modalMessage: "",
+            modalMessage: [],
             calendarOptions: {
                 plugins: [ dayGridPlugin, interactionPlugin ],
                 initialView: 'dayGridMonth',
@@ -59,6 +68,22 @@ export default {
                 showNonCurrentDates: false,
                 eventClick: this.handleEventClick,
                 eventBackgroundColor: '#32CD32',
+                customButtons: {
+                    helpButton: {
+                        text: "Help",
+                        click: () => {
+                            let modalMessage1 = "Click a date to add an event or";
+                            let modalMessage2 = "Click an event to View/Edit/Delete";
+                            this.modalMessage.push(modalMessage1);
+                            this.modalMessage.push(modalMessage2);
+                            this.modalActive = true;
+                            console.log(this.modalMessage)
+                        }
+                    }
+                },
+                headerToolbar: {
+                    right: 'helpButton today prev,next'
+                }
             }
         }
     },
@@ -83,7 +108,7 @@ export default {
         },
         closeModal() {
             this.modalActive = !this.modalActive;
-            this.modalMessage = "";
+            this.modalMessage = [];
         },
         backToCalendar() {
             this.isCreating = false;

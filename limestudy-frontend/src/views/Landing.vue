@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View for landing or non-logged in home page
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="home">
         <BlogPost :post="welcomeScreen" />
         <BlogPost :post="aboutScreen" /> 

@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    View to view flashcard statistics
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="card-wrap">
         <div class="container">
             <div class="buttons">
@@ -7,7 +15,7 @@
                 <button class="preview" :class="{'button-inactive': showMonthly}" @click.prevent="getMonthlyStatistics">Monthly</button>
                 <button class="preview" :class="{'button-inactive': showLifeTime}" @click.prevent="getLifeTimeStatistics">All Time</button>
             </div>
-            <div class="line-chart">
+            <div class="bar-chart">
                 <Bar :chart-data="chartData" :chart-options="chartOptions" />
             </div>
             
@@ -71,13 +79,16 @@ export default {
                         display: true,
                     }
                 },
+                interaction: {
+                    intersect: false,
+                },
                 scales: {
                     x: {
-                        stacked: true,
+                        stacked: false,
                     },
-                    // y: {
-                    //     stacked: true
-                    // }
+                    y: {
+                        stacked: false
+                    }
                 },
             },
         }
@@ -258,6 +269,10 @@ export default {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 15px;
+    position: absolute;
+    top: 5px;
+    left: 0px;
+    width: 100%;
 
     button
     {
@@ -268,5 +283,9 @@ export default {
 {
     margin-left: 2px;
     text-transform: initial;
+}
+.bar-chart
+{
+    margin-top: 20px;
 }
 </style>

@@ -1,4 +1,12 @@
 <template>
+    <!-- 
+    Matthew Olivarez
+    Spring 2023
+    Senior Project
+    Limestudy Frontend
+    Component for Class card, which is small card to view Class information
+    Contains template (HTML), CSS, and JavaScript
+    -->
     <div class="card">
         <div v-show="getEditClass" class="icons">
             <div @click="editClass" class="icon">
